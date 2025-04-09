@@ -1,0 +1,2 @@
+# HEMOPI
+ O HEMOPI (Sangue Solidário) é uma plataforma web moderna desenvolvida para facilitar o acompanhamento de doações de sangue, envio de notificações inteligentes e gerenciamento de campanhas de doação. Criado para apoiar o HEMOPI (Centro de Hematologia e Hemoterapia), o sistema incentiva a doação recorrente, organiza informações essenciais para os doadores e otimiza a operação da instituição.
