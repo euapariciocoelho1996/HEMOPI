@@ -1,0 +1,177 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 100%;
+        padding: 40px 20px;
+    }
+
+    .left-panel {
+        order: 2;
+    }
+
+    .right-panel {
+        order: 1;
+    }
+
+    form {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .left-panel h1 {
+        font-size: 26px;
+    }
+
+    .left-panel p {
+        font-size: 14px;
+    }
+
+    .switch-btn {
+        padding: 8px 24px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        font-size: 16px;
+    }
+
+    .social-login img {
+        width: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .left-panel h1 {
+        font-size: 22px;
+    }
+
+    .right-panel h2 {
+        font-size: 20px;
+    }
+
+    .left-panel p,
+    .divider {
+        font-size: 13px;
+    }
+
+    form input {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        padding: 10px;
+    }
+}
+
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f2f2f2;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Painel Esquerdo */
+.left-panel {
+    flex: 1;
+    background-color: #972727;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.left-panel h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.left-panel p {
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+.switch-btn {
+    background-color: transparent;
+    border: 2px solid #fff;
+    padding: 10px 30px;
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Painel Direito */
+.right-panel {
+    flex: 1;
+    background-color: #fff;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-panel h2 {
+    color: #972727;
+    margin-bottom: 20px;
+}
+
+.social-login img {
+    width: 32px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.divider {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #aaa;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    max-width: 300px;
+}
+
+form input {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.submit-btn {
+    background-color: #972727;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#message-carousel {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+}
