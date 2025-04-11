@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Perfil do Usuário</title>
+    <link rel="stylesheet" href="css/estilos.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+            authDomain: "teste-2067f.firebaseapp.com",
+            projectId: "teste-2067f",
+            storageBucket: "teste-2067f.appspot.com",
+            messagingSenderId: "160483034987",
+            appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('abrirFormulario');
+
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    Swal.fire("Você precisa estar logado para acessar o perfil.");
+                    btn.disabled = true;
+                    return;
+                }
+
+                btn.addEventListener('click', () => {
+                    Swal.fire({
+                        title: 'Preencha seus dados',
+                        width: 600,
+                        html: `
+              <div class="form-container">
+                <input type="text" id="nome" placeholder="Nome completo" class="form-field" required>
+                <input type="number" id="idade" placeholder="Idade" class="form-field" required>
+                <select id="sexo" class="form-field" required>
+                  <option value="">Selecione o sexo</option>
+                  <option value="Feminino">Feminino</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Outro">Outro</option>
+                </select>
+                <input type="text" id="rua" placeholder="Rua" class="form-field" required>
+                <input type="text" id="bairro" placeholder="Bairro" class="form-field" required>
+              </div>
+            `,
+                        customClass: {
+                            popup: 'popup-form'
+                        },
+                        confirmButtonText: 'Salvar',
+                        focusConfirm: false,
+                        preConfirm: () => {
+                            const nome = document.getElementById('nome').value.trim();
+                            const idade = document.getElementById('idade').value.trim();
+                            const sexo = document.getElementById('sexo').value.trim();
+                            const rua = document.getElementById('rua').value.trim();
+                            const bairro = document.getElementById('bairro').value.trim();
+
+                            if (!nome || !idade || !sexo || !rua || !bairro) {
+                                Swal.showValidationMessage('Preencha todos os campos!');
+                                return false;
+                            }
+
+                            return { nome, idade, sexo, rua, bairro };
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                const uid = auth.currentUser.uid;
+                                await setDoc(doc(db, "usuarios", uid), result.value);
+                                Swal.fire('Sucesso!', 'Dados salvos com sucesso.', 'success');
+                            } catch (err) {
+                                console.error("Erro ao salvar dados:", err);
+                                Swal.fire('Erro', 'Não foi possível salvar os dados.', 'error');
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background: #f9f9f9;
+        }
+
+        .perfil-btn {
+            padding: 14px 28px;
+            background-color: #c62828;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .perfil-btn:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+
+        h1 {
+            color: #444;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 10px 0;
+        }
+
+        .form-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .popup-form {
+            border-radius: 12px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Perfil do Usuário</h1>
+    <button class="perfil-btn" id="abrirFormulario">Seus dados já estão cadastrados?</button>
+</body>
+
+</html>
