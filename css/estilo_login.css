@@ -89,7 +89,7 @@ body {
 /* Painel Esquerdo */
 .left-panel {
     flex: 1;
-    background-color: #972727;
+    background-color: rgb(206, 72, 60);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -131,7 +131,7 @@ body {
 }
 
 .right-panel h2 {
-    color: #972727;
+    color: rgb(206, 72, 60);
     margin-bottom: 20px;
 }
 
@@ -162,7 +162,7 @@ form input {
 }
 
 .submit-btn {
-    background-color: #972727;
+    background-color: rgb(206, 72, 60);
     color: #fff;
     padding: 12px;
     border: none;

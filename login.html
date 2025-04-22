@@ -22,19 +22,147 @@
         </div>
 
         <div class="right-panel">
-            <h2>Continuar com:</h2>
+            <h2 id="form-title">Entre com sua conta</h2>
+            <p class="divider" id="alternative-action">ou continue com:</p>
             <div class="social-login" style="cursor: pointer;">
                 <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google">
             </div>
             <p class="divider">ou use seu e-mail</p>
-            <form>
-                <input type="text" placeholder="Nome" required>
-                <input type="email" placeholder="E-mail" required>
-                <input type="password" placeholder="Senha" required>
-                <button type="submit" class="submit-btn">Cadastrar</button>
+            <form id="login-form" onsubmit="return validateForm(event)">
+                <input type="email" id="email" placeholder="E-mail" required>
+                <input type="password" id="password" placeholder="Senha" required>
+                <div id="password-strength-message"></div>
+                <button type="submit" class="submit-btn">Entrar</button>
             </form>
+            <p class="signup-info" id="signup-link" style="margin-top: 20px;">Não tem uma conta? <a href="javascript:void(0);" onclick="toggleForm('signup')">Cadastre-se aqui</a></p>
         </div>
     </div>
+
+    <script>
+        // Função para alternar entre login e cadastro
+        function toggleForm(action) {
+            const formTitle = document.getElementById("form-title");
+            const alternativeAction = document.getElementById("alternative-action");
+            const signupLink = document.getElementById("signup-link");
+            const form = document.getElementById("login-form");
+
+            if (action === 'signup') {
+                formTitle.textContent = "Crie sua conta";
+                alternativeAction.textContent = "ou continue com:";
+                signupLink.innerHTML = 'Já tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'login\')">Faça login aqui</a>';
+
+                // Troca os campos de login para cadastro
+                form.innerHTML = `
+                    <input type="text" id="name" placeholder="Nome completo" required>
+                    <input type="email" id="signup-email" placeholder="E-mail" required>
+                    <input type="password" id="signup-password" placeholder="Senha" required>
+                    <div id="signup-password-strength-message"></div>
+                    <button type="submit" class="submit-btn">Cadastrar</button>
+                `;
+            } else {
+                formTitle.textContent = "Entre com sua conta";
+                alternativeAction.textContent = "ou continue com:";
+                signupLink.innerHTML = 'Não tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'signup\')">Cadastre-se aqui</a>';
+
+                // Troca os campos de cadastro para login
+                form.innerHTML = `
+                    <input type="email" id="email" placeholder="E-mail" required>
+                    <input type="password" id="password" placeholder="Senha" required>
+                    <div id="password-strength-message"></div>
+                    <button type="submit" class="submit-btn">Entrar</button>
+                `;
+            }
+        }
+
+        // Função para validar o formulário
+        function validateForm(event) {
+            event.preventDefault(); // Impede o envio do formulário até a validação ser concluída
+
+            let email, password, name;
+            let emailValid = false;
+            let passwordValid = false;
+            let nameValid = true;
+
+            if (document.getElementById("signup-email")) {
+                // Se for o formulário de cadastro, valida todos os campos
+                email = document.getElementById("signup-email").value;
+                password = document.getElementById("signup-password").value;
+                name = document.getElementById("name").value;
+
+                // Verifica se todos os campos foram preenchidos
+                if (!name || !email || !password) {
+                    alert("Por favor, preencha todos os campos.");
+                    return false;
+                }
+
+                // Validação do email (regex simples)
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                emailValid = emailRegex.test(email);
+                if (!emailValid) {
+                    alert("Por favor, insira um e-mail válido.");
+                    return false;
+                }
+
+                // Validação de senha forte
+                passwordValid = validatePasswordStrength(password);
+                if (!passwordValid) {
+                    alert("A senha não é forte o suficiente. Ela deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, um número e um caractere especial.");
+                    return false;
+                }
+
+            } else {
+                // Se for o formulário de login, valida apenas e-mail e senha
+                email = document.getElementById("email").value;
+                password = document.getElementById("password").value;
+
+                // Verifica se todos os campos foram preenchidos
+                if (!email || !password) {
+                    alert("Por favor, preencha todos os campos.");
+                    return false;
+                }
+
+                // Validação do email (regex simples)
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                emailValid = emailRegex.test(email);
+                if (!emailValid) {
+                    alert("Por favor, insira um e-mail válido.");
+                    return false;
+                }
+
+                // Verifica se a senha tem pelo menos 6 caracteres
+                passwordValid = password.length >= 6;
+                if (!passwordValid) {
+                    alert("A senha deve ter pelo menos 6 caracteres.");
+                    return false;
+                }
+            }
+
+            // Se todos os campos forem válidos, o formulário é enviado
+            alert("Formulário validado com sucesso!");
+            return true;
+        }
+
+        // Função para validar a força da senha
+        function validatePasswordStrength(password) {
+            const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const messageElement = document.getElementById('signup-password-strength-message');
+
+            if (strongPasswordRegex.test(password)) {
+                messageElement.textContent = "Senha forte!";
+                messageElement.style.color = "green";
+                return true;
+            } else {
+                messageElement.textContent = "A senha precisa ter pelo menos 8 caracteres, incluindo uma letra maiúscula, um número e um caractere especial.";
+                messageElement.style.color = "red";
+                return false;
+            }
+        }
+
+        // Atualiza a força da senha enquanto o usuário digita
+        document.getElementById("signup-password")?.addEventListener("input", function () {
+            validatePasswordStrength(this.value);
+        });
+    </script>
 
     <!-- Firebase + Login -->
     <script type="module">
@@ -61,23 +189,32 @@
                     const user = result.user;
                     alert(`Bem-vindo, ${user.displayName}`);
                     window.location.href = "index.html"; // redireciona
-                })
-
+                });
         });
 
         // Cadastro com Email/Senha
-        document.querySelector("form").addEventListener("submit", (e) => {
+        document.querySelector("#login-form").addEventListener("submit", (e) => {
             e.preventDefault();
 
-            const email = document.querySelector('input[type="email"]').value;
-            const senha = document.querySelector('input[type="password"]').value;
+            const email = document.querySelector("#signup-email").value;
+            const senha = document.querySelector("#signup-password").value;
 
             createUserWithEmailAndPassword(auth, email, senha)
                 .then((userCredential) => {
                     alert("Usuário cadastrado com sucesso!");
                     window.location.href = "index.html"; // redireciona
                 })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
 
+                    // Caso o e-mail já esteja em uso, informamos ao usuário
+                    if (errorCode === 'auth/email-already-in-use') {
+                        alert("Este e-mail já está em uso. Tente outro ou faça login.");
+                    } else {
+                        alert(`Erro: ${errorMessage}`);
+                    }
+                });
         });
     </script>
 

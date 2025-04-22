@@ -151,7 +151,7 @@ body {
 .logo span {
     font-size: 20px;
     font-weight: 700;
-    color: #972727;
+    color: rgb(206, 72, 60);
 }
 
 .menu-centralizado {
@@ -175,7 +175,7 @@ a[href="#solicite-demo"].cta-button {
 }
 
 a[href="#conteudos"]:hover {
-    color: #972727;
+    color: rgb(206, 72, 60);
     /* Cor que você quiser ao passar o mouse */
     text-decoration: underline;
     /* Exemplo de efeito extra */
@@ -183,7 +183,7 @@ a[href="#conteudos"]:hover {
 
 
 .cta-button {
-    background-color: #972727;
+    background-color: rgb(206, 72, 60);
     color: #fff;
     padding: 10px 20px;
     border-radius: 30px;
@@ -192,7 +192,7 @@ a[href="#conteudos"]:hover {
 }
 
 .cta-button:hover {
-    background-color: #7b1c1c;
+    background-color: rgb(206, 72, 60);
 }
 
 .login {
@@ -207,7 +207,7 @@ a[href="#conteudos"]:hover {
 }
 
 .login:hover {
-    color: #972727;
+    color: rgb(206, 72, 60);
 }
 
 .icon-login {
@@ -237,7 +237,7 @@ a[href="#conteudos"]:hover {
 }
 
 .hero-texto .destaque {
-    color: #972727;
+    color: rgb(206, 72, 60);
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 10px;
@@ -336,7 +336,7 @@ a[href="#conteudos"]:hover {
 
 .info-card h3 {
     font-size: 20px;
-    color: #972727;
+    color: rgb(206, 72, 60);
     margin-bottom: 10px;
 }
 
@@ -453,11 +453,11 @@ a[href="#conteudos"]:hover {
 }
 
 .carousel-indicators .dot.active {
-    background-color: #972727;
+    background-color: rgb(206, 72, 60);
 }
 
 .rodape {
-    background-color: #972727;
+    background-color: rgb(206, 72, 60);
     color: #fff;
     padding: 70px 30px 40px;
     /* ↑ Aumenta altura (topo e base) */
@@ -540,7 +540,7 @@ a[href="#conteudos"]:hover {
 
 .perfil-texto h2 {
     font-size: 32px;
-    color: #972727;
+    color: rgb(206, 72, 60);
     margin-bottom: 10px;
     display: flex;
     justify-content: center;
@@ -576,7 +576,7 @@ a[href="#conteudos"]:hover {
 
 .perfil-card i {
     font-size: 36px;
-    color: #972727;
+    color: rgb(206, 72, 60);
     margin-bottom: 15px;
 }
 
