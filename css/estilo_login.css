@@ -133,6 +133,7 @@ body {
 .right-panel h2 {
     color: rgb(206, 72, 60);
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .social-login img {
@@ -145,6 +146,7 @@ body {
     margin: 20px 0;
     font-size: 14px;
     color: #aaa;
+    text-align: center;
 }
 
 form {
@@ -152,6 +154,7 @@ form {
     flex-direction: column;
     width: 80%;
     max-width: 300px;
+    text-align: center;
 }
 
 form input {
@@ -174,4 +177,14 @@ form input {
 #message-carousel {
     transition: opacity 0.5s ease-in-out;
     opacity: 1;
+}
+
+#auth-container,
+#local-form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
 }
