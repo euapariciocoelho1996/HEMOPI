@@ -34,6 +34,6 @@
 **Função:** Suporte no Frontend e Backend  
 **Responsabilidades:**  
 - Ajudar na interface do usuário (UI)  
-- Ajudar na integração com Firebase  
+- Ajudar na integração com Banco de Dados  
 
 ---
