@@ -17,7 +17,7 @@
 **Função:** Frontend e Backend  
 **Responsabilidades:**  
 - Interface do usuário (UI)  
-- Integração com Firebase  
+- Integração com Banco de Dados 
 - Design responsivo  
 
 ---
