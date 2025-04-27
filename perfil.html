@@ -3,205 +3,9 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Perfil do Usuário</title>
+    <title>Perfil do Usuário - Sangue Solidário</title>
     <link rel="stylesheet" href="css/estilos.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-            authDomain: "teste-2067f.firebaseapp.com",
-            projectId: "teste-2067f",
-            storageBucket: "teste-2067f.appspot.com",
-            messagingSenderId: "160483034987",
-            appId: "1:160483034987:web:944eb621b02efea11b2e2e"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('abrirFormulario');
-            const profileInfoContainer = document.getElementById('profileInfo');
-
-            onAuthStateChanged(auth, (user) => {
-                if (!user) {
-                    Swal.fire("Você precisa estar logado para acessar o perfil.");
-                    btn.disabled = true;
-                    return;
-                }
-
-                const uid = user.uid;
-                const userRef = doc(db, "usuarios", uid);
-                getDoc(userRef).then((docSnap) => {
-                    if (docSnap.exists()) {
-                        const userData = docSnap.data();
-                        const isAdmin = userData.isAdmin || false; // Verifica se o usuário é administrador
-                        
-                        // Exibe o perfil do usuário
-                        profileInfoContainer.innerHTML = `
-                            <div class="profile-card">
-                                <h3>Dados Cadastrados</h3>
-                                <p><strong>Nome:</strong> ${userData.nome}</p>
-                                <p><strong>Idade:</strong> ${userData.idade}</p>
-                                <p><strong>Sexo:</strong> ${userData.sexo}</p>
-                                <p><strong>Rua:</strong> ${userData.rua}</p>
-                                <p><strong>Bairro:</strong> ${userData.bairro}</p>
-
-                                <!-- Informações de doações e datas -->
-                                <div class="donation-info">
-                                    <p><i class="heart-icon">❤️</i> <strong>Doações:</strong> ${userData.doacoes || 0}</p>
-                                    <p><i class="calendar-icon">📅</i> <strong>Última Doação:</strong> ${userData.ultimaDoacao || 'Não registrada'}</p>
-                                    <p><i class="calendar-icon">⏳</i> <strong>Próxima Doação:</strong> ${userData.proximaDoacao || 'Não definida'}</p>
-                                </div>
-
-                                ${isAdmin ? '<button id="editarDoacao" class="btn-editar">Editar Doações</button>' : ''}
-                            </div>
-                        `;
-
-                        // Se o usuário for administrador, permitir a edição
-                        if (isAdmin) {
-                            document.getElementById('editarDoacao').addEventListener('click', () => {
-                                Swal.fire({
-                                    title: 'Editar Doações',
-                                    width: 600,
-                                    html: `
-                                        <div class="form-container">
-                                            <input type="number" id="doacoes" placeholder="Quantidade de Doações" class="form-field" value="${userData.doacoes || ''}">
-                                            <input type="date" id="ultimaDoacao" placeholder="Última Doação" class="form-field" value="${userData.ultimaDoacao || ''}">
-                                            <input type="date" id="proximaDoacao" placeholder="Próxima Doação" class="form-field" value="${userData.proximaDoacao || ''}">
-                                        </div>
-                                    `,
-                                    customClass: {
-                                        popup: 'popup-form'
-                                    },
-                                    confirmButtonText: 'Salvar',
-                                    focusConfirm: false,
-                                    preConfirm: () => {
-                                        const doacoes = document.getElementById('doacoes').value.trim();
-                                        const ultimaDoacao = document.getElementById('ultimaDoacao').value.trim();
-                                        const proximaDoacao = document.getElementById('proximaDoacao').value.trim();
-
-                                        return { doacoes, ultimaDoacao, proximaDoacao };
-                                    }
-                                }).then(async (result) => {
-                                    if (result.isConfirmed) {
-                                        try {
-                                            const userRef = doc(db, "usuarios", uid);
-                                            await setDoc(userRef, {
-                                                ...userData,
-                                                doacoes: result.value.doacoes,
-                                                ultimaDoacao: result.value.ultimaDoacao,
-                                                proximaDoacao: result.value.proximaDoacao
-                                            }, { merge: true });
-
-                                            Swal.fire('Sucesso!', 'Doações atualizadas com sucesso.', 'success');
-                                            profileInfoContainer.innerHTML = `
-                                                <div class="profile-card">
-                                                    <h3>Dados Atualizados</h3>
-                                                    <p><strong>Nome:</strong> ${userData.nome}</p>
-                                                    <p><strong>Idade:</strong> ${userData.idade}</p>
-                                                    <p><strong>Sexo:</strong> ${userData.sexo}</p>
-                                                    <p><strong>Rua:</strong> ${userData.rua}</p>
-                                                    <p><strong>Bairro:</strong> ${userData.bairro}</p>
-                                                    <div class="donation-info">
-                                                        <p><i class="heart-icon">❤️</i> <strong>Doações:</strong> ${result.value.doacoes}</p>
-                                                        <p><i class="calendar-icon">📅</i> <strong>Última Doação:</strong> ${result.value.ultimaDoacao || 'Não registrada'}</p>
-                                                        <p><i class="calendar-icon">⏳</i> <strong>Próxima Doação:</strong> ${result.value.proximaDoacao || 'Não definida'}</p>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        } catch (err) {
-                                            console.error("Erro ao salvar dados:", err);
-                                            Swal.fire('Erro', 'Não foi possível salvar os dados.', 'error');
-                                        }
-                                    }
-                                });
-                            });
-                        }
-                    } else {
-                        profileInfoContainer.innerHTML = `
-                            <div class="profile-card">
-                                <h3>Nenhum dado encontrado</h3>
-                                <p>Você ainda não completou o seu cadastro. Por favor, preencha os dados abaixo.</p>
-                            </div>
-                        `;
-                    }
-                }).catch((err) => {
-                    console.error("Erro ao recuperar dados:", err);
-                    profileInfoContainer.innerHTML = `<p>Erro ao carregar os dados.</p>`;
-                });
-
-                btn.addEventListener('click', () => {
-                    Swal.fire({
-                        title: 'Preencha seus dados',
-                        width: 600,
-                        html: `
-                            <div class="form-container">
-                                <input type="text" id="nome" placeholder="Nome completo" class="form-field" required>
-                                <input type="number" id="idade" placeholder="Idade" class="form-field" required>
-                                <select id="sexo" class="form-field" required>
-                                    <option value="">Selecione o sexo</option>
-                                    <option value="Feminino">Feminino</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Outro">Outro</option>
-                                </select>
-                                <input type="text" id="rua" placeholder="Rua" class="form-field" required>
-                                <input type="text" id="bairro" placeholder="Bairro" class="form-field" required>
-                            </div>
-                        `,
-                        customClass: {
-                            popup: 'popup-form'
-                        },
-                        confirmButtonText: 'Salvar',
-                        focusConfirm: false,
-                        preConfirm: () => {
-                            const nome = document.getElementById('nome').value.trim();
-                            const idade = document.getElementById('idade').value.trim();
-                            const sexo = document.getElementById('sexo').value.trim();
-                            const rua = document.getElementById('rua').value.trim();
-                            const bairro = document.getElementById('bairro').value.trim();
-
-                            if (!nome || !idade || !sexo || !rua || !bairro) {
-                                Swal.showValidationMessage('Preencha todos os campos!');
-                                return false;
-                            }
-
-                            return { nome, idade, sexo, rua, bairro };
-                        }
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            try {
-                                const uid = auth.currentUser.uid;
-                                await setDoc(doc(db, "usuarios", uid), result.value);
-                                Swal.fire('Sucesso!', 'Dados salvos com sucesso.', 'success');
-                                profileInfoContainer.innerHTML = `
-                                    <div class="profile-card">
-                                        <h3>Dados Atualizados</h3>
-                                        <p><strong>Nome:</strong> ${result.value.nome}</p>
-                                        <p><strong>Idade:</strong> ${result.value.idade}</p>
-                                        <p><strong>Sexo:</strong> ${result.value.sexo}</p>
-                                        <p><strong>Rua:</strong> ${result.value.rua}</p>
-                                        <p><strong>Bairro:</strong> ${result.value.bairro}</p>
-                                    </div>
-                                `;
-                            } catch (err) {
-                                console.error("Erro ao salvar dados:", err);
-                                Swal.fire('Erro', 'Não foi possível salvar os dados.', 'error');
-                            }
-                        }
-                    });
-                });
-            });
-        });
-    </script>
-
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -316,6 +120,22 @@
             background-color: #e0a800;
             transform: translateY(-3px);
         }
+
+        .login-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .login-link:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
@@ -327,16 +147,29 @@
         </div>
 
         <nav class="menu-centralizado">
-            <a href="#conteudos">Início</a>
-            <a href="#solicite-demo" class="cta-button">Campanhas Ativas</a>
+            <a href="index.html">Início</a>
+            <a href="#campanhas" class="cta-button">Campanhas Ativas</a>
         </nav>
+        
+        <div id="user-header-options">
+            <!-- Auth status will be populated by auth-status.js -->
+        </div>
     </header>
 
     <h1>Perfil do Usuário</h1>
     <div class="botao-container">
-        <button class="perfil-btn" id="abrirFormulario">Seus dados já estão cadastrados?</button>
+        <button class="perfil-btn" id="abrirFormulario">Atualizar seus dados</button>
     </div>
-    <div id="profileInfo"></div>
+    <div id="profileInfo">
+        <!-- Profile information will be populated by perfil.js -->
+        <div class="profile-card">
+            <h3>Carregando...</h3>
+            <p>Aguarde enquanto buscamos suas informações...</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script type="module" src="js/auth-status.js"></script>
+    <script type="module" src="js/perfil.js"></script>
 </body>
-<script type="module" src="js/auth-status.js"></script>
 </html>

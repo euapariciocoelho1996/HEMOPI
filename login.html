@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tela de Login</title>
+  <title>Tela de Login - Sangue Solidário</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/estilo_login.css" />
   <style>
@@ -21,7 +21,7 @@
 <body>
   <div class="container">
     <div class="left-panel">
-      <h1>Bem-vindo!!!</h1>
+      <h1>Bem-vindo ao Sangue Solidário</h1>
       <p id="message-carousel">Estamos quase lá... sua doação pode salvar vidas!</p>
     </div>
 
@@ -34,7 +34,7 @@
           <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
         </div>
         <p class="divider">ou use seu e-mail</p>
-        <form id="login-form" onsubmit="return validateForm(event)">
+        <form id="login-form">
           <input type="email" id="email" placeholder="E-mail" required />
           <input type="password" id="password" placeholder="Senha" required />
           <div id="password-strength-message"></div>
@@ -52,255 +52,23 @@
       </div>
 
       <!-- Formulário de cadastro de local -->
-      <!-- Formulário de cadastro de local -->
-<div id="local-form-container">
-    <h2>Cadastrar Local de Doação</h2>
-    <form id="local-form" onsubmit="return validateLocalForm(event)">
-      <input type="text" id="local-name" placeholder="Nome do Local" required /><br />
-      <input type="text" id="local-endereco" placeholder="Endereço Completo" required /><br />
-      <input type="text" id="local-contato" placeholder="Contato (Telefone ou E-mail)" required /><br />
-      <input type="email" id="local-email" placeholder="E-mail para Cadastro" required /><br /> <!-- Novo campo -->
-      <input type="text" id="local-cnpj" placeholder="CNPJ" required /><br />
-      <button type="submit" class="submit-btn">Cadastrar Local</button><br /><br />
-      <a href="javascript:void(0);" onclick="voltarLogin()">Voltar para login</a>
-    </form>
-  </div>
-  
+      <div id="local-form-container">
+        <h2>Cadastrar Local de Doação</h2>
+        <form id="local-form">
+          <input type="text" id="local-name" placeholder="Nome do Local" required />
+          <input type="text" id="local-endereco" placeholder="Endereço Completo" required />
+          <input type="text" id="local-contato" placeholder="Contato (Telefone)" required />
+          <input type="email" id="local-email" placeholder="E-mail para Cadastro" required />
+          <input type="text" id="local-cnpj" placeholder="CNPJ (somente números)" required />
+          <button type="submit" class="submit-btn">Cadastrar Local</button><br /><br />
+          <a href="javascript:void(0);" onclick="voltarLogin()">Voltar para login</a>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script>
-    function toggleForm(action) {
-      const formTitle = document.getElementById("form-title");
-      const alternativeAction = document.getElementById("alternative-action");
-      const signupLink = document.getElementById("signup-link");
-      const form = document.getElementById("login-form");
-
-      if (action === 'signup') {
-        formTitle.textContent = "Crie sua conta";
-        alternativeAction.textContent = "ou continue com:";
-        signupLink.innerHTML = 'Já tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'login\')">Faça login aqui</a>';
-        form.innerHTML = `
-          <input type="text" id="name" placeholder="Nome completo" required>
-          <input type="email" id="signup-email" placeholder="E-mail" required>
-          <input type="password" id="signup-password" placeholder="Senha" required>
-          <div id="signup-password-strength-message"></div>
-          <button type="submit" class="submit-btn">Cadastrar</button>
-        `;
-      } else {
-        formTitle.textContent = "Entre com sua conta";
-        alternativeAction.textContent = "ou continue com:";
-        signupLink.innerHTML = 'Não tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'signup\')">Cadastre-se aqui</a>';
-        form.innerHTML = `
-          <input type="email" id="email" placeholder="E-mail" required>
-          <input type="password" id="password" placeholder="Senha" required>
-          <div id="password-strength-message"></div>
-          <button type="submit" class="submit-btn">Entrar</button>
-        `;
-      }
-    }
-
-    function toggleLocalForm() {
-    // Esconde o formulário de login e exibe o formulário de cadastro de local
-    document.getElementById("auth-container").style.display = "none";
-    document.getElementById("local-form-container").style.display = "flex"; // Ou 'block' dependendo do seu layout
-}
-
-function voltarLogin() {
-    // Esconde o formulário de cadastro de local e exibe o formulário de login
-    document.getElementById("local-form-container").style.display = "none";
-    document.getElementById("auth-container").style.display = "flex"; // Ou 'block' dependendo do seu layout
-}
-
-
-    function validateForm(event) {
-      event.preventDefault();
-      let email, password, name;
-      let emailValid = false;
-      let passwordValid = false;
-
-      if (document.getElementById("signup-email")) {
-        email = document.getElementById("signup-email").value;
-        password = document.getElementById("signup-password").value;
-        name = document.getElementById("name").value;
-
-        if (!name || !email || !password) {
-          alert("Por favor, preencha todos os campos.");
-          return false;
-        }
-
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        emailValid = emailRegex.test(email);
-        if (!emailValid) {
-          alert("Por favor, insira um e-mail válido.");
-          return false;
-        }
-
-        passwordValid = validatePasswordStrength(password);
-        if (!passwordValid) {
-          alert("A senha não é forte o suficiente.");
-          return false;
-        }
-      } else {
-        email = document.getElementById("email").value;
-        password = document.getElementById("password").value;
-
-        if (!email || !password) {
-          alert("Por favor, preencha todos os campos.");
-          return false;
-        }
-
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        emailValid = emailRegex.test(email);
-        if (!emailValid) {
-          alert("Por favor, insira um e-mail válido.");
-          return false;
-        }
-
-        passwordValid = password.length >= 6;
-        if (!passwordValid) {
-          alert("A senha deve ter pelo menos 6 caracteres.");
-          return false;
-        }
-      }
-
-      alert("Formulário validado com sucesso!");
-      return true;
-    }
-
-    function validatePasswordStrength(password) {
-      const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      const messageElement = document.getElementById('signup-password-strength-message');
-      if (!messageElement) return false;
-
-      if (strongPasswordRegex.test(password)) {
-        messageElement.textContent = "Senha forte!";
-        messageElement.style.color = "green";
-        return true;
-      } else {
-        messageElement.textContent = "A senha precisa ter pelo menos 8 caracteres, incluindo uma letra maiúscula, um número e um caractere especial.";
-        messageElement.style.color = "red";
-        return false;
-      }
-    }
-
-    function validateLocalForm(event) {
-        event.preventDefault();
-
-        const nome = document.getElementById("local-name").value.trim();
-        const endereco = document.getElementById("local-endereco").value.trim();
-        const contato = document.getElementById("local-contato").value.trim();
-        const cnpj = document.getElementById("local-cnpj").value.trim();
-
-        if (!nome || !endereco || !contato || !cnpj) {
-            alert("Por favor, preencha todos os campos.");
-            return false;
-        }
-
-        const cnpjRegex = /^\d{14}$/;
-        if (!cnpjRegex.test(cnpj)) {
-            alert("CNPJ inválido. Insira apenas os 14 números.");
-            return false;
-        }
-
-        // Firebase Database - Salvar Dados
-        const db = getDatabase();
-        const localRef = ref(db, 'locais/' + cnpj); // CNPJ usado como ID único
-
-        set(localRef, {
-            nome: nome,
-            endereco: endereco,
-            contato: contato,
-            cnpj: cnpj
-        })
-        .then(() => {
-            alert("Local cadastrado com sucesso no Firebase!");
-            document.getElementById("local-form").reset();
-        })
-        .catch((error) => {
-            alert("Erro ao salvar no Firebase: " + error.message);
-        });
-
-   return true;
-}
-
-  </script>
-
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-      authDomain: "teste-2067f.firebaseapp.com",
-      projectId: "teste-2067f",
-      storageBucket: "teste-2067f.firebasestorage.app",
-      messagingSenderId: "160483034987",
-      appId: "1:160483034987:web:944eb621b02efea11b2e2e"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    document.querySelector('.social-login').addEventListener('click', () => {
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          const user = result.user;
-          alert(`Bem-vindo, ${user.displayName}`);
-          window.location.href = "index.html";
-        });
-    });
-
-    document.addEventListener("submit", (e) => {
-      if (e.target.id === "login-form" && document.getElementById("signup-email")) {
-        e.preventDefault();
-        const email = document.querySelector("#signup-email").value;
-        const senha = document.querySelector("#signup-password").value;
-        createUserWithEmailAndPassword(auth, email, senha)
-          .then(() => {
-            alert("Usuário cadastrado com sucesso!");
-            window.location.href = "index.html";
-          })
-          .catch((error) => {
-            if (error.code === 'auth/email-already-in-use') {
-              alert("Este e-mail já está em uso.");
-            } else {
-              alert(`Erro: ${error.message}`);
-            }
-          });
-      }
-    });
-  </script>
-
-  <script>
-    const messages = [
-      "Estamos quase lá... sua doação pode salvar vidas!",
-      "Doe sangue, compartilhe vida!",
-      "Você é o tipo certo de herói.",
-      "Uma bolsa de sangue pode salvar até 4 vidas.",
-      "A sua atitude hoje pode mudar o amanhã de alguém.",
-      "Doar sangue é um ato de amor.",
-      "Um pequeno gesto. Um grande impacto.",
-      "Você tem o poder de salvar vidas. Use-o.",
-      "Seja a esperança de alguém hoje.",
-      "Doe sangue, doe vida, doe esperança."
-    ];
-
-    const messageElement = document.getElementById('message-carousel');
-    let index = 0;
-
-    setInterval(() => {
-      messageElement.style.opacity = 0;
-      setTimeout(() => {
-        index = (index + 1) % messages.length;
-        messageElement.textContent = messages[index];
-        messageElement.style.opacity = 1;
-      }, 500);
-    }, 4000);
-  </script>
+  <script type="module" src="js/script_login.js"></script>
 </body>
 
 </html>
