@@ -11,12 +11,15 @@
 </head>
 
 <body>
+
+    <!-- Início do Cabeçalho Principal -->
     <header class="header-moderno">
         <div class="logo">
             <img src="img/icone.png" alt="Logo Sangue Solidário">
             <span>Sangue Solidário</span>
         </div>
 
+        <!-- Menu de Navegação -->
         <nav class="menu-centralizado">
             <a href="#hero">Início</a>
             <a href="#informacoes-doacao">Sobre Doação</a>
@@ -24,8 +27,8 @@
             <a href="#campanhas" class="cta-button">Campanhas Ativas</a>
         </nav>
 
+        <!-- Área de Autenticação do Usuário -->
         <div id="user-header-options">
-            <!-- User auth status will be injected by auth-status.js -->
             <a href="login.html" class="login">
                 <img src="img/login.png" alt="Ícone de login" class="icon-login">
                 Entrar
@@ -33,6 +36,7 @@
         </div>
     </header>
 
+    <!-- Seção Hero com Carrossel -->
     <section class="hero reveal" id="hero">
         <div class="hero-content">
             <div class="hero-texto">
@@ -45,7 +49,7 @@
                 <a href="#informacoes-doacao" class="cta-hero">Como Doar</a>
             </div>
 
-            <!-- Carrossel -->
+            <!-- Carrossel de Imagens -->
             <div class="carrossel-container">
                 <div class="hero-imagem carousel">
                     <div class="carousel-images">
@@ -55,7 +59,7 @@
                     </div>
                 </div>
 
-                <!-- Indicadores do carrossel -->
+                <!-- Indicadores do Carrossel -->
                 <div class="carousel-indicators">
                     <span class="dot active"></span>
                     <span class="dot"></span>
@@ -65,6 +69,7 @@
         </div>
     </section>
 
+    <!-- Seção de Informação sobre a Importância da Doação -->
     <section class="secao-doacao-informativa reveal">
         <div class="conteudo-doacao">
             <div class="texto-esquerda">
@@ -83,8 +88,10 @@
         </div>
     </section>
 
+    <!-- Seção de Informações sobre Doação -->
     <section class="informacoes-doacao reveal" id="informacoes-doacao">
         <div class="informacoes-container">
+            <!-- Card: Frequência de Doação -->
             <div class="info-card">
                 <img src="img/calendario.jpg" alt="Ícone Calendário">
                 <h3>Com que frequência posso doar?</h3>
@@ -93,6 +100,8 @@
                 </p>
                 <p>O intervalo é essencial para sua saúde e para manter os estoques sempre cheios.</p>
             </div>
+
+            <!-- Card: Quem pode doar -->
             <div class="info-card">
                 <img src="img/pessoas.jpg" alt="Ícone Pessoa">
                 <h3>Quem pode doar sangue?</h3>
@@ -102,6 +111,8 @@
                     ✔ Estar descansado e alimentado</p>
                 <p>📌 Leve um documento com foto na sua primeira doação!</p>
             </div>
+
+            <!-- Card: Destino do Sangue Doado -->
             <div class="info-card">
                 <img src="img/doacao-de-sangue.png" alt="Ícone Sangue">
                 <h3>Para onde vai o sangue doado?</h3>
@@ -111,6 +122,7 @@
         </div>
     </section>
 
+    <!-- Seção Perfil do Doador -->
     <section class="secao-perfil-doador reveal" id="secao-perfil-doador">
         <div class="perfil-container">
             <div class="perfil-texto">
@@ -122,18 +134,17 @@
                 </p>
             </div>
 
+            <!-- Cards do Perfil -->
             <div class="perfil-cards">
                 <div class="perfil-card">
                     <i class="ph ph-drop-half-bottom"></i>
                     <h3>Tipo Sanguíneo</h3>
-                    <p>Visualize seu tipo e descubra quais grupos você pode ajudar. Você é parte essencial dessa rede de
-                        solidariedade.</p>
+                    <p>Visualize seu tipo e descubra quais grupos você pode ajudar. Você é parte essencial dessa rede de solidariedade.</p>
                 </div>
                 <div class="perfil-card">
                     <i class="ph ph-calendar-check"></i>
                     <h3>Histórico de Doações</h3>
-                    <p>Acompanhe datas, locais e o status das suas doações. Cada registro é uma história de vida salva.
-                    </p>
+                    <p>Acompanhe datas, locais e o status das suas doações. Cada registro é uma história de vida salva.</p>
                 </div>
                 <div class="perfil-card">
                     <i class="ph ph-heartbeat"></i>
@@ -146,13 +157,15 @@
                     <p>Fique por dentro de quando poderá doar novamente. Sempre no tempo certo, sempre salvando.</p>
                 </div>
             </div>
-            
+
+            <!-- Botão para Perfil -->
             <div class="perfil-acoes">
                 <a href="perfil.html" class="cta-perfil">Acessar meu perfil</a>
             </div>
         </div>
     </section>
 
+    <!-- Seção de Campanhas Ativas -->
     <section id="campanhas" class="secao-campanhas reveal">
         <div class="campanhas-container">
             <h2>Campanhas de Doação Ativas</h2>
@@ -166,7 +179,7 @@
                     <p>Os estoques estão criticamente baixos. Sua doação pode salvar vidas ainda hoje!</p>
                     <p class="campanha-data">Até: 30/12/2025</p>
                 </div>
-                
+
                 <div class="campanha-card">
                     <div class="urgencia media">IMPORTANTE</div>
                     <h3>Todos os Tipos Sanguíneos</h3>
@@ -174,7 +187,7 @@
                     <p>Ajude a manter nossos estoques preparados para emergências e cirurgias.</p>
                     <p class="campanha-data">Até: 15/01/2026</p>
                 </div>
-                
+
                 <div class="campanha-card">
                     <div class="urgencia baixa">REGULAR</div>
                     <h3>Campanha "Doe Vida"</h3>
@@ -186,6 +199,7 @@
         </div>
     </section>
 
+    <!-- Rodapé -->
     <footer class="rodape">
         <div class="rodape-container">
             <div class="rodape-logo">
@@ -193,6 +207,7 @@
                 <span>Sangue Solidário</span>
             </div>
 
+            <!-- Links do Rodapé -->
             <div class="rodape-links">
                 <a href="#hero">Início</a>
                 <a href="#informacoes-doacao">Sobre Doação</a>
@@ -201,12 +216,14 @@
                 <a href="login.html">Entrar</a>
             </div>
 
+            <!-- Redes Sociais -->
             <div class="rodape-social">
                 <a href="#" aria-label="Facebook"><img src="img/facebook.png" alt="Facebook"></a>
                 <a href="#" aria-label="Instagram"><img src="img/instagram.png" alt="Instagram"></a>
             </div>
         </div>
 
+        <!-- Direitos Autorais -->
         <div class="rodape-copy">
             <p>&copy; 2025 Sangue Solidário. Todos os direitos reservados.</p>
         </div>
