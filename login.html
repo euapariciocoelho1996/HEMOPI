@@ -7,6 +7,7 @@
   <title>Tela de Login - Sangue Solidário</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/estilo_login.css" />
+  <link rel="stylesheet" href="css/feedback_campo_local.css" />
   <style>
     #message-carousel {
       transition: opacity 0.5s;
@@ -55,15 +56,34 @@
       <div id="local-form-container">
         <h2>Cadastrar Local de Doação</h2>
         <form id="local-form">
+          
           <input type="text" id="local-name" placeholder="Nome do Local" required />
+          <span class="error-message" id="error-name"></span>
+          
           <input type="text" id="local-endereco" placeholder="Endereço Completo" required />
+          <span class="error-message" id="error-endereco"></span>
+          
           <input type="text" id="local-contato" placeholder="Contato (Telefone)" required />
+          <span class="error-message" id="error-contato"></span>
+          
           <input type="email" id="local-email" placeholder="E-mail para Cadastro" required />
+          <span class="error-message" id="error-email"></span>
+          
           <input type="text" id="local-cnpj" placeholder="CNPJ (somente números)" required />
+          <span class="error-message" id="error-cnpj"></span>
+      
+          <input type="password" id="local-senha" placeholder="Crie uma senha" required />
+          <span class="error-message" id="error-senha"></span>
+      
+          <input type="password" id="local-confirmar-senha" placeholder="Confirme a senha" required />
+          <span class="error-message" id="error-confirmar-senha"></span>
+      
           <button type="submit" class="submit-btn">Cadastrar Local</button><br /><br />
           <a href="javascript:void(0);" onclick="voltarLogin()">Voltar para login</a>
         </form>
       </div>
+      
+
     </div>
   </div>
 
