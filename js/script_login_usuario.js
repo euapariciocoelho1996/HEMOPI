@@ -12,7 +12,6 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -28,7 +27,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const database = getDatabase(app);
 
 /**
  * Animated message carousel
@@ -72,7 +70,6 @@ function toggleForm(action) {
             <button type="submit" class="submit-btn">Cadastrar</button>
         `;
         
-        // Add password strength checker
         const passwordInput = document.getElementById("signup-password");
         if (passwordInput) {
             passwordInput.addEventListener('input', checkPasswordStrength);
@@ -88,22 +85,6 @@ function toggleForm(action) {
             <button type="submit" class="submit-btn">Entrar</button>
         `;
     }
-}
-
-/**
- * Toggle local donation center form
- */
-function toggleLocalForm() {
-    document.getElementById("auth-container").style.display = "none";
-    document.getElementById("local-form-container").style.display = "flex";
-}
-
-/**
- * Return to login form
- */
-function voltarLogin() {
-    document.getElementById("local-form-container").style.display = "none";
-    document.getElementById("auth-container").style.display = "flex";
 }
 
 /**
@@ -134,7 +115,6 @@ function checkPasswordStrength(event) {
 function validateForm(event) {
     event.preventDefault();
     
-    // Check if in signup mode
     const isSignup = !!document.getElementById("signup-email");
     
     if (isSignup) {
@@ -168,7 +148,6 @@ function validateSignupForm() {
         return false;
     }
     
-    // Create account with Firebase
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
             showAlert("Usuário cadastrado com sucesso!");
@@ -208,7 +187,6 @@ function validateLoginForm() {
         return false;
     }
     
-    // Sign in with Firebase
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
             window.location.href = "index.html";
@@ -221,58 +199,6 @@ function validateLoginForm() {
             }
         });
     
-    return true;
-}
-
-/**
- * Validate a donation center registration form
- * @param {Event} event - Form submit event 
- * @returns {boolean} - Whether form is valid
- */
-function validateLocalForm(event) {
-    event.preventDefault();
-
-    const nome = document.getElementById("local-name").value.trim();
-    const endereco = document.getElementById("local-endereco").value.trim();
-    const contato = document.getElementById("local-contato").value.trim();
-    const email = document.getElementById("local-email").value.trim();
-    const cnpj = document.getElementById("local-cnpj").value.trim();
-
-    if (!nome || !endereco || !contato || !email || !cnpj) {
-        showAlert("Por favor, preencha todos os campos.");
-        return false;
-    }
-
-    if (!validateEmail(email)) {
-        showAlert("Por favor, insira um e-mail válido.");
-        return false;
-    }
-
-    const cnpjRegex = /^\d{14}$/;
-    if (!cnpjRegex.test(cnpj)) {
-        showAlert("CNPJ inválido. Insira apenas os 14 números.");
-        return false;
-    }
-
-    // Save to Firebase Database
-    const localRef = ref(database, 'locais/' + cnpj);
-    set(localRef, {
-        nome: nome,
-        endereco: endereco,
-        contato: contato,
-        email: email,
-        cnpj: cnpj,
-        dataCadastro: new Date().toISOString()
-    })
-    .then(() => {
-        showAlert("Local cadastrado com sucesso!");
-        document.getElementById("local-form").reset();
-        voltarLogin();
-    })
-    .catch((error) => {
-        showAlert("Erro ao salvar: " + error.message);
-    });
-
     return true;
 }
 
@@ -314,20 +240,14 @@ function rotateMessages() {
     let index = 0;
     
     function updateMessage() {
-        // Fade out
         messageElement.style.opacity = 0;
-
         setTimeout(() => {
-            // Update message while invisible
             index = (index + 1) % messages.length;
             messageElement.textContent = messages[index];
-
-            // Fade in
             messageElement.style.opacity = 1;
         }, FADE_DURATION);
     }
 
-    // Start message rotation
     setInterval(updateMessage, MESSAGE_INTERVAL);
 }
 
@@ -354,29 +274,17 @@ function initGoogleAuth() {
  * Initialize page functionality
  */
 function init() {
-    // Start message carousel
     rotateMessages();
-    
-    // Initialize Google auth button
     initGoogleAuth();
-    
-    // Add form submission handlers
+
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', validateForm);
     }
-    
-    const localForm = document.getElementById('local-form');
-    if (localForm) {
-        localForm.addEventListener('submit', validateLocalForm);
-    }
-    
-    // Make functions available globally
+
+    // Disponibiliza funções globalmente
     window.toggleForm = toggleForm;
-    window.toggleLocalForm = toggleLocalForm;
-    window.voltarLogin = voltarLogin;
     window.validateForm = validateForm;
-    window.validateLocalForm = validateLocalForm;
 }
 
 // Initialize when DOM is fully loaded
