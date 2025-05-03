@@ -127,3 +127,20 @@ h1 {
 .login-link:hover {
     background-color: #0056b3;
 }
+
+
+/* estilo de botao de cadastrar campanha */
+.form-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #ce483c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.form-button:hover {
+    background-color: #a03a2f;
+}
+
+
