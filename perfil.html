@@ -1,175 +1,253 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8" />
-    <title>Perfil do Usuário - Sangue Solidário</title>
+    <title>Perfil - Sangue Solidário</title>
+    <link rel="stylesheet" href="css/perfil.css" />
     <link rel="stylesheet" href="css/estilos.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-top: 50px;
-            font-size: 36px;
-            font-weight: bold;
-        }
-
-        .botao-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .perfil-btn {
-            padding: 15px 30px;
-            background-color: #007bff;
-            color: white;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
-        }
-
-        .perfil-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-3px);
-        }
-
-        .profile-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 30px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-        }
-
-        .profile-card h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #444;
-        }
-
-        .profile-card p {
-            font-size: 18px;
-            margin: 10px 0;
-            line-height: 1.6;
-        }
-
-        .donation-info p {
-            font-size: 18px;
-            margin: 5px 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .donation-info i {
-            margin-right: 10px;
-        }
-
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .form-field {
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-field:focus {
-            border-color: #007bff;
-            outline: none;
-        }
-
-        .popup-form {
-            border-radius: 12px !important;
-        }
-
-        .btn-editar {
-            background-color: #ffc107;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-editar:hover {
-            background-color: #e0a800;
-            transform: translateY(-3px);
-        }
-
-        .login-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .login-link:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
-
 <body>
     <header class="header-moderno">
         <div class="logo">
-            <img src="img/icone.png" alt="Logo">
+            <img src="img/icone.png" alt="Logo" />
             <span>Sangue Solidário</span>
         </div>
-
         <nav class="menu-centralizado">
             <a href="index.html">Início</a>
             <a href="#campanhas" class="cta-button">Campanhas Ativas</a>
         </nav>
-        
-        <div id="user-header-options">
-            <!-- Auth status will be populated by auth-status.js -->
-        </div>
+        <div id="user-header-options"></div>
     </header>
 
-    <h1>Perfil do Usuário</h1>
+    <h1 id="pageTitle">Perfil</h1>
+
     <div class="botao-container">
         <button class="perfil-btn" id="abrirFormulario">Atualizar seus dados</button>
     </div>
+
     <div id="profileInfo">
-        <!-- Profile information will be populated by perfil.js -->
         <div class="profile-card">
             <h3>Carregando...</h3>
             <p>Aguarde enquanto buscamos suas informações...</p>
         </div>
     </div>
-    
-    <!-- Scripts -->
-    <script type="module" src="js/auth-status.js"></script>
-    <script type="module" src="js/perfil.js"></script>
+
+    <div id="localInfo">
+        <div class="profile-card">
+            <h3>Buscando informações do local...</h3>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+            authDomain: "teste-2067f.firebaseapp.com",
+            projectId: "teste-2067f",
+            storageBucket: "teste-2067f.appspot.com",
+            messagingSenderId: "160483034987",
+            appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function showNotification(title, message, type = 'info') {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: title,
+                    text: message,
+                    icon: type,
+                    confirmButtonColor: '#ce483c'
+                });
+            } else {
+                alert(`${title}: ${message}`);
+            }
+        }
+
+        async function loadUserProfile(uid) {
+            try {
+                const userRef = doc(db, "usuarios", uid);
+                const docSnap = await getDoc(userRef);
+                return docSnap.exists() ? docSnap.data() : null;
+            } catch (error) {
+                console.error("Erro ao carregar perfil:", error);
+                showNotification('Erro', 'Erro ao carregar perfil do usuário.', 'error');
+                return null;
+            }
+        }
+
+        function renderUserProfile(userData) {
+            const container = document.getElementById('profileInfo');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="profile-card">
+                    <h3>Dados do Usuário</h3>
+                    <p><strong>Nome:</strong> ${userData.nome || 'Não informado'}</p>
+                    <p><strong>Idade:</strong> ${userData.idade || 'Não informada'}</p>
+                    <p><strong>Sexo:</strong> ${userData.sexo || 'Não informado'}</p>
+                    <p><strong>Rua:</strong> ${userData.rua || 'Não informada'}</p>
+                    <p><strong>Bairro:</strong> ${userData.bairro || 'Não informado'}</p>
+                    <div class="donation-info">
+                        <p><i class="heart-icon">❤️</i> <strong>Doações:</strong> ${userData.doacoes || 0}</p>
+                        <p><i class="calendar-icon">📅</i> <strong>Última Doação:</strong> ${userData.ultimaDoacao || 'Não registrada'}</p>
+                        <p><i class="calendar-icon">⏳</i> <strong>Próxima Doação:</strong> ${userData.proximaDoacao || 'Não definida'}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadLocalByEmail(email) {
+            try {
+                const locaisRef = collection(db, "locais");
+                const q = query(locaisRef, where("email", "==", email));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const localData = querySnapshot.docs[0].data();
+                    renderLocalData(localData);
+                    return true;
+                } else {
+                    renderLocalData(null);
+                    return false;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar local:", error);
+                showNotification("Erro", "Erro ao buscar dados do local.", "error");
+                return false;
+            }
+        }
+
+        function renderLocalData(localData) {
+            const container = document.getElementById('localInfo');
+            if (!container) return;
+
+            if (!localData) {
+                container.innerHTML = `
+                    <div class="profile-card">
+                        <h3>Local não encontrado</h3>
+                        <p>Não há dados de local vinculados ao seu e-mail.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="profile-card">
+                    <h3>Informações do Local Vinculado</h3>
+                    <p><strong>Nome:</strong> ${localData.nome || 'Não informado'}</p>
+                    <p><strong>CNPJ:</strong> ${localData.cnpj || 'Não informado'}</p>
+                    <p><strong>Contato:</strong> ${localData.contato || 'Não informado'}</p>
+                    <p><strong>Email:</strong> ${localData.email || 'Não informado'}</p>
+                    <p><strong>Endereço:</strong> ${localData.endereco || 'Não informado'}</p>
+                </div>
+            `;
+        }
+
+        async function saveUserProfile(uid, data) {
+            try {
+                const userRef = doc(db, "usuarios", uid);
+                await setDoc(userRef, data, { merge: true });
+                return true;
+            } catch (error) {
+                console.error("Erro ao salvar perfil:", error);
+                showNotification('Erro', 'Não foi possível salvar os dados do perfil.', 'error');
+                return false;
+            }
+        }
+
+        function showProfileForm() {
+            Swal.fire({
+                title: 'Atualize seus dados',
+                width: 600,
+                html: `
+                    <div class="form-container">
+                        <input type="text" id="nome" placeholder="Nome completo" class="form-field" required>
+                        <input type="number" id="idade" placeholder="Idade" class="form-field" required>
+                        <select id="sexo" class="form-field" required>
+                            <option value="">Selecione o sexo</option>
+                            <option value="Feminino">Feminino</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                        <input type="text" id="rua" placeholder="Rua" class="form-field" required>
+                        <input type="text" id="bairro" placeholder="Bairro" class="form-field" required>
+                    </div>
+                `,
+                confirmButtonText: 'Salvar',
+                confirmButtonColor: '#ce483c',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const nome = document.getElementById('nome').value.trim();
+                    const idade = document.getElementById('idade').value.trim();
+                    const sexo = document.getElementById('sexo').value.trim();
+                    const rua = document.getElementById('rua').value.trim();
+                    const bairro = document.getElementById('bairro').value.trim();
+
+                    if (!nome || !idade || !sexo || !rua || !bairro) {
+                        Swal.showValidationMessage('Preencha todos os campos!');
+                        return false;
+                    }
+
+                    return { nome, idade, sexo, rua, bairro };
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const saved = await saveUserProfile(auth.currentUser.uid, result.value);
+                    if (saved) {
+                        showNotification('Sucesso', 'Dados atualizados.', 'success');
+                        renderUserProfile(result.value);
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileBtn = document.getElementById('abrirFormulario');
+            const profileInfoContainer = document.getElementById('profileInfo');
+            const localInfoContainer = document.getElementById('localInfo');
+            const pageTitle = document.getElementById('pageTitle');
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    profileInfoContainer.innerHTML = `
+                        <div class="profile-card">
+                            <h3>Não autenticado</h3>
+                            <p>Faça login para visualizar seu perfil.</p>
+                            <a href="login.html" class="login-link">Fazer Login</a>
+                        </div>
+                    `;
+                    localInfoContainer.innerHTML = '';
+                    profileBtn.style.display = 'none';
+                    return;
+                }
+
+                const isLocal = await loadLocalByEmail(user.email);
+
+                if (isLocal) {
+                    // Usuário é um local
+                    profileInfoContainer.innerHTML = '';
+                    profileBtn.style.display = 'none';
+                    pageTitle.textContent = "Perfil do Local";
+                } else {
+                    // Usuário comum
+                    const userData = await loadUserProfile(user.uid);
+                    if (userData) {
+                        renderUserProfile(userData);
+                    }
+                    localInfoContainer.innerHTML = '';
+                    profileBtn.style.display = 'inline-block';
+                    profileBtn.addEventListener('click', showProfileForm);
+                    pageTitle.textContent = "Perfil do Usuário";
+                }
+            });
+        });
+    </script>
 </body>
 </html>

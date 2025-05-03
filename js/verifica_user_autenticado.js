@@ -4,9 +4,7 @@
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-
+import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -66,14 +64,12 @@ function updateHeaderUI(user) {
 
 // Monitor authentication state changes
 onAuthStateChanged(auth, (user) => {
+    console.log("Usuário autenticado:", user);  // Verificando o status do usuário no console
     updateHeaderUI(user);
     
     // Dispatch custom event for other components that might need auth info
     const authEvent = new CustomEvent('authStateChanged', { 
-        detail: { 
-            isAuthenticated: !!user,
-            user: user 
-        } 
+        detail: { isAuthenticated: !!user, user } 
     });
     document.dispatchEvent(authEvent);
 });
