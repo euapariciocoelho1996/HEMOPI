@@ -1,38 +1,59 @@
-// header.js
-import { auth, signOut, onAuthStateChanged } from "./firebaseConfig.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("header.html")
-    .then((res) => res.text())
-    .then((html) => {
-      const headerWrapper = document.createElement("div");
-      headerWrapper.innerHTML = html;
-      document.body.prepend(headerWrapper);
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+  authDomain: "teste-2067f.firebaseapp.com",
+  projectId: "teste-2067f",
+  storageBucket: "teste-2067f.appspot.com",
+  messagingSenderId: "160483034987",
+  appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+};
 
-      const userHeader = document.getElementById("user-header");
+// Inicializa Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          userHeader.innerHTML = `
-            <div class="user-info">
-              <span class="user-greeting">Olá, <strong>Herói</strong> ❤️</span>
-              <a href="perfil.html" class="profile-link">Ver Perfil</a>
-              <button id="logout-btn" class="logout-button">Sair</button>
-            </div>
-          `;
+// Atualiza o header com base no login
+function updateHeaderUI(user) {
+  const userHeader = document.getElementById("user-header-options");
+  if (!userHeader) return;
 
-          const logoutBtn = document.getElementById("logout-btn");
-          logoutBtn?.addEventListener("click", () => {
-            signOut(auth).then(() => window.location.reload());
-          });
-        } else {
-          userHeader.innerHTML = `
-            <a href="login.html" class="login">
-              <img src="img/login.png" alt="Ícone de login" class="icon-login">
-              Entrar
-            </a>
-          `;
-        }
-      });
+  if (user) {
+    userHeader.innerHTML = `
+      <div class="user-info">
+        <span class="user-greeting">Olá, <strong>Herói</strong> ❤️</span>
+        <a href="perfil.html" class="profile-link">Ver Perfil</a>
+        <button id="logout-btn" class="logout-button">Sair</button>
+      </div>
+    `;
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      signOut(auth)
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error("Erro ao sair:", error);
+        });
     });
+  } else {
+    userHeader.innerHTML = `
+      <a href="login.html" class="login">
+        <img src="img/login.png" alt="Ícone de login" class="icon-login">
+        Entrar
+      </a>
+    `;
+  }
+}
+
+// Monitora login/deslogamento
+onAuthStateChanged(auth, (user) => {
+  console.log("Usuário autenticado:", user);
+  updateHeaderUI(user);
 });

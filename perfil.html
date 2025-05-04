@@ -10,14 +10,25 @@
 <body>
     <header class="header-moderno">
         <div class="logo">
-            <img src="img/icone.png" alt="Logo" />
+            <img src="img/icone.png" alt="Logo Sangue Solidário">
             <span>Sangue Solidário</span>
         </div>
+  
+        <!-- Menu de Navegação -->
         <nav class="menu-centralizado">
             <a href="index.html">Início</a>
+            <a href="#informacoes-doacao">Sobre a Doação</a>
+            <a href="#secao-perfil-doador">Perfil do Doador</a>
             <a href="#campanhas" class="cta-button">Campanhas Ativas</a>
         </nav>
-        <div id="user-header-options"></div>
+  
+        <!-- Área de Autenticação do Usuário -->
+        <div id="user-header-options">
+            <a href="login.html" class="login">
+                <img src="img/login.png" alt="Ícone de login" class="icon-login">
+                Entrar
+            </a>
+        </div>
     </header>
 
     <h1 id="pageTitle">Perfil</h1>
@@ -40,5 +51,6 @@
     </div>
 
     <script src="js/perfil.js" type="module"></script>
+    <script src="js/header.js" type="module"></script>
 </body>
 </html>

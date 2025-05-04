@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js"; 
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/+esm'
@@ -50,9 +50,13 @@ onAuthStateChanged(auth, async (user) => {
         const dados = docSnap.data();
         const docId = docSnap.id;
 
+        const inicioData = dados.inicio?.toDate
+          ? dados.inicio.toDate().toISOString().split("T")[0]
+          : dados.inicio || "";
+
         const fimData = dados.fim?.toDate
           ? dados.fim.toDate().toISOString().split("T")[0]
-          : dados.fim;
+          : dados.fim || "";
 
         const urgencia = dados.urgencia || "baixa";
         const urgenciaTexto = {
@@ -67,9 +71,8 @@ onAuthStateChanged(auth, async (user) => {
         card.innerHTML = `
           <div class="urgencia ${urgencia}">${urgenciaTexto}</div>
           <h3>${dados.titulo}</h3>
-          <p class="campanha-local">${dados.localNome || "Local não informado"}</p>
           <p>${dados.descricao}</p>
-          <p class="campanha-data">Até: ${fimData}</p>
+          <p class="campanha-data">Início: ${inicioData} | Fim: ${fimData}</p>
           <button class="btn-editar" style="margin-top:10px;">Editar</button>
         `;
 
@@ -79,8 +82,8 @@ onAuthStateChanged(auth, async (user) => {
             title: "Editar Campanha",
             html: `
               <input id="swal-titulo" class="swal2-input" placeholder="Título" value="${dados.titulo}">
-              <input id="swal-local" class="swal2-input" placeholder="Nome do Local" value="${dados.localNome || ""}">
               <textarea id="swal-desc" class="swal2-textarea" placeholder="Descrição">${dados.descricao}</textarea>
+              <input id="swal-inicio" class="swal2-input" type="date" value="${inicioData}">
               <input id="swal-fim" class="swal2-input" type="date" value="${fimData}">
               <select id="swal-urgencia" class="swal2-select">
                 <option value="urgente" ${urgencia === "urgente" ? "selected" : ""}>URGENTE</option>
@@ -94,8 +97,8 @@ onAuthStateChanged(auth, async (user) => {
             preConfirm: () => {
               return {
                 titulo: document.getElementById("swal-titulo").value,
-                localNome: document.getElementById("swal-local").value,
                 descricao: document.getElementById("swal-desc").value,
+                inicio: document.getElementById("swal-inicio").value,
                 fim: document.getElementById("swal-fim").value,
                 urgencia: document.getElementById("swal-urgencia").value
               };
@@ -106,6 +109,7 @@ onAuthStateChanged(auth, async (user) => {
             try {
               await updateDoc(doc(db, "campanhas", docId), {
                 ...formValues,
+                inicio: new Date(formValues.inicio),
                 fim: new Date(formValues.fim)
               });
 
