@@ -247,6 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
             buttonContainer.style.gap = '10px';
+            buttonContainer.style.justifyContent = 'center'; // Centraliza os botões horizontalmente
+            buttonContainer.style.width = '100%'; // Garante que ocupe toda a largura do container pai
+            buttonContainer.style.marginTop = '20px'; // Espaço entre o título e os botões
+
 
             const campaignBtn = document.createElement('button');
             campaignBtn.textContent = "Cadastrar Campanha";

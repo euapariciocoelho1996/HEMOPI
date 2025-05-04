@@ -1,3 +1,8 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 /* 3. Header */
 .header-moderno {
     display: flex;
@@ -53,7 +58,7 @@
   
   .cta-button {
     background-color: rgb(206, 72, 60);
-    color: #fff;
+    color: #ffffff;
     padding: 10px 20px;
     border-radius: 30px;
     font-weight: 600;
