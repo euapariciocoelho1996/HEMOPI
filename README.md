@@ -20,7 +20,7 @@
 - Integração com Banco de Dados 
 - Design responsivo  
 ```
- ✅ Registro de Atividades no Projeto
+Registro de Atividades no Projeto
  📅 04 de maio de 2025
  Edição de campanhas
  
