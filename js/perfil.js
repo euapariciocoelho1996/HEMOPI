@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js"; 
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -166,19 +166,17 @@ function showProfileForm() {
     });
 }
 
-// ✅ CORRIGIDO: uso de addDoc no lugar de setDoc + doc()
 async function cadastrarCampanha(campanha) {
     try {
-        const campanhasRef = collection(db, "campanhas"); // Ref para a coleção "campanhas"
-        const docRef = await addDoc(campanhasRef, campanha); // Criação do novo documento
+        const campanhasRef = collection(db, "campanhas");
+        const docRef = await addDoc(campanhasRef, campanha);
         console.log("Campanha cadastrada com ID:", docRef.id);
         showNotification('Sucesso', 'Campanha cadastrada com sucesso!', 'success');
     } catch (error) {
-        console.error("Erro ao cadastrar campanha:", error); // Logs o erro
+        console.error("Erro ao cadastrar campanha:", error);
         showNotification('Erro', 'Não foi possível cadastrar a campanha.', 'error');
     }
 }
-
 
 function showCampaignForm(emailLocal) {
     Swal.fire({
@@ -210,16 +208,14 @@ function showCampaignForm(emailLocal) {
                 return false;
             }
 
-            // Montagem do objeto campanha para enviar ao Firestore
             return { titulo, local, descricao, inicio, fim };
         }
     }).then(async (result) => {
         if (result.isConfirmed) {
-            await cadastrarCampanha(result.value); // Chama a função de salvar no Firestore
+            await cadastrarCampanha(result.value);
         }
     });
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const profileBtn = document.getElementById('abrirFormulario');
@@ -244,14 +240,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const isLocal = await loadLocalByEmail(user.email);
 
         if (isLocal) {
-             // 🔄 LIMPA conteúdos antigos (caso tenha vindo de login anterior como usuário)
             profileInfoContainer.innerHTML = '';
             profileBtn.style.display = 'none';
             pageTitle.textContent = "Perfil do Local";
 
             const buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
-            buttonContainer.style.gap = '10px'; // Espaço entre os botões
+            buttonContainer.style.gap = '10px';
 
             const campaignBtn = document.createElement('button');
             campaignBtn.textContent = "Cadastrar Campanha";
@@ -262,13 +257,76 @@ document.addEventListener('DOMContentLoaded', () => {
             redirectBtn.textContent = "Editar Campanhas";
             redirectBtn.classList.add('form-button');
             redirectBtn.addEventListener('click', () => {
-                window.location.href = "campanhas_de_cada_local.html"; // Página de destino
+                window.location.href = "campanhas_de_cada_local.html";
+            });
+
+            const registerUserBtn = document.createElement('button');
+            registerUserBtn.textContent = "Cadastrar Usuário";
+            registerUserBtn.classList.add('form-button');
+            registerUserBtn.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Cadastrar Novo Usuário',
+                    html:
+                        '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
+                        '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
+                        '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Cadastrar',
+                    confirmButtonColor: '#ce483c',
+                    preConfirm: async () => {
+                        const email = document.getElementById('swal-input-email').value.trim();
+                        const senha = document.getElementById('swal-input-password').value;
+                        const confirmar = document.getElementById('swal-input-confirm').value;
+
+                        if (!email || !senha || !confirmar) {
+                            Swal.showValidationMessage('Por favor, preencha todos os campos.');
+                            return false;
+                        }
+
+                        if (senha !== confirmar) {
+                            Swal.showValidationMessage('As senhas não coincidem.');
+                            return false;
+                        }
+
+                        try {
+                            const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+                            const secondaryAuth = getAuth(secondaryApp);
+
+                            const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, senha);
+                            const newUser = userCredential.user;
+
+                            await setDoc(doc(db, "usuarios", newUser.uid), {
+                                email: email,
+                                dataCadastro: new Date().toISOString()
+                            });
+
+                            await signOut(secondaryAuth);
+                            return true;
+
+                        } catch (error) {
+                            if (error.code === "auth/email-already-in-use") {
+                                Swal.showValidationMessage("Este e-mail já está cadastrado.");
+                            } else if (error.code === "auth/weak-password") {
+                                Swal.showValidationMessage("A senha deve ter pelo menos 6 caracteres.");
+                            } else {
+                                Swal.showValidationMessage("Erro ao cadastrar usuário: " + error.message);
+                            }
+                            return false;
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire('Sucesso!', 'Usuário cadastrado com sucesso.', 'success');
+                    }
+                });
             });
 
             buttonContainer.appendChild(campaignBtn);
             buttonContainer.appendChild(redirectBtn);
+            buttonContainer.appendChild(registerUserBtn);
             localInfoContainer.appendChild(buttonContainer);
-                    
+
         } else {
             const userData = await loadUserProfile(user.uid);
             if (userData) {
