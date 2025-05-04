@@ -1,0 +1,136 @@
+/* 3. Header */
+.header-moderno {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 15px 40px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .logo img {
+    height: 42px;
+  }
+  
+  .logo span {
+    font-size: 20px;
+    font-weight: 700;
+    color: rgb(206, 72, 60);
+  }
+  
+  .menu-centralizado {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .menu-centralizado a {
+    text-decoration: none;
+    font-size: 15px;
+    color: #454545;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  a[href="#solicite-demo"].cta-button {
+    color: #ffffff;
+  }
+  
+  a[href="#conteudos"]:hover {
+    color: rgb(206, 72, 60);
+    text-decoration: underline;
+  }
+  
+  .cta-button {
+    background-color: rgb(206, 72, 60);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: rgb(206, 72, 60);
+  }
+  
+  /* User menu when logged in */
+  .user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .user-greeting {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin-right: 10px;
+  }
+  
+  .user-greeting strong {
+    color: rgb(206, 72, 60);
+  }
+  
+  .profile-link {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: 500;
+    margin-right: 20px;
+    transition: color 0.2s;
+  }
+  
+  .profile-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  
+  .logout-button {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333;
+  }
+  
+  /* 4. User Authentication */
+  .login {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 15px;
+    color: #454545;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .login:hover {
+    color: rgb(206, 72, 60);
+  }
+  
+  .icon-login {
+    height: 24px;
+    margin-right: 8px;
+  }
+  

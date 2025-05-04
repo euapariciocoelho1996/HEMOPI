@@ -244,15 +244,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const isLocal = await loadLocalByEmail(user.email);
 
         if (isLocal) {
+             // 🔄 LIMPA conteúdos antigos (caso tenha vindo de login anterior como usuário)
             profileInfoContainer.innerHTML = '';
             profileBtn.style.display = 'none';
             pageTitle.textContent = "Perfil do Local";
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '10px'; // Espaço entre os botões
 
             const campaignBtn = document.createElement('button');
             campaignBtn.textContent = "Cadastrar Campanha";
             campaignBtn.classList.add('form-button');
             campaignBtn.addEventListener('click', () => showCampaignForm(user.email));
-            localInfoContainer.appendChild(campaignBtn);
+
+            const redirectBtn = document.createElement('button');
+            redirectBtn.textContent = "Editar Campanhas";
+            redirectBtn.classList.add('form-button');
+            redirectBtn.addEventListener('click', () => {
+                window.location.href = "campanhas_de_cada_local.html"; // Página de destino
+            });
+
+            buttonContainer.appendChild(campaignBtn);
+            buttonContainer.appendChild(redirectBtn);
+            localInfoContainer.appendChild(buttonContainer);
+                    
         } else {
             const userData = await loadUserProfile(user.uid);
             if (userData) {

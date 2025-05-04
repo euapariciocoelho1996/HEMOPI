@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Campanhas</title>
+  <link rel="stylesheet" href="css/estilo_campanha_cada_local.css">
+  <link rel="stylesheet" href="css/header.css">
+</head>
+<body>
+
+  <!-- Início do Cabeçalho Principal -->
+    <header class="header-moderno">
+      <div class="logo">
+          <img src="img/icone.png" alt="Logo Sangue Solidário">
+          <span>Sangue Solidário</span>
+      </div>
+
+      <!-- Menu de Navegação -->
+      <nav class="menu-centralizado">
+          <a href="index.html">Início</a>
+          <a href="#informacoes-doacao">Sobre a Doação</a>
+          <a href="#secao-perfil-doador">Perfil do Doador</a>
+          <a href="#campanhas" class="cta-button">Campanhas Ativas</a>
+      </nav>
+
+      <!-- Área de Autenticação do Usuário -->
+      <div id="user-header-options">
+          <a href="login.html" class="login">
+              <img src="img/login.png" alt="Ícone de login" class="icon-login">
+              Entrar
+          </a>
+      </div>
+    </header>
+
+  <!-- Elemento onde será inserida a seção de campanhas -->
+  <div id="campanhasContainer"></div>
+
+  <!-- Script de campanhas -->
+  <script type="module" src="js/campanhas_de_cada_local.js"></script>
+
+  <script type="module">
+    import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/+esm';
+    window.Swal = Swal;
+  </script>
+  
+  <script type="module" src="js/header.js"></script>
+</body>
+</html>
