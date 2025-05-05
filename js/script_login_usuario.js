@@ -12,53 +12,131 @@ import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-
 import { showNotification, isValidEmail } from "./utils.js";
 import { loginUser, registerUser } from "./user-management.js";
 
+// Mensagens de motivação para o carrossel
+const messages = [
+    "Estamos quase lá... sua doação pode salvar vidas!",
+    "Doe sangue, compartilhe vida!",
+    "Você é o tipo certo de herói.",
+    "Uma bolsa de sangue pode salvar até 4 vidas.",
+    "A sua atitude hoje pode mudar o amanhã de alguém.",
+    "Doar sangue é um ato de amor.",
+    "Um pequeno gesto. Um grande impacto.",
+    "Você tem o poder de salvar vidas. Use-o.",
+    "Seja a esperança de alguém hoje.",
+    "Doe sangue, doe vida, doe esperança."
+];
+
 /**
  * Initialize login functionality
  */
 function initLoginPage() {
     const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const toggleForms = document.querySelectorAll('.toggle-form');
+    const messageCarousel = document.getElementById('message-carousel');
     
-    // Set up form toggle buttons
-    setupFormToggles(toggleForms);
+    // Iniciar carrossel de mensagens
+    if (messageCarousel) {
+        iniciarCarrosselMensagens();
+    }
     
-    // Set up form submissions
+    // Configurar formulário de login
     if (loginForm) {
         loginForm.addEventListener('submit', handleLoginSubmit);
     }
     
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegisterSubmit);
+    // Disponibilizar funções no escopo global
+    window.toggleForm = toggleForm;
+    window.toggleLocalForm = toggleLocalForm;
+    window.voltarLogin = voltarLogin;
+}
+
+/**
+ * Inicia o carrossel de mensagens motivacionais
+ */
+function iniciarCarrosselMensagens() {
+    const messageElement = document.getElementById('message-carousel');
+    if (!messageElement) return;
+    
+    let index = 0;
+    
+    function updateMessage() {
+        messageElement.style.opacity = 0;
+        setTimeout(() => {
+            index = (index + 1) % messages.length;
+            messageElement.textContent = messages[index];
+            messageElement.style.opacity = 1;
+        }, 500); // Duração do fade out
+    }
+
+    setInterval(updateMessage, 4000); // Troca a cada 4 segundos
+}
+
+/**
+ * Alterna entre os formulários de login e cadastro
+ * @param {string} action - 'login' ou 'signup'
+ */
+function toggleForm(action) {
+    const formTitle = document.getElementById("form-title");
+    const alternativeAction = document.getElementById("alternative-action");
+    const signupLink = document.getElementById("signup-link");
+    const form = document.getElementById("login-form");
+
+    if (action === 'signup') {
+        formTitle.textContent = "Crie sua conta";
+        alternativeAction.textContent = "ou continue com:";
+        signupLink.innerHTML = 'Já tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'login\')">Faça login aqui</a>';
+        form.innerHTML = `
+            <input type="text" id="signup-name" placeholder="Nome completo" required>
+            <input type="email" id="signup-email" placeholder="E-mail" required>
+            <input type="password" id="signup-password" placeholder="Senha" required>
+            <input type="password" id="signup-confirm-password" placeholder="Confirme a senha" required>
+            <div id="signup-password-strength-message"></div>
+            <button type="submit" class="submit-btn">Cadastrar</button>
+        `;
+        
+        // Adicionar listener para o formulário de cadastro
+        form.removeEventListener('submit', handleLoginSubmit);
+        form.addEventListener('submit', handleSignupSubmit);
+    } else {
+        formTitle.textContent = "Entre com sua conta";
+        alternativeAction.textContent = "ou continue com:";
+        signupLink.innerHTML = 'Não tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'signup\')">Cadastre-se aqui</a>';
+        form.innerHTML = `
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <div id="password-strength-message"></div>
+            <button type="submit" class="submit-btn">Entrar</button>
+        `;
+        
+        // Adicionar listener para o formulário de login
+        form.removeEventListener('submit', handleSignupSubmit);
+        form.addEventListener('submit', handleLoginSubmit);
     }
 }
 
 /**
- * Sets up form toggle functionality
- * @param {NodeList} toggleButtons - Toggle buttons
+ * Alterna para o formulário de cadastro de local
  */
-function setupFormToggles(toggleButtons) {
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-            const loginTitle = document.querySelector('.login-title');
-            
-            if (loginForm.style.display === 'none') {
-                // Switching to login form
-                loginForm.style.display = 'flex';
-                registerForm.style.display = 'none';
-                loginTitle.textContent = 'Login';
-            } else {
-                // Switching to register form
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'flex';
-                loginTitle.textContent = 'Cadastro';
-            }
-        });
-    });
+function toggleLocalForm() {
+    const authContainer = document.getElementById('auth-container');
+    const localFormContainer = document.getElementById('local-form-container');
+    
+    if (authContainer && localFormContainer) {
+        authContainer.style.display = 'none';
+        localFormContainer.style.display = 'block';
+    }
+}
+
+/**
+ * Volta para o formulário de login
+ */
+function voltarLogin() {
+    const authContainer = document.getElementById('auth-container');
+    const localFormContainer = document.getElementById('local-form-container');
+    
+    if (authContainer && localFormContainer) {
+        localFormContainer.style.display = 'none';
+        authContainer.style.display = 'block';
+    }
 }
 
 /**
@@ -68,8 +146,8 @@ function setupFormToggles(toggleButtons) {
 async function handleLoginSubmit(e) {
     e.preventDefault();
     
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
     
     if (!email || !password) {
         showNotification('Erro', 'Por favor, preencha todos os campos.', 'error');
@@ -81,7 +159,7 @@ async function handleLoginSubmit(e) {
         return;
     }
     
-    showLoadingState(true);
+    showLoadingState(true, 'login');
     
     try {
         const user = await loginUser(email, password);
@@ -95,21 +173,21 @@ async function handleLoginSubmit(e) {
     } catch (error) {
         handleLoginError(error);
     } finally {
-        showLoadingState(false);
+        showLoadingState(false, 'login');
     }
 }
 
 /**
- * Handles register form submission
+ * Handles signup form submission
  * @param {Event} e - Form submit event
  */
-async function handleRegisterSubmit(e) {
+async function handleSignupSubmit(e) {
     e.preventDefault();
     
-    const name = document.getElementById('register-name').value.trim();
-    const email = document.getElementById('register-email').value.trim();
-    const password = document.getElementById('register-password').value;
-    const confirmPassword = document.getElementById('register-confirm-password').value;
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('signup-confirm-password').value;
     
     // Validate form fields
     if (!name || !email || !password || !confirmPassword) {
@@ -132,7 +210,7 @@ async function handleRegisterSubmit(e) {
         return;
     }
     
-    showLoadingState(true);
+    showLoadingState(true, 'signup');
     
     try {
         const user = await registerUser(email, password, {
@@ -143,35 +221,36 @@ async function handleRegisterSubmit(e) {
         if (user) {
             showNotification('Sucesso', 'Cadastro realizado com sucesso! Faça login para continuar.', 'success');
             
-            // Reset form and switch to login
-            document.getElementById('register-form').reset();
-            
-            // Automatically switch to login form
-            document.querySelector('.toggle-form').click();
+            // Voltar para o formulário de login
+            toggleForm('login');
         }
     } catch (error) {
         handleRegistrationError(error);
     } finally {
-        showLoadingState(false);
+        showLoadingState(false, 'signup');
     }
 }
 
 /**
  * Shows or hides loading state
  * @param {boolean} isLoading - Whether to show loading state
+ * @param {string} formType - Type of form ('login' or 'signup')
  */
-function showLoadingState(isLoading) {
-    const loginButton = document.querySelector('#login-form button[type="submit"]');
-    const registerButton = document.querySelector('#register-form button[type="submit"]');
+function showLoadingState(isLoading, formType) {
+    let button;
     
-    if (loginButton) {
-        loginButton.disabled = isLoading;
-        loginButton.textContent = isLoading ? 'Entrando...' : 'Entrar';
-    }
-    
-    if (registerButton) {
-        registerButton.disabled = isLoading;
-        registerButton.textContent = isLoading ? 'Cadastrando...' : 'Cadastrar';
+    if (formType === 'login') {
+        button = document.querySelector('#login-form button[type="submit"]');
+        if (button) {
+            button.disabled = isLoading;
+            button.textContent = isLoading ? 'Entrando...' : 'Entrar';
+        }
+    } else if (formType === 'signup') {
+        button = document.querySelector('#login-form button[type="submit"]');
+        if (button) {
+            button.disabled = isLoading;
+            button.textContent = isLoading ? 'Cadastrando...' : 'Cadastrar';
+        }
     }
 }
 
