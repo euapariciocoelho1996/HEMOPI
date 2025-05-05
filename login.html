@@ -46,9 +46,12 @@
       <div id="auth-container">
         <h2 id="form-title" class="login-title">Entre com sua conta</h2>
         <p class="divider" id="alternative-action">ou continue com:</p>
-        <div class="social-login" style="cursor: pointer;">
+
+        <!-- Botão Google com redirecionamento -->
+        <div class="social-login" id="google-login" style="cursor: pointer;">
           <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
         </div>
+
         <p class="divider">ou use seu e-mail</p>
         <form id="login-form">
           <input type="email" id="email" placeholder="E-mail" required />
@@ -56,6 +59,7 @@
           <div id="password-strength-message"></div>
           <button type="submit" class="submit-btn">Entrar</button>
         </form>
+
         <p class="signup-info" id="signup-link" style="margin-top: 20px;">
           Não tem uma conta?
           <a href="javascript:void(0);" onclick="toggleForm('signup')">Cadastre-se aqui</a>
@@ -71,42 +75,61 @@
       <div id="local-form-container">
         <h2>Cadastrar Local de Doação</h2>
         <form id="local-form">
-          
           <input type="text" id="local-name" placeholder="Nome do Local" required />
           <span class="error-message" id="error-name"></span>
-          
+
           <input type="text" id="local-endereco" placeholder="Endereço Completo" required />
           <span class="error-message" id="error-endereco"></span>
-          
+
           <input type="text" id="local-contato" placeholder="Contato (Telefone)" required />
           <span class="error-message" id="error-contato"></span>
-          
+
           <input type="email" id="local-email" placeholder="E-mail para Cadastro" required />
           <span class="error-message" id="error-email"></span>
-          
+
           <input type="text" id="local-cnpj" placeholder="CNPJ (somente números)" required />
           <span class="error-message" id="error-cnpj"></span>
-      
+
           <input type="password" id="local-senha" placeholder="Crie uma senha" required />
           <span class="error-message" id="error-senha"></span>
-      
+
           <input type="password" id="local-confirmar-senha" placeholder="Confirme a senha" required />
           <span class="error-message" id="error-confirmar-senha"></span>
-      
+
           <button type="submit" class="submit-btn">Cadastrar Local</button><br /><br />
           <a href="javascript:void(0);" onclick="voltarLogin()">Voltar para login</a>
         </form>
       </div>
-      
-
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script type="module" src="js/script_login_usuario.js"></script>
-  <script type="module" src="js/script_cadastro_local.js"></script>
-  <script type="module" src="js/auth_status_manager.js"></script>
+  <!-- Scripts JavaScript (removido type="module" para evitar erro de carregamento) -->
+  <script src="js/script_login_usuario.js"></script>
+  <script src="js/script_cadastro_local.js"></script>
+  <script src="js/auth_status_manager.js"></script>
 
+  <!-- Script para login com Google -->
+  <script>
+    document.getElementById("google-login").addEventListener("click", function () {
+      window.location.href = "/auth/google"; // Altere aqui se sua rota for diferente
+    });
+
+    // Funções auxiliares (caso ainda não estejam no JS externo)
+    function toggleForm(formType) {
+      // Exemplo simples - personalize conforme necessário
+      alert("Alternar para formulário de: " + formType);
+    }
+
+    function toggleLocalForm() {
+      document.getElementById("auth-container").style.display = "none";
+      document.getElementById("local-form-container").style.display = "block";
+    }
+
+    function voltarLogin() {
+      document.getElementById("local-form-container").style.display = "none";
+      document.getElementById("auth-container").style.display = "block";
+    }
+  </script>
 </body>
 
 </html>
