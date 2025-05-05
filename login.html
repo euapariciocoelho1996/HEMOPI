@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/estilo_login.css" />
   <link rel="stylesheet" href="css/feedback_campo_local.css" />
+  <!-- SweetAlert2 para notificações -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     #message-carousel {
       transition: opacity 0.5s;
@@ -15,6 +17,19 @@
 
     #local-form-container {
       display: none;
+    }
+    
+    .auth-success {
+      text-align: center;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .auth-success h2 {
+      color: #28a745;
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -29,7 +44,7 @@
     <div class="right-panel">
       <!-- Formulário de login/cadastro -->
       <div id="auth-container">
-        <h2 id="form-title">Entre com sua conta</h2>
+        <h2 id="form-title" class="login-title">Entre com sua conta</h2>
         <p class="divider" id="alternative-action">ou continue com:</p>
         <div class="social-login" style="cursor: pointer;">
           <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
