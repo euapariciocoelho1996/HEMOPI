@@ -21,6 +21,22 @@
 - Design responsivo  
 ```
 Registro de Atividades no Projeto
+ 📅 05 de maio de 2025
+ Clean Code e Modularização
+ 
+ Estruturação do código com módulos reutilizáveis:
+ - Criação do arquivo firebase-config.js para centralizar configurações
+ - Implementação do módulo utils.js com funções utilitárias
+ - Desenvolvimento do módulo user-management.js para gerenciamento de usuários
+ - Criação do módulo campanhas.js para operações de campanhas de doação
+ - Implementação do módulo locais.js para gerenciar locais de doação
+ 
+ Melhorias de legibilidade e manutenção:
+ - Adição de documentação JSDoc para todas as funções
+ - Remoção de código duplicado
+ - Padronização de tratamento de erros
+ - Separação de responsabilidades em funções específicas
+ 
  📅 04 de maio de 2025
  Edição de campanhas
  

@@ -1,291 +1,225 @@
 /**
- * Login and Registration functionality
- * Handles form switching, validation, and Firebase Auth
+ * User Login Module
+ * Handles user authentication and login process
  */
 
-// Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { auth, db } from "./firebase-config.js";
 import { 
-    getAuth, 
-    GoogleAuthProvider, 
-    signInWithPopup, 
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword 
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-    authDomain: "teste-2067f.firebaseapp.com",
-    projectId: "teste-2067f",
-    storageBucket: "teste-2067f.firebasestorage.app",
-    messagingSenderId: "160483034987",
-    appId: "1:160483034987:web:944eb621b02efea11b2e2e"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { showNotification, isValidEmail } from "./utils.js";
+import { loginUser, registerUser } from "./user-management.js";
 
 /**
- * Animated message carousel
+ * Initialize login functionality
  */
-const messages = [
-    "Estamos quase lá... sua doação pode salvar vidas!",
-    "Doe sangue, compartilhe vida!",
-    "Você é o tipo certo de herói.",
-    "Uma bolsa de sangue pode salvar até 4 vidas.",
-    "A sua atitude hoje pode mudar o amanhã de alguém.",
-    "Doar sangue é um ato de amor.",
-    "Um pequeno gesto. Um grande impacto.",
-    "Você tem o poder de salvar vidas. Use-o.",
-    "Seja a esperança de alguém hoje.",
-    "Doe sangue, doe vida, doe esperança."
-];
-
-// Constants
-const FADE_DURATION = 500;
-const MESSAGE_INTERVAL = 4000;
-
-/**
- * Toggle between login and signup forms
- * @param {string} action - 'login' or 'signup'
- */
-function toggleForm(action) {
-    const formTitle = document.getElementById("form-title");
-    const alternativeAction = document.getElementById("alternative-action");
-    const signupLink = document.getElementById("signup-link");
-    const form = document.getElementById("login-form");
-
-    if (action === 'signup') {
-        formTitle.textContent = "Crie sua conta";
-        alternativeAction.textContent = "ou continue com:";
-        signupLink.innerHTML = 'Já tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'login\')">Faça login aqui</a>';
-        form.innerHTML = `
-            <input type="text" id="name" placeholder="Nome completo" required>
-            <input type="email" id="signup-email" placeholder="E-mail" required>
-            <input type="password" id="signup-password" placeholder="Senha" required>
-            <div id="signup-password-strength-message"></div>
-            <button type="submit" class="submit-btn">Cadastrar</button>
-        `;
-        
-        const passwordInput = document.getElementById("signup-password");
-        if (passwordInput) {
-            passwordInput.addEventListener('input', checkPasswordStrength);
-        }
-    } else {
-        formTitle.textContent = "Entre com sua conta";
-        alternativeAction.textContent = "ou continue com:";
-        signupLink.innerHTML = 'Não tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'signup\')">Cadastre-se aqui</a>';
-        form.innerHTML = `
-            <input type="email" id="email" placeholder="E-mail" required>
-            <input type="password" id="password" placeholder="Senha" required>
-            <div id="password-strength-message"></div>
-            <button type="submit" class="submit-btn">Entrar</button>
-        `;
+function initLoginPage() {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const toggleForms = document.querySelectorAll('.toggle-form');
+    
+    // Set up form toggle buttons
+    setupFormToggles(toggleForms);
+    
+    // Set up form submissions
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLoginSubmit);
+    }
+    
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegisterSubmit);
     }
 }
 
 /**
- * Check password strength while typing
- * @param {Event} event - Input event
+ * Sets up form toggle functionality
+ * @param {NodeList} toggleButtons - Toggle buttons
  */
-function checkPasswordStrength(event) {
-    const password = event.target.value;
-    const messageElement = document.getElementById('signup-password-strength-message');
-    if (!messageElement) return;
-
-    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    
-    if (strongPasswordRegex.test(password)) {
-        messageElement.textContent = "Senha forte!";
-        messageElement.style.color = "green";
-    } else {
-        messageElement.textContent = "A senha precisa ter pelo menos 8 caracteres, incluindo uma letra maiúscula, um número e um caractere especial.";
-        messageElement.style.color = "red";
-    }
-}
-
-/**
- * Validate login/signup form
- * @param {Event} event - Form submit event
- * @returns {boolean} - Whether form is valid
- */
-function validateForm(event) {
-    event.preventDefault();
-    
-    const isSignup = !!document.getElementById("signup-email");
-    
-    if (isSignup) {
-        return validateSignupForm();
-    } else {
-        return validateLoginForm();
-    }
-}
-
-/**
- * Validate signup form fields
- * @returns {boolean} - Whether form is valid
- */
-function validateSignupForm() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("signup-email").value.trim();
-    const password = document.getElementById("signup-password").value;
-    
-    if (!name || !email || !password) {
-        showAlert("Por favor, preencha todos os campos.");
-        return false;
-    }
-    
-    if (!validateEmail(email)) {
-        showAlert("Por favor, insira um e-mail válido.");
-        return false;
-    }
-    
-    if (!validatePasswordStrength(password)) {
-        showAlert("A senha não é forte o suficiente.");
-        return false;
-    }
-    
-    createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            showAlert("Usuário cadastrado com sucesso!");
-            window.location.href = "index.html";
-        })
-        .catch((error) => {
-            if (error.code === 'auth/email-already-in-use') {
-                showAlert("Este e-mail já está em uso.");
+function setupFormToggles(toggleButtons) {
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const loginTitle = document.querySelector('.login-title');
+            
+            if (loginForm.style.display === 'none') {
+                // Switching to login form
+                loginForm.style.display = 'flex';
+                registerForm.style.display = 'none';
+                loginTitle.textContent = 'Login';
             } else {
-                showAlert(`Erro: ${error.message}`);
+                // Switching to register form
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'flex';
+                loginTitle.textContent = 'Cadastro';
             }
         });
-    
-    return true;
+    });
 }
 
 /**
- * Validate login form fields
- * @returns {boolean} - Whether form is valid
+ * Handles login form submission
+ * @param {Event} e - Form submit event
  */
-function validateLoginForm() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
     
     if (!email || !password) {
-        showAlert("Por favor, preencha todos os campos.");
-        return false;
+        showNotification('Erro', 'Por favor, preencha todos os campos.', 'error');
+        return;
     }
     
-    if (!validateEmail(email)) {
-        showAlert("Por favor, insira um e-mail válido.");
-        return false;
+    if (!isValidEmail(email)) {
+        showNotification('Erro', 'Por favor, insira um email válido.', 'error');
+        return;
+    }
+    
+    showLoadingState(true);
+    
+    try {
+        const user = await loginUser(email, password);
+        
+        if (user) {
+            showNotification('Sucesso', 'Login realizado com sucesso!', 'success');
+            setTimeout(() => {
+                window.location.href = 'perfil.html';
+            }, 1500);
+        }
+    } catch (error) {
+        handleLoginError(error);
+    } finally {
+        showLoadingState(false);
+    }
+}
+
+/**
+ * Handles register form submission
+ * @param {Event} e - Form submit event
+ */
+async function handleRegisterSubmit(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('register-name').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+    
+    // Validate form fields
+    if (!name || !email || !password || !confirmPassword) {
+        showNotification('Erro', 'Por favor, preencha todos os campos.', 'error');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        showNotification('Erro', 'Por favor, insira um email válido.', 'error');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        showNotification('Erro', 'As senhas não coincidem.', 'error');
+        return;
     }
     
     if (password.length < 6) {
-        showAlert("A senha deve ter pelo menos 6 caracteres.");
-        return false;
+        showNotification('Erro', 'A senha deve ter pelo menos 6 caracteres.', 'error');
+        return;
     }
     
-    signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            window.location.href = "index.html";
-        })
-        .catch((error) => {
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                showAlert("E-mail ou senha incorretos.");
-            } else {
-                showAlert(`Erro: ${error.message}`);
-            }
+    showLoadingState(true);
+    
+    try {
+        const user = await registerUser(email, password, {
+            nome: name,
+            dataCadastro: new Date().toISOString()
         });
-    
-    return true;
-}
-
-/**
- * Validate email format
- * @param {string} email - Email to validate
- * @returns {boolean} - Whether email is valid
- */
-function validateEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-}
-
-/**
- * Validate password strength
- * @param {string} password - Password to validate
- * @returns {boolean} - Whether password is strong enough
- */
-function validatePasswordStrength(password) {
-    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return strongPasswordRegex.test(password);
-}
-
-/**
- * Show an alert message to the user
- * @param {string} message - Message to display
- */
-function showAlert(message) {
-    alert(message);
-}
-
-/**
- * Rotate through motivational messages
- */
-function rotateMessages() {
-    const messageElement = document.getElementById('message-carousel');
-    if (!messageElement) return;
-    
-    let index = 0;
-    
-    function updateMessage() {
-        messageElement.style.opacity = 0;
-        setTimeout(() => {
-            index = (index + 1) % messages.length;
-            messageElement.textContent = messages[index];
-            messageElement.style.opacity = 1;
-        }, FADE_DURATION);
-    }
-
-    setInterval(updateMessage, MESSAGE_INTERVAL);
-}
-
-/**
- * Initialize Google Auth
- */
-function initGoogleAuth() {
-    const googleBtn = document.querySelector('.social-login');
-    if (googleBtn) {
-        googleBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    showAlert(`Bem-vindo, ${result.user.displayName || 'Doador'}`);
-                    window.location.href = "index.html";
-                })
-                .catch((error) => {
-                    showAlert(`Erro de autenticação: ${error.message}`);
-                });
-        });
+        
+        if (user) {
+            showNotification('Sucesso', 'Cadastro realizado com sucesso! Faça login para continuar.', 'success');
+            
+            // Reset form and switch to login
+            document.getElementById('register-form').reset();
+            
+            // Automatically switch to login form
+            document.querySelector('.toggle-form').click();
+        }
+    } catch (error) {
+        handleRegistrationError(error);
+    } finally {
+        showLoadingState(false);
     }
 }
 
 /**
- * Initialize page functionality
+ * Shows or hides loading state
+ * @param {boolean} isLoading - Whether to show loading state
  */
-function init() {
-    rotateMessages();
-    initGoogleAuth();
-
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', validateForm);
+function showLoadingState(isLoading) {
+    const loginButton = document.querySelector('#login-form button[type="submit"]');
+    const registerButton = document.querySelector('#register-form button[type="submit"]');
+    
+    if (loginButton) {
+        loginButton.disabled = isLoading;
+        loginButton.textContent = isLoading ? 'Entrando...' : 'Entrar';
     }
-
-    // Disponibiliza funções globalmente
-    window.toggleForm = toggleForm;
-    window.validateForm = validateForm;
+    
+    if (registerButton) {
+        registerButton.disabled = isLoading;
+        registerButton.textContent = isLoading ? 'Cadastrando...' : 'Cadastrar';
+    }
 }
 
-// Initialize when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', init);
+/**
+ * Handles login errors
+ * @param {Error} error - Login error
+ */
+function handleLoginError(error) {
+    console.error('Erro de login:', error);
+    
+    let message = 'Falha no login. Verifique suas credenciais.';
+    
+    switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+            message = 'Email ou senha incorretos.';
+            break;
+        case 'auth/too-many-requests':
+            message = 'Muitas tentativas de login. Tente novamente mais tarde.';
+            break;
+    }
+    
+    showNotification('Erro', message, 'error');
+}
+
+/**
+ * Handles registration errors
+ * @param {Error} error - Registration error
+ */
+function handleRegistrationError(error) {
+    console.error('Erro de cadastro:', error);
+    
+    let message = 'Falha no cadastro. Tente novamente.';
+    
+    switch (error.code) {
+        case 'auth/email-already-in-use':
+            message = 'Este email já está em uso.';
+            break;
+        case 'auth/invalid-email':
+            message = 'Email inválido.';
+            break;
+        case 'auth/weak-password':
+            message = 'A senha deve ter pelo menos 6 caracteres.';
+            break;
+    }
+    
+    showNotification('Erro', message, 'error');
+}
+
+// Initialize the page when DOM is ready
+document.addEventListener('DOMContentLoaded', initLoginPage);
