@@ -188,3 +188,10 @@ form input {
     height: 100%;
     text-align: center;
 }
+
+#password-strength-message {
+  font-size: 0.85rem;   /* Fonte um pouco menor que o padrão */
+  margin: 8px 0;        /* Margem vertical de 8px, zero nas laterais */
+  color: inherit;       /* Mantém a cor herdada (ou ajuste conforme quiser) */
+}
+

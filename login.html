@@ -29,28 +29,38 @@
     <div class="right-panel">
       <!-- Formulário de login/cadastro -->
       <div id="auth-container">
-        <h2 id="form-title">Entre com sua conta</h2>
-        <p class="divider" id="alternative-action">ou continue com:</p>
-        <div class="social-login" style="cursor: pointer;">
-          <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
-        </div>
-        <p class="divider">ou use seu e-mail</p>
-        <form id="login-form">
-          <input type="email" id="email" placeholder="E-mail" required />
-          <input type="password" id="password" placeholder="Senha" required />
-          <div id="password-strength-message"></div>
-          <button type="submit" class="submit-btn">Entrar</button>
-        </form>
-        <p class="signup-info" id="signup-link" style="margin-top: 20px;">
-          Não tem uma conta?
-          <a href="javascript:void(0);" onclick="toggleForm('signup')">Cadastre-se aqui</a>
-        </p>
-
-        <p class="signup-info" style="margin-top: 10px;">
-          Deseja cadastrar um local de doação?
-          <a href="javascript:void(0);" onclick="toggleLocalForm()">Clique aqui</a>
-        </p>
+      <h2 id="form-title">Entre com sua conta</h2>
+      <p class="divider" id="alternative-action">ou continue com:</p>
+      
+      <div class="social-login" style="cursor: pointer;">
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
       </div>
+      
+      <p class="divider">ou use seu e-mail</p>
+      
+      <form id="login-form" novalidate>
+        <input type="email" id="email" placeholder="E-mail" required />
+        <!-- Mensagem de erro do email será inserida aqui pelo JS -->
+        
+        <input type="password" id="password" placeholder="Senha" required />
+        <!-- Mensagem de erro da senha será inserida aqui pelo JS -->
+        
+        <div id="password-strength-message"></div>
+        
+        <button type="submit" class="submit-btn">Entrar</button>
+      </form>
+      
+      <p class="signup-info" id="signup-link" style="margin-top: 20px;">
+        Não tem uma conta?
+        <a href="javascript:void(0);" onclick="toggleForm('signup')">Cadastre-se aqui</a>
+      </p>
+
+      <p class="signup-info" style="margin-top: 10px;">
+        Deseja cadastrar um local de doação?
+        <a href="javascript:void(0);" onclick="toggleLocalForm()">Clique aqui</a>
+      </p>
+    </div>
+
 
       <!-- Formulário de cadastro de local -->
       <div id="local-form-container">

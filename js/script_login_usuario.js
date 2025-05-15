@@ -1,8 +1,3 @@
-/**
- * Login and Registration functionality
- * Handles form switching, validation, and Firebase Auth
- */
-
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { 
@@ -125,39 +120,86 @@ function validateForm(event) {
 }
 
 /**
+ * Exibe mensagem de erro abaixo do campo de input
+ * @param {HTMLElement} inputElement - O campo input para mostrar erro
+ * @param {string} message - Mensagem de erro a exibir
+ */
+function showFieldError(inputElement, message) {
+    if (!inputElement) return;
+
+    // Verifica se já existe uma mensagem de erro abaixo do input
+    let errorElement = inputElement.nextElementSibling;
+    
+    // Se não existe ou não é um erro, cria um novo
+    if (!errorElement || !errorElement.classList.contains('field-error')) {
+        errorElement = document.createElement('div');
+        errorElement.className = 'field-error';
+        inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+    }
+
+    errorElement.textContent = message;
+    errorElement.style.color = 'red';
+    errorElement.style.fontSize = '0.9em';
+    errorElement.style.marginTop = '4px';
+}
+
+/**
+ * Limpa todas as mensagens de erro nos campos do formulário
+ */
+function clearFieldErrors() {
+    const errors = document.querySelectorAll('.field-error');
+    errors.forEach(errorEl => errorEl.remove());
+}
+
+/**
  * Validate signup form fields
  * @returns {boolean} - Whether form is valid
  */
 function validateSignupForm() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("signup-email").value.trim();
-    const password = document.getElementById("signup-password").value;
+    clearFieldErrors();
+
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("signup-email");
+    const passwordInput = document.getElementById("signup-password");
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
     
-    if (!name || !email || !password) {
-        showAlert("Por favor, preencha todos os campos.");
-        return false;
+    let valid = true;
+
+    if (!name) {
+        showFieldError(nameInput, "Por favor, preencha o nome completo.");
+        valid = false;
     }
-    
-    if (!validateEmail(email)) {
-        showAlert("Por favor, insira um e-mail válido.");
-        return false;
+    if (!email) {
+        showFieldError(emailInput, "Por favor, preencha o e-mail.");
+        valid = false;
+    } else if (!validateEmail(email)) {
+        showFieldError(emailInput, "Por favor, insira um e-mail válido.");
+        valid = false;
     }
-    
-    if (!validatePasswordStrength(password)) {
-        showAlert("A senha não é forte o suficiente.");
-        return false;
+
+    if (!password) {
+        showFieldError(passwordInput, "Por favor, preencha a senha.");
+        valid = false;
+    } else if (!validatePasswordStrength(password)) {
+        showFieldError(passwordInput, "A senha não é forte o suficiente.");
+        valid = false;
     }
+
+    if (!valid) return false;
     
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-            showAlert("Usuário cadastrado com sucesso!");
+            alert("Usuário cadastrado com sucesso!");
             window.location.href = "index.html";
         })
         .catch((error) => {
             if (error.code === 'auth/email-already-in-use') {
-                showAlert("Este e-mail já está em uso.");
+                showFieldError(emailInput, "Este e-mail já está em uso.");
             } else {
-                showAlert(`Erro: ${error.message}`);
+                showFieldError(emailInput, `Erro: ${error.message}`);
             }
         });
     
@@ -169,33 +211,37 @@ function validateSignupForm() {
  * @returns {boolean} - Whether form is valid
  */
 function validateLoginForm() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    clearFieldErrors();
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
     
-    if (!email || !password) {
-        showAlert("Por favor, preencha todos os campos.");
-        return false;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    
+    let valid = true;
+
+    if (!email) {
+        showFieldError(emailInput, "Por favor, preencha o e-mail.");
+        valid = false;
+    } else if (!validateEmail(email)) {
+        showFieldError(emailInput, "Por favor, insira um e-mail válido.");
+        valid = false;
     }
+
     
-    if (!validateEmail(email)) {
-        showAlert("Por favor, insira um e-mail válido.");
-        return false;
-    }
-    
-    if (password.length < 6) {
-        showAlert("A senha deve ter pelo menos 6 caracteres.");
-        return false;
-    }
-    
+
+    if (!valid) return false;
+
     signInWithEmailAndPassword(auth, email, password)
         .then(() => {
             window.location.href = "index.html";
         })
         .catch((error) => {
             if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                showAlert("E-mail ou senha incorretos.");
+                showFieldError(passwordInput, "E-mail ou senha incorretos.");
             } else {
-                showAlert(`Erro: ${error.message}`);
+                showFieldError(passwordInput, "E-mail ou senha incorretos.");
             }
         });
     
@@ -224,6 +270,7 @@ function validatePasswordStrength(password) {
 
 /**
  * Show an alert message to the user
+ * (Pode ser usado para alertas gerais, não para erros de campo)
  * @param {string} message - Message to display
  */
 function showAlert(message) {
