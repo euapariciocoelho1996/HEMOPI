@@ -86,10 +86,14 @@ function toggleForm(action) {
  * Check password strength while typing
  * @param {Event} event - Input event
  */
-function checkPasswordStrength(event) {
+function checkPasswordStrength(event) { 
     const password = event.target.value;
     const messageElement = document.getElementById('signup-password-strength-message');
     if (!messageElement) return;
+
+    // Aplica os estilos solicitados
+    messageElement.style.fontSize = "0.85rem";
+    messageElement.style.margin = "8px 0";
 
     const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     
@@ -101,6 +105,7 @@ function checkPasswordStrength(event) {
         messageElement.style.color = "red";
     }
 }
+
 
 /**
  * Validate login/signup form
