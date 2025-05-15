@@ -1,10 +1,24 @@
 /**
- * Authentication Status Manager
+ * Authentication status manager
  * Handles user login state and UI updates
  */
 
-import { auth } from "./firebase-config.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+    authDomain: "teste-2067f.firebaseapp.com",
+    projectId: "teste-2067f",
+    storageBucket: "teste-2067f.firebasestorage.app",
+    messagingSenderId: "160483034987",
+    appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+};
+
+// Initialize Firebase services
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 /**
  * Updates the header UI based on user authentication status
@@ -29,7 +43,13 @@ function updateHeaderUI(user) {
         // Add logout handler
         const logoutBtn = document.getElementById("logout-btn");
         if (logoutBtn) {
-            logoutBtn.addEventListener("click", handleLogout);
+            logoutBtn.addEventListener("click", () => {
+                signOut(auth).then(() => {
+                    window.location.reload();
+                }).catch(error => {
+                    console.error("Erro ao fazer logout:", error);
+                });
+            });
         }
     } else {
         // User is not signed in - show login link
@@ -42,45 +62,14 @@ function updateHeaderUI(user) {
     }
 }
 
-/**
- * Handles the logout process
- */
-function handleLogout() {
-    signOut(auth)
-        .then(() => {
-            window.location.reload();
-        })
-        .catch(error => {
-            console.error("Erro ao fazer logout:", error);
-        });
-}
-
-/**
- * Initializes the authentication state listener
- */
-function initAuthStateListener() {
-    auth.onAuthStateChanged((user) => {
-        console.log("Usuário autenticado:", !!user);
-        updateHeaderUI(user);
-        
-        // Dispatch custom event for other components that might need auth info
-        dispatchAuthEvent(user);
-    });
-}
-
-/**
- * Dispatches a custom event with the current authentication state
- * @param {Object|null} user - The current user or null if not authenticated
- */
-function dispatchAuthEvent(user) {
+// Monitor authentication state changes
+onAuthStateChanged(auth, (user) => {
+    console.log("Usuário autenticado:", user);  // Verificando o status do usuário no console
+    updateHeaderUI(user);
+    
+    // Dispatch custom event for other components that might need auth info
     const authEvent = new CustomEvent('authStateChanged', { 
         detail: { isAuthenticated: !!user, user } 
     });
     document.dispatchEvent(authEvent);
-}
-
-// Initialize authentication listener when DOM is ready
-document.addEventListener('DOMContentLoaded', initAuthStateListener);
-
-// Export functions for potential use in other modules
-export { updateHeaderUI, handleLogout };
+});

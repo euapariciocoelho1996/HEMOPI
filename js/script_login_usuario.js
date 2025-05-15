@@ -1,18 +1,36 @@
 /**
- * User Login Module
- * Handles user authentication and login process
+ * Login and Registration functionality
+ * Handles form switching, validation, and Firebase Auth
  */
 
-import { auth, db } from "./firebase-config.js";
+// Import Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithPopup, 
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-import { showNotification, isValidEmail } from "./utils.js";
-import { loginUser, registerUser } from "./user-management.js";
 
-// Mensagens de motivação para o carrossel
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+    authDomain: "teste-2067f.firebaseapp.com",
+    projectId: "teste-2067f",
+    storageBucket: "teste-2067f.firebasestorage.app",
+    messagingSenderId: "160483034987",
+    appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+/**
+ * Animated message carousel
+ */
 const messages = [
     "Estamos quase lá... sua doação pode salvar vidas!",
     "Doe sangue, compartilhe vida!",
@@ -26,53 +44,13 @@ const messages = [
     "Doe sangue, doe vida, doe esperança."
 ];
 
-/**
- * Initialize login functionality
- */
-function initLoginPage() {
-    const loginForm = document.getElementById('login-form');
-    const messageCarousel = document.getElementById('message-carousel');
-    
-    // Iniciar carrossel de mensagens
-    if (messageCarousel) {
-        iniciarCarrosselMensagens();
-    }
-    
-    // Configurar formulário de login
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLoginSubmit);
-    }
-    
-    // Disponibilizar funções no escopo global
-    window.toggleForm = toggleForm;
-    window.toggleLocalForm = toggleLocalForm;
-    window.voltarLogin = voltarLogin;
-}
+// Constants
+const FADE_DURATION = 500;
+const MESSAGE_INTERVAL = 4000;
 
 /**
- * Inicia o carrossel de mensagens motivacionais
- */
-function iniciarCarrosselMensagens() {
-    const messageElement = document.getElementById('message-carousel');
-    if (!messageElement) return;
-    
-    let index = 0;
-    
-    function updateMessage() {
-        messageElement.style.opacity = 0;
-        setTimeout(() => {
-            index = (index + 1) % messages.length;
-            messageElement.textContent = messages[index];
-            messageElement.style.opacity = 1;
-        }, 500); // Duração do fade out
-    }
-
-    setInterval(updateMessage, 4000); // Troca a cada 4 segundos
-}
-
-/**
- * Alterna entre os formulários de login e cadastro
- * @param {string} action - 'login' ou 'signup'
+ * Toggle between login and signup forms
+ * @param {string} action - 'login' or 'signup'
  */
 function toggleForm(action) {
     const formTitle = document.getElementById("form-title");
@@ -85,17 +63,17 @@ function toggleForm(action) {
         alternativeAction.textContent = "ou continue com:";
         signupLink.innerHTML = 'Já tem uma conta? <a href="javascript:void(0);" onclick="toggleForm(\'login\')">Faça login aqui</a>';
         form.innerHTML = `
-            <input type="text" id="signup-name" placeholder="Nome completo" required>
+            <input type="text" id="name" placeholder="Nome completo" required>
             <input type="email" id="signup-email" placeholder="E-mail" required>
             <input type="password" id="signup-password" placeholder="Senha" required>
-            <input type="password" id="signup-confirm-password" placeholder="Confirme a senha" required>
             <div id="signup-password-strength-message"></div>
             <button type="submit" class="submit-btn">Cadastrar</button>
         `;
         
-        // Adicionar listener para o formulário de cadastro
-        form.removeEventListener('submit', handleLoginSubmit);
-        form.addEventListener('submit', handleSignupSubmit);
+        const passwordInput = document.getElementById("signup-password");
+        if (passwordInput) {
+            passwordInput.addEventListener('input', checkPasswordStrength);
+        }
     } else {
         formTitle.textContent = "Entre com sua conta";
         alternativeAction.textContent = "ou continue com:";
@@ -106,199 +84,208 @@ function toggleForm(action) {
             <div id="password-strength-message"></div>
             <button type="submit" class="submit-btn">Entrar</button>
         `;
-        
-        // Adicionar listener para o formulário de login
-        form.removeEventListener('submit', handleSignupSubmit);
-        form.addEventListener('submit', handleLoginSubmit);
     }
 }
 
 /**
- * Alterna para o formulário de cadastro de local
+ * Check password strength while typing
+ * @param {Event} event - Input event
  */
-function toggleLocalForm() {
-    const authContainer = document.getElementById('auth-container');
-    const localFormContainer = document.getElementById('local-form-container');
+function checkPasswordStrength(event) {
+    const password = event.target.value;
+    const messageElement = document.getElementById('signup-password-strength-message');
+    if (!messageElement) return;
+
+    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     
-    if (authContainer && localFormContainer) {
-        authContainer.style.display = 'none';
-        localFormContainer.style.display = 'block';
+    if (strongPasswordRegex.test(password)) {
+        messageElement.textContent = "Senha forte!";
+        messageElement.style.color = "green";
+    } else {
+        messageElement.textContent = "A senha precisa ter pelo menos 8 caracteres, incluindo uma letra maiúscula, um número e um caractere especial.";
+        messageElement.style.color = "red";
     }
 }
 
 /**
- * Volta para o formulário de login
+ * Validate login/signup form
+ * @param {Event} event - Form submit event
+ * @returns {boolean} - Whether form is valid
  */
-function voltarLogin() {
-    const authContainer = document.getElementById('auth-container');
-    const localFormContainer = document.getElementById('local-form-container');
+function validateForm(event) {
+    event.preventDefault();
     
-    if (authContainer && localFormContainer) {
-        localFormContainer.style.display = 'none';
-        authContainer.style.display = 'block';
+    const isSignup = !!document.getElementById("signup-email");
+    
+    if (isSignup) {
+        return validateSignupForm();
+    } else {
+        return validateLoginForm();
     }
 }
 
 /**
- * Handles login form submission
- * @param {Event} e - Form submit event
+ * Validate signup form fields
+ * @returns {boolean} - Whether form is valid
  */
-async function handleLoginSubmit(e) {
-    e.preventDefault();
+function validateSignupForm() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const password = document.getElementById("signup-password").value;
     
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+    if (!name || !email || !password) {
+        showAlert("Por favor, preencha todos os campos.");
+        return false;
+    }
+    
+    if (!validateEmail(email)) {
+        showAlert("Por favor, insira um e-mail válido.");
+        return false;
+    }
+    
+    if (!validatePasswordStrength(password)) {
+        showAlert("A senha não é forte o suficiente.");
+        return false;
+    }
+    
+    createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            showAlert("Usuário cadastrado com sucesso!");
+            window.location.href = "index.html";
+        })
+        .catch((error) => {
+            if (error.code === 'auth/email-already-in-use') {
+                showAlert("Este e-mail já está em uso.");
+            } else {
+                showAlert(`Erro: ${error.message}`);
+            }
+        });
+    
+    return true;
+}
+
+/**
+ * Validate login form fields
+ * @returns {boolean} - Whether form is valid
+ */
+function validateLoginForm() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
     
     if (!email || !password) {
-        showNotification('Erro', 'Por favor, preencha todos os campos.', 'error');
-        return;
+        showAlert("Por favor, preencha todos os campos.");
+        return false;
     }
     
-    if (!isValidEmail(email)) {
-        showNotification('Erro', 'Por favor, insira um email válido.', 'error');
-        return;
-    }
-    
-    showLoadingState(true, 'login');
-    
-    try {
-        const user = await loginUser(email, password);
-        
-        if (user) {
-            showNotification('Sucesso', 'Login realizado com sucesso!', 'success');
-            setTimeout(() => {
-                window.location.href = 'perfil.html';
-            }, 1500);
-        }
-    } catch (error) {
-        handleLoginError(error);
-    } finally {
-        showLoadingState(false, 'login');
-    }
-}
-
-/**
- * Handles signup form submission
- * @param {Event} e - Form submit event
- */
-async function handleSignupSubmit(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('signup-name').value.trim();
-    const email = document.getElementById('signup-email').value.trim();
-    const password = document.getElementById('signup-password').value;
-    const confirmPassword = document.getElementById('signup-confirm-password').value;
-    
-    // Validate form fields
-    if (!name || !email || !password || !confirmPassword) {
-        showNotification('Erro', 'Por favor, preencha todos os campos.', 'error');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showNotification('Erro', 'Por favor, insira um email válido.', 'error');
-        return;
-    }
-    
-    if (password !== confirmPassword) {
-        showNotification('Erro', 'As senhas não coincidem.', 'error');
-        return;
+    if (!validateEmail(email)) {
+        showAlert("Por favor, insira um e-mail válido.");
+        return false;
     }
     
     if (password.length < 6) {
-        showNotification('Erro', 'A senha deve ter pelo menos 6 caracteres.', 'error');
-        return;
+        showAlert("A senha deve ter pelo menos 6 caracteres.");
+        return false;
     }
     
-    showLoadingState(true, 'signup');
-    
-    try {
-        const user = await registerUser(email, password, {
-            nome: name,
-            dataCadastro: new Date().toISOString()
+    signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            window.location.href = "index.html";
+        })
+        .catch((error) => {
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                showAlert("E-mail ou senha incorretos.");
+            } else {
+                showAlert(`Erro: ${error.message}`);
+            }
         });
-        
-        if (user) {
-            showNotification('Sucesso', 'Cadastro realizado com sucesso! Faça login para continuar.', 'success');
-            
-            // Voltar para o formulário de login
-            toggleForm('login');
-        }
-    } catch (error) {
-        handleRegistrationError(error);
-    } finally {
-        showLoadingState(false, 'signup');
+    
+    return true;
+}
+
+/**
+ * Validate email format
+ * @param {string} email - Email to validate
+ * @returns {boolean} - Whether email is valid
+ */
+function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
+
+/**
+ * Validate password strength
+ * @param {string} password - Password to validate
+ * @returns {boolean} - Whether password is strong enough
+ */
+function validatePasswordStrength(password) {
+    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+}
+
+/**
+ * Show an alert message to the user
+ * @param {string} message - Message to display
+ */
+function showAlert(message) {
+    alert(message);
+}
+
+/**
+ * Rotate through motivational messages
+ */
+function rotateMessages() {
+    const messageElement = document.getElementById('message-carousel');
+    if (!messageElement) return;
+    
+    let index = 0;
+    
+    function updateMessage() {
+        messageElement.style.opacity = 0;
+        setTimeout(() => {
+            index = (index + 1) % messages.length;
+            messageElement.textContent = messages[index];
+            messageElement.style.opacity = 1;
+        }, FADE_DURATION);
+    }
+
+    setInterval(updateMessage, MESSAGE_INTERVAL);
+}
+
+/**
+ * Initialize Google Auth
+ */
+function initGoogleAuth() {
+    const googleBtn = document.querySelector('.social-login');
+    if (googleBtn) {
+        googleBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    showAlert(`Bem-vindo, ${result.user.displayName || 'Doador'}`);
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    showAlert(`Erro de autenticação: ${error.message}`);
+                });
+        });
     }
 }
 
 /**
- * Shows or hides loading state
- * @param {boolean} isLoading - Whether to show loading state
- * @param {string} formType - Type of form ('login' or 'signup')
+ * Initialize page functionality
  */
-function showLoadingState(isLoading, formType) {
-    let button;
-    
-    if (formType === 'login') {
-        button = document.querySelector('#login-form button[type="submit"]');
-        if (button) {
-            button.disabled = isLoading;
-            button.textContent = isLoading ? 'Entrando...' : 'Entrar';
-        }
-    } else if (formType === 'signup') {
-        button = document.querySelector('#login-form button[type="submit"]');
-        if (button) {
-            button.disabled = isLoading;
-            button.textContent = isLoading ? 'Cadastrando...' : 'Cadastrar';
-        }
+function init() {
+    rotateMessages();
+    initGoogleAuth();
+
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', validateForm);
     }
+
+    // Disponibiliza funções globalmente
+    window.toggleForm = toggleForm;
+    window.validateForm = validateForm;
 }
 
-/**
- * Handles login errors
- * @param {Error} error - Login error
- */
-function handleLoginError(error) {
-    console.error('Erro de login:', error);
-    
-    let message = 'Falha no login. Verifique suas credenciais.';
-    
-    switch (error.code) {
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-            message = 'Email ou senha incorretos.';
-            break;
-        case 'auth/too-many-requests':
-            message = 'Muitas tentativas de login. Tente novamente mais tarde.';
-            break;
-    }
-    
-    showNotification('Erro', message, 'error');
-}
-
-/**
- * Handles registration errors
- * @param {Error} error - Registration error
- */
-function handleRegistrationError(error) {
-    console.error('Erro de cadastro:', error);
-    
-    let message = 'Falha no cadastro. Tente novamente.';
-    
-    switch (error.code) {
-        case 'auth/email-already-in-use':
-            message = 'Este email já está em uso.';
-            break;
-        case 'auth/invalid-email':
-            message = 'Email inválido.';
-            break;
-        case 'auth/weak-password':
-            message = 'A senha deve ter pelo menos 6 caracteres.';
-            break;
-    }
-    
-    showNotification('Erro', message, 'error');
-}
-
-// Initialize the page when DOM is ready
-document.addEventListener('DOMContentLoaded', initLoginPage);
+// Initialize when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', init);
