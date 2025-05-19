@@ -187,10 +187,16 @@ function showCampaignForm(emailLocal) {
                 <input type="text" id="titulo" placeholder="Título da campanha" class="form-field" required>
                 <input type="text" id="local" placeholder="Local (email do local)" class="form-field" value="${emailLocal}" readonly>
                 <textarea id="descricao" placeholder="Descrição da campanha" class="form-field" required></textarea>
+                <input type="text" id="cidade" placeholder="Cidade" class="form-field" required>
+                <input type="text" id="estado" placeholder="Estado" class="form-field" required>
                 <label for="inicio">Data de Início:</label>
                 <input type="date" id="inicio" class="form-field" required>
                 <label for="fim">Data de Fim:</label>
                 <input type="date" id="fim" class="form-field" required>
+                
+                <input type="tel" id="contato" placeholder="Contato (telefone)" class="form-field" required>
+                <textarea id="requisitos" placeholder="Requisitos (opcional)" class="form-field"></textarea>
+                <textarea id="observacoes" placeholder="Observações (opcional)" class="form-field"></textarea>
             </div>
         `,
         confirmButtonText: 'Cadastrar',
@@ -200,15 +206,20 @@ function showCampaignForm(emailLocal) {
             const titulo = document.getElementById('titulo').value.trim();
             const local = document.getElementById('local').value.trim();
             const descricao = document.getElementById('descricao').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            const estado = document.getElementById('estado').value.trim().toUpperCase();
             const inicio = document.getElementById('inicio').value;
             const fim = document.getElementById('fim').value;
+            const contato = document.getElementById('contato').value.trim();
+            const requisitos = document.getElementById('requisitos').value.trim();
+            const observacoes = document.getElementById('observacoes').value.trim();
 
-            if (!titulo || !local || !descricao || !inicio || !fim) {
-                Swal.showValidationMessage('Preencha todos os campos!');
+            if (!titulo || !local || !descricao || !cidade || !estado || !inicio || !fim || !contato) {
+                Swal.showValidationMessage('Preencha todos os campos obrigatórios!');
                 return false;
             }
 
-            return { titulo, local, descricao, inicio, fim };
+            return { titulo, local, descricao, cidade, estado, inicio, fim, contato, requisitos, observacoes };
         }
     }).then(async (result) => {
         if (result.isConfirmed) {
@@ -216,6 +227,8 @@ function showCampaignForm(emailLocal) {
         }
     });
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const profileBtn = document.getElementById('abrirFormulario');

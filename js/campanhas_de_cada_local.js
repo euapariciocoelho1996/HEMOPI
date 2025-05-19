@@ -73,42 +73,55 @@ onAuthStateChanged(auth, async (user) => {
           <div class="urgencia ${urgencia}">${urgenciaTexto}</div>
           <h3>${dados.titulo}</h3>
           <p>${dados.descricao}</p>
+          <p><strong>Cidade:</strong> ${dados.cidade || "Não informada"}</p>
+          <p><strong>Estado:</strong> ${dados.estado || "Não informado"}</p>
           <p class="campanha-data">Início: ${inicioData} | Fim: ${fimData}</p>
           <button class="btn-editar" style="margin-top:10px;">Editar</button>
-        `;
+      `;
+
 
         // Evento de edição
         // Evento de edição
       card.querySelector(".btn-editar").addEventListener("click", async () => {
-        const result = await Swal.fire({
-          title: "Editar Campanha",
-          html: `
-            <input id="swal-titulo" class="swal2-input" placeholder="Título" value="${dados.titulo}">
-            <textarea id="swal-desc" class="swal2-textarea" placeholder="Descrição">${dados.descricao}</textarea>
-            <input id="swal-inicio" class="swal2-input" type="date" value="${inicioData}">
-            <input id="swal-fim" class="swal2-input" type="date" value="${fimData}">
-            <select id="swal-urgencia" class="swal2-select">
-              <option value="urgente" ${urgencia === "urgente" ? "selected" : ""}>URGENTE</option>
-              <option value="media" ${urgencia === "media" ? "selected" : ""}>IMPORTANTE</option>
-              <option value="baixa" ${urgencia === "baixa" ? "selected" : ""}>REGULAR</option>
-            </select>
-          `,
-          focusConfirm: false,
-          showCancelButton: true,
-          showDenyButton: true,
-          confirmButtonText: "Salvar",
-          denyButtonText: "Excluir",
-          cancelButtonText: "Cancelar",
-          preConfirm: () => {
-            return {
-              titulo: document.getElementById("swal-titulo").value,
-              descricao: document.getElementById("swal-desc").value,
-              inicio: document.getElementById("swal-inicio").value,
-              fim: document.getElementById("swal-fim").value,
-              urgencia: document.getElementById("swal-urgencia").value
-            };
-          }
-        });
+         const result = await Swal.fire({
+            title: "Editar Campanha",
+            html: `
+              <input id="swal-titulo" class="swal2-input" placeholder="Título" value="${dados.titulo}">
+              <textarea id="swal-desc" class="swal2-textarea" placeholder="Descrição">${dados.descricao}</textarea>
+              <input id="swal-inicio" class="swal2-input" type="date" value="${inicioData}">
+              <input id="swal-fim" class="swal2-input" type="date" value="${fimData}">
+              <input id="swal-cidade" class="swal2-input" placeholder="Cidade" value="${dados.cidade || ""}">
+              <input id="swal-estado" class="swal2-input" placeholder="Estado" value="${dados.estado || ""}">
+              <select id="swal-urgencia" class="swal2-select">
+                <option value="urgente" ${urgencia === "urgente" ? "selected" : ""}>URGENTE</option>
+                <option value="media" ${urgencia === "media" ? "selected" : ""}>IMPORTANTE</option>
+                <option value="baixa" ${urgencia === "baixa" ? "selected" : ""}>REGULAR</option>
+              </select>
+              <input id="swal-contato" class="swal2-input" placeholder="Contato (telefone)" value="${dados.contato || ""}">
+              <textarea id="swal-requisitos" class="swal2-textarea" placeholder="Requisitos (opcional)">${dados.requisitos || ""}</textarea>
+              <textarea id="swal-observacoes" class="swal2-textarea" placeholder="Observações (opcional)">${dados.observacoes || ""}</textarea>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: "Salvar",
+            denyButtonText: "Excluir",
+            cancelButtonText: "Cancelar",
+            preConfirm: () => {
+              return {
+                titulo: document.getElementById("swal-titulo").value,
+                descricao: document.getElementById("swal-desc").value,
+                inicio: document.getElementById("swal-inicio").value,
+                fim: document.getElementById("swal-fim").value,
+                cidade: document.getElementById("swal-cidade").value,
+                estado: document.getElementById("swal-estado").value,
+                urgencia: document.getElementById("swal-urgencia").value,
+                contato: document.getElementById("swal-contato").value,
+                requisitos: document.getElementById("swal-requisitos").value,
+                observacoes: document.getElementById("swal-observacoes").value
+              };
+            }
+          });
 
         // Salvar alterações
         if (result.isConfirmed && result.value) {
