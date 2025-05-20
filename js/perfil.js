@@ -271,6 +271,15 @@ function showCampaignForm(emailLocal) {
     });
 }
 
+function validarCNPJ(cnpj) {
+    // Remove tudo que não for dígito
+    cnpj = cnpj.replace(/[^\d]+/g, '');
+    // Verifica se tem exatamente 14 dígitos
+    return cnpj.match(/^\d{14}$/) !== null;
+}
+
+
+
 
 function showEditLocalForm(localData) {
     Swal.fire({
@@ -287,7 +296,7 @@ function showEditLocalForm(localData) {
         confirmButtonText: 'Salvar',
         confirmButtonColor: '#ce483c',
         focusConfirm: false,
-        preConfirm: () => {
+       preConfirm: async () => {
             const nome = document.getElementById('nomeLocal').value.trim();
             const cnpj = document.getElementById('cnpjLocal').value.trim();
             const contato = document.getElementById('contatoLocal').value.trim();
@@ -298,8 +307,25 @@ function showEditLocalForm(localData) {
                 return false;
             }
 
+            if (!validarCNPJ(cnpj)) {
+                Swal.showValidationMessage('CNPJ inválido!');
+                return false;
+            }
+
+            // Verifica se o CNPJ já está cadastrado (exceto para o próprio documento)
+            const locaisRef = collection(db, "locais");
+            const cnpjQuery = query(locaisRef, where("cnpj", "==", cnpj));
+            const cnpjSnapshot = await getDocs(cnpjQuery);
+            const outroCadastrado = cnpjSnapshot.docs.find(docSnap => docSnap.data().email !== localData.email);
+
+            if (outroCadastrado) {
+                Swal.showValidationMessage('Este CNPJ já está cadastrado para outro local.');
+                return false;
+            }
+
             return { nome, cnpj, contato, endereco };
         }
+
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
