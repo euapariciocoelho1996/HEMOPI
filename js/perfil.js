@@ -96,6 +96,7 @@ function renderLocalData(localData) {
         return;
     }
 
+    // Renderiza os dados do local
     container.innerHTML = `
         <div class="profile-card">
             <h3>Informações do Local Vinculado</h3>
@@ -106,7 +107,49 @@ function renderLocalData(localData) {
             <p><strong>Endereço:</strong> ${localData.endereco || 'Não informado'}</p>
         </div>
     `;
+
+    // Cria os botões novamente
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.gap = '10px';
+    buttonContainer.style.justifyContent = 'center';
+    buttonContainer.style.marginTop = '20px';
+
+    const campaignBtn = document.createElement('button');
+    campaignBtn.textContent = "Cadastrar Campanha";
+    campaignBtn.classList.add('form-button');
+    campaignBtn.addEventListener('click', () => showCampaignForm(localData.email));
+
+    const redirectBtn = document.createElement('button');
+    redirectBtn.textContent = "Editar Campanhas";
+    redirectBtn.classList.add('form-button');
+    redirectBtn.addEventListener('click', () => {
+        window.location.href = "campanhas_de_cada_local.html";
+    });
+
+    const registerUserBtn = document.createElement('button');
+    registerUserBtn.textContent = "Cadastrar Usuário";
+    registerUserBtn.classList.add('form-button');
+    registerUserBtn.addEventListener('click', () => {
+        // (copie aqui seu código do Swal.fire de cadastro de usuário)
+    });
+
+    const editLocalBtn = document.createElement('button');
+    editLocalBtn.textContent = "Editar Local";
+    editLocalBtn.classList.add('form-button');
+    editLocalBtn.addEventListener('click', () => {
+        showEditLocalForm(localData);
+    });
+
+    // Adiciona os botões ao container
+    buttonContainer.appendChild(campaignBtn);
+    buttonContainer.appendChild(redirectBtn);
+    buttonContainer.appendChild(registerUserBtn);
+    buttonContainer.appendChild(editLocalBtn);
+
+    container.appendChild(buttonContainer); // Anexa ao DOM
 }
+
 
 async function saveUserProfile(uid, data) {
     try {
@@ -229,6 +272,56 @@ function showCampaignForm(emailLocal) {
 }
 
 
+function showEditLocalForm(localData) {
+    Swal.fire({
+        title: 'Editar Informações do Local',
+        width: 600,
+        html: `
+            <div class="form-container">
+                <input type="text" id="nomeLocal" value="${localData.nome || ''}" placeholder="Nome do local" class="form-field" required>
+                <input type="text" id="cnpjLocal" value="${localData.cnpj || ''}" placeholder="CNPJ" class="form-field" required>
+                <input type="text" id="contatoLocal" value="${localData.contato || ''}" placeholder="Contato" class="form-field" required>
+                <input type="text" id="enderecoLocal" value="${localData.endereco || ''}" placeholder="Endereço" class="form-field" required>
+            </div>
+        `,
+        confirmButtonText: 'Salvar',
+        confirmButtonColor: '#ce483c',
+        focusConfirm: false,
+        preConfirm: () => {
+            const nome = document.getElementById('nomeLocal').value.trim();
+            const cnpj = document.getElementById('cnpjLocal').value.trim();
+            const contato = document.getElementById('contatoLocal').value.trim();
+            const endereco = document.getElementById('enderecoLocal').value.trim();
+
+            if (!nome || !cnpj || !contato || !endereco) {
+                Swal.showValidationMessage('Preencha todos os campos!');
+                return false;
+            }
+
+            return { nome, cnpj, contato, endereco };
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const locaisRef = collection(db, "locais");
+                const q = query(locaisRef, where("email", "==", localData.email));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const docId = querySnapshot.docs[0].id;
+                    const docRef = doc(db, "locais", docId);
+                    await setDoc(docRef, { ...localData, ...result.value }, { merge: true });
+                    showNotification("Sucesso", "Informações do local atualizadas!", "success");
+                    renderLocalData({ ...localData, ...result.value });
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar local:", error);
+                showNotification("Erro", "Não foi possível atualizar as informações do local.", "error");
+            }
+        }
+    });
+}
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const profileBtn = document.getElementById('abrirFormulario');
@@ -339,10 +432,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            buttonContainer.appendChild(campaignBtn);
-            buttonContainer.appendChild(redirectBtn);
-            buttonContainer.appendChild(registerUserBtn);
-            localInfoContainer.appendChild(buttonContainer);
+            const editLocalBtn = document.createElement('button');
+            editLocalBtn.textContent = "Editar Local";
+            editLocalBtn.classList.add('form-button');
+            editLocalBtn.addEventListener('click', async () => {
+                const locaisRef = collection(db, "locais");
+                const q = query(locaisRef, where("email", "==", user.email));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const localData = querySnapshot.docs[0].data();
+                    showEditLocalForm(localData);
+                }
+            });
+
+
 
         } else {
             const userData = await loadUserProfile(user.uid);
