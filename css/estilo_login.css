@@ -4,6 +4,33 @@
     box-sizing: border-box;
 }
 
+/* Customização do SweetAlert2 */
+.swal2-popup {
+    font-family: 'Roboto', sans-serif;
+    border-radius: 15px;
+}
+
+.swal2-title {
+    color: #333;
+    font-weight: 600;
+}
+
+.swal2-confirm {
+    background-color: rgb(206, 72, 60) !important;
+    border-radius: 20px !important;
+    padding: 12px 30px !important;
+    font-weight: bold !important;
+}
+
+.swal2-success-ring {
+    border-color: rgba(206, 72, 60, 0.3) !important;
+}
+
+.swal2-success-line-tip,
+.swal2-success-line-long {
+    background-color: rgb(206, 72, 60) !important;
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
