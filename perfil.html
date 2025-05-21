@@ -5,6 +5,7 @@
     <title>Perfil - Sangue Solidário</title>
     <link rel="stylesheet" href="css/perfil.css" />
     <link rel="stylesheet" href="css/estilos.css" />
+    <link rel="stylesheet" href="css/perfil.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
@@ -50,6 +51,14 @@
         </div>
     </div>
 
+    <div id="campanhasContainer" class="campanhas-lista">
+        <h2>Campanhas do Local</h2>
+        <input type="text" id="buscaCampanha" placeholder="Buscar campanha pelo título..." />
+        <ul id="listaCampanhas"></ul>
+    </div>
+
+
+    <script src="js/camapnhas_no_perfil.js" type="module"></script>
     <script src="js/perfil.js" type="module"></script>
     <script src="js/header.js" type="module"></script>
 </body>

@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 // SweetAlert2 já está no HTML via CDN, mas se quiser usar import, pode fazer:
 // import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js";
 
@@ -106,29 +106,45 @@ document.addEventListener("DOMContentLoaded", async () => {
                   return false;
                 }
 
+                const campanhaId = docSnap.id;
+
                 // Objeto com os dados que você quer salvar
                 const intencao = {
-                  campanhaId: docSnap.id,         // id do documento da campanha
-                  usuarioId: user.uid,             // id do usuário autenticado
-                  usuarioEmail: user.email || "", // email do usuário (se disponível)
+                  campanhaId,
+                  usuarioId: user.uid,
+                  usuarioEmail: user.email || "",
                   campanhaTitulo: dados.titulo,
-                  campanhaResponsavel: dados.local || "",  // responsável pela campanha
+                  campanhaResponsavel: dados.local || "",
                   timestamp: new Date(),
                 };
 
                 try {
+                  // Verifica se já existe intenção registrada para essa campanha por este usuário
+                  const q = query(
+                    collection(db, "intencaoDoacao"),
+                    where("usuarioId", "==", user.uid),
+                    where("campanhaId", "==", campanhaId)
+                  );
+                  const querySnapshot = await getDocs(q);
+
+                  if (!querySnapshot.empty) {
+                    Swal.showValidationMessage('Você já registrou intenção de doar nesta campanha.');
+                    return false; // impede fechamento do modal
+                  }
+
                   await addDoc(collection(db, "intencaoDoacao"), intencao);
+
+                  await Swal.fire({
+                    icon: 'success',
+                    title: 'Obrigado!',
+                    text: 'Sua intenção de doar foi registrada. A equipe entrará em contato se necessário.',
+                  });
                 } catch (error) {
                   Swal.showValidationMessage(`Erro ao registrar intenção: ${error.message}`);
                   return false;
                 }
-
-                await Swal.fire({
-                  icon: 'success',
-                  title: 'Obrigado!',
-                  text: 'Sua intenção de doar foi registrada. A equipe entrará em contato se necessário.',
-                });
               }
+
 
           });
         });
