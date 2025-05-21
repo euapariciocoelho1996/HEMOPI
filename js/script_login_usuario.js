@@ -5,8 +5,7 @@ import {
     GoogleAuthProvider, 
     signInWithPopup, 
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    sendPasswordResetEmail
+    signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
 // Firebase configuration
@@ -198,17 +197,8 @@ function validateSignupForm() {
     
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Cadastro realizado!',
-                text: `Bem-vindo(a) ${name} ao Sangue Solidário!`,
-                confirmButtonColor: '#ce483c',
-                showConfirmButton: true,
-                timer: 3000,
-                timerProgressBar: true
-            }).then(() => {
-                window.location.href = "index.html";
-            });
+            alert("Usuário cadastrado com sucesso!");
+            window.location.href = "index.html";
         })
         .catch((error) => {
             if (error.code === 'auth/email-already-in-use') {
@@ -244,6 +234,8 @@ function validateLoginForm() {
         valid = false;
     }
 
+    
+
     if (!valid) return false;
 
     signInWithEmailAndPassword(auth, email, password)
@@ -252,19 +244,9 @@ function validateLoginForm() {
         })
         .catch((error) => {
             if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro de autenticação',
-                    text: 'E-mail ou senha incorretos. Por favor, verifique suas credenciais.',
-                    confirmButtonColor: '#ce483c'
-                });
+                showFieldError(passwordInput, "E-mail ou senha incorretos.");
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro',
-                    text: `Ocorreu um erro: ${error.message}`,
-                    confirmButtonColor: '#ce483c'
-                });
+                showFieldError(passwordInput, "E-mail ou senha incorretos.");
             }
         });
     
@@ -330,25 +312,11 @@ function initGoogleAuth() {
         googleBtn.addEventListener('click', () => {
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login realizado!',
-                        text: `Bem-vindo(a) ${result.user.displayName || 'Doador'}!`,
-                        confirmButtonColor: '#ce483c',
-                        timer: 2000,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.href = "index.html";
-                    });
+                    showAlert(`Bem-vindo, ${result.user.displayName || 'Doador'}`);
+                    window.location.href = "index.html";
                 })
                 .catch((error) => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro de autenticação',
-                        text: error.message,
-                        confirmButtonColor: '#ce483c'
-                    });
+                    showAlert(`Erro de autenticação: ${error.message}`);
                 });
         });
     }
@@ -366,73 +334,9 @@ function init() {
         loginForm.addEventListener('submit', validateForm);
     }
 
-    // Initialize password recovery
-    initPasswordRecovery();
-
     // Disponibiliza funções globalmente
     window.toggleForm = toggleForm;
     window.validateForm = validateForm;
-}
-
-/**
- * Initialize password recovery functionality
- */
-function initPasswordRecovery() {
-    const forgotPasswordLink = document.getElementById('forgot-password-link');
-    if (forgotPasswordLink) {
-        forgotPasswordLink.addEventListener('click', handleForgotPassword);
-    }
-}
-
-/**
- * Handle forgot password request
- */
-function handleForgotPassword() {
-    Swal.fire({
-        title: 'Recuperação de Senha',
-        text: 'Digite seu e-mail para receber instruções de redefinição de senha',
-        input: 'email',
-        inputPlaceholder: 'E-mail',
-        showCancelButton: true,
-        confirmButtonText: 'Enviar',
-        confirmButtonColor: '#ce483c',
-        cancelButtonText: 'Cancelar',
-        showLoaderOnConfirm: true,
-        inputValidator: (email) => {
-            if (!email) {
-                return 'Digite seu e-mail';
-            }
-            if (!validateEmail(email)) {
-                return 'Digite um e-mail válido';
-            }
-        },
-        preConfirm: (email) => {
-            return sendPasswordResetEmail(auth, email)
-                .then(() => {
-                    return 'success';
-                })
-                .catch((error) => {
-                    throw new Error(error.message);
-                });
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-        if (result.value === 'success') {
-            Swal.fire({
-                icon: 'success',
-                title: 'E-mail enviado!',
-                text: 'Verifique sua caixa de entrada e siga as instruções',
-                confirmButtonColor: '#ce483c'
-            });
-        }
-    }).catch((error) => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro',
-            text: error.message || 'Ocorreu um erro ao enviar o e-mail. Tente novamente.',
-            confirmButtonColor: '#ce483c'
-        });
-    });
 }
 
 // Initialize when DOM is fully loaded

@@ -34,32 +34,17 @@ body {
   
   .menu-centralizado {
     display: flex;
-    gap: 15px;
+    gap: 30px;
     justify-content: center;
     align-items: center;
-    margin: 0 10px;
   }
   
   .menu-centralizado a {
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     color: #454545;
     font-weight: 500;
-    transition: all 0.3s ease;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  .menu-centralizado a i {
-    font-size: 18px;
-  }
-  
-  .menu-centralizado a:hover {
-    color: rgb(206, 72, 60);
-    background-color: rgba(206, 72, 60, 0.08);
+    transition: color 0.3s ease;
   }
   
   a[href="#solicite-demo"].cta-button {
@@ -73,18 +58,15 @@ body {
   
   .cta-button {
     background-color: rgb(206, 72, 60);
-    color: #ffffff !important;
+    color: #ffffff;
     padding: 10px 20px;
     border-radius: 30px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
   }
   
   .cta-button:hover {
-    background-color: rgb(176, 61, 51) !important;
-    color: white !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(206, 72, 60, 0.3);
+    background-color: rgb(206, 72, 60);
   }
   
   /* User menu when logged in */
@@ -155,57 +137,5 @@ body {
   .icon-login {
     height: 24px;
     margin-right: 8px;
-  }
-  
-  /* Media queries para responsividade */
-  @media (max-width: 992px) {
-    .header-moderno {
-      padding: 15px 20px;
-      flex-wrap: wrap;
-    }
-    
-    .menu-centralizado {
-      order: 3;
-      width: 100%;
-      margin-top: 15px;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .menu-centralizado a {
-      margin: 5px;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .header-moderno {
-      padding: 10px;
-      justify-content: space-between;
-    }
-    
-    .menu-centralizado {
-      overflow-x: auto;
-      justify-content: flex-start;
-      padding-bottom: 10px;
-    }
-    
-    .menu-centralizado::-webkit-scrollbar {
-      height: 3px;
-    }
-    
-    .menu-centralizado::-webkit-scrollbar-thumb {
-      background-color: rgba(206, 72, 60, 0.5);
-      border-radius: 10px;
-    }
-    
-    .menu-centralizado a {
-      white-space: nowrap;
-      font-size: 13px;
-    }
-    
-    .cta-button {
-      padding: 8px 16px;
-    }
   }
   

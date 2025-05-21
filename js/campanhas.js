@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 // SweetAlert2 já está no HTML via CDN, mas se quiser usar import, pode fazer:
 // import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
@@ -15,6 +16,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+
+const auth = getAuth(app);
 document.addEventListener("DOMContentLoaded", async () => {
   const containerPai = document.getElementById("campanhasContainer");
   if (!containerPai) return;
@@ -70,28 +76,64 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p class="campanha-localizacao">Localização: ${dados.cidade || "Cidade não informada"}, ${dados.estado || "Estado não informado"}</p>
       `;
 
-      card.addEventListener("click", () => {
-        Swal.fire({
-          title: dados.titulo,
-          html: `
-            <p><strong>Descrição:</strong> ${dados.descricao}</p>
-            <p><strong>Início:</strong> ${inicioData} | <strong>Fim:</strong> ${fimData}</p>
-            <p><strong>Urgência:</strong> ${urgenciaTexto}</p>
-            <p><strong>Organizada por:</strong> ${dados.local}</p>
-            <p><strong>Localização:</strong> ${dados.cidade || "Cidade não informada"}, ${dados.estado || "Estado não informado"}</p>
-            <hr>
-            <p><strong>Contato:</strong> ${dados.contato || "Não informado"}</p>
-            <p><strong>Requisitos:</strong> ${dados.requisitos || "Nenhum requisito adicional"}</p>
-            <p><strong>Observações:</strong> ${dados.observacoes || "Sem observações"}</p>
-          `,
-          showCloseButton: true,
-          focusConfirm: false,
-          confirmButtonText: 'Fechar',
-          customClass: {
-            popup: 'popup-campanha'
-          }
+
+        card.addEventListener("click", () => {
+          Swal.fire({
+            title: dados.titulo,
+            html: `
+              <p><strong>Descrição:</strong> ${dados.descricao}</p>
+              <p><strong>Início:</strong> ${inicioData} | <strong>Fim:</strong> ${fimData}</p>
+              <p><strong>Urgência:</strong> ${urgenciaTexto}</p>
+              <p><strong>Organizada por:</strong> ${dados.local}</p>
+              <p><strong>Localização:</strong> ${dados.cidade || "Cidade não informada"}, ${dados.estado || "Estado não informado"}</p>
+              <hr>
+              <p><strong>Contato:</strong> ${dados.contato || "Não informado"}</p>
+              <p><strong>Requisitos:</strong> ${dados.requisitos || "Nenhum requisito adicional"}</p>
+              <p><strong>Observações:</strong> ${dados.observacoes || "Sem observações"}</p>
+            `,
+            showCloseButton: true,
+            showCancelButton: true,
+            cancelButtonText: 'Fechar',
+            confirmButtonText: 'Quero doar nesta campanha',
+            focusConfirm: false,
+            customClass: {
+              popup: 'popup-campanha'
+            },
+            preConfirm: async () => {
+                const user = auth.currentUser;
+                if (!user) {
+                  Swal.showValidationMessage('Você precisa estar logado para registrar sua intenção. Por favor, faça login.');
+                  return false;
+                }
+
+                // Objeto com os dados que você quer salvar
+                const intencao = {
+                  campanhaId: docSnap.id,         // id do documento da campanha
+                  usuarioId: user.uid,             // id do usuário autenticado
+                  usuarioEmail: user.email || "", // email do usuário (se disponível)
+                  campanhaTitulo: dados.titulo,
+                  campanhaResponsavel: dados.local || "",  // responsável pela campanha
+                  timestamp: new Date(),
+                };
+
+                try {
+                  await addDoc(collection(db, "intencaoDoacao"), intencao);
+                } catch (error) {
+                  Swal.showValidationMessage(`Erro ao registrar intenção: ${error.message}`);
+                  return false;
+                }
+
+                await Swal.fire({
+                  icon: 'success',
+                  title: 'Obrigado!',
+                  text: 'Sua intenção de doar foi registrada. A equipe entrará em contato se necessário.',
+                });
+              }
+
+          });
         });
-      });
+
+
 
       cardsWrapper.appendChild(card);
     });

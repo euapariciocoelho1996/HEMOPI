@@ -8,8 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/estilo_login.css" />
   <link rel="stylesheet" href="css/feedback_campo_local.css" />
-  <!-- SweetAlert2 para mensagens -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     #message-carousel {
       transition: opacity 0.5s;
@@ -17,22 +15,6 @@
 
     #local-form-container {
       display: none;
-    }
-    
-    .forgot-password {
-      text-align: right;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      font-size: 0.85em;
-    }
-    
-    .forgot-password a {
-      color: #ce483c;
-      text-decoration: none;
-    }
-    
-    .forgot-password a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
@@ -64,10 +46,6 @@
         <!-- Mensagem de erro da senha será inserida aqui pelo JS -->
         
         <div id="password-strength-message"></div>
-        
-        <p class="forgot-password">
-          <a href="javascript:void(0);" id="forgot-password-link">Esqueceu sua senha?</a>
-        </p>
         
         <button type="submit" class="submit-btn">Entrar</button>
       </form>
@@ -122,6 +100,7 @@
   <!-- Scripts -->
   <script type="module" src="js/script_login_usuario.js"></script>
   <script type="module" src="js/script_cadastro_local.js"></script>
+  <script type="module" src="js/auth_status_manager.js"></script>
 
 </body>
 

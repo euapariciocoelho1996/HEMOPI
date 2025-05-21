@@ -127,40 +127,20 @@ async function validateLocalForm(event) {
         hasError = true;
     }
 
-    if (hasError) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Formulário incompleto',
-            text: 'Por favor, corrija os campos destacados para continuar.',
-            confirmButtonColor: '#ce483c'
-        });
+    if (hasError) return;
+
+    // Verifica duplicidade no Firestore
+    if (await isEmailExistsInLocais(email)) {
+        showFieldError("email", "Este e-mail já está vinculado a um local.");
         return;
     }
 
-    // Verifica duplicidade no Firestore
+    if (await isCNPJExists(cnpj)) {
+        showFieldError("cnpj", "CNPJ já cadastrado.");
+        return;
+    }
+
     try {
-        if (await isEmailExistsInLocais(email)) {
-            showFieldError("email", "Este e-mail já está vinculado a um local.");
-            Swal.fire({
-                icon: 'error',
-                title: 'E-mail já cadastrado',
-                text: 'Este e-mail já está vinculado a outro local de doação.',
-                confirmButtonColor: '#ce483c'
-            });
-            return;
-        }
-
-        if (await isCNPJExists(cnpj)) {
-            showFieldError("cnpj", "CNPJ já cadastrado.");
-            Swal.fire({
-                icon: 'error',
-                title: 'CNPJ já cadastrado',
-                text: 'Este CNPJ já está registrado em nossa plataforma.',
-                confirmButtonColor: '#ce483c'
-            });
-            return;
-        }
-
         // Cria o usuário no Firebase Auth
         await createUserWithEmailAndPassword(auth, email, senha);
 
@@ -176,37 +156,18 @@ async function validateLocalForm(event) {
             dataCadastro: new Date().toISOString()
         });
 
-        // Substituir o alert por SweetAlert2
-        Swal.fire({
-            icon: 'success',
-            title: 'Local cadastrado com sucesso!',
-            text: `O local "${nome}" foi registrado e já pode gerenciar campanhas de doação.`,
-            confirmButtonColor: '#ce483c',
-            showConfirmButton: true,
-            timer: 3000,
-            timerProgressBar: true
-        }).then(() => {
-            document.getElementById("local-form").reset();
-            updateHeaderUI({ displayName: nome, email: email });
-            window.location.href = "index.html";
-        });
+        alert("Local cadastrado com sucesso!");
+        document.getElementById("local-form").reset();
+
+        updateHeaderUI({ displayName: nome, email: email });
+
+        window.location.href = "index.html";
 
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {
             showFieldError("email", "Este e-mail já está em uso para login.");
-            Swal.fire({
-                icon: 'error',
-                title: 'E-mail já em uso',
-                text: 'Este e-mail já está sendo utilizado por outro usuário.',
-                confirmButtonColor: '#ce483c'
-            });
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao cadastrar',
-                text: error.message,
-                confirmButtonColor: '#ce483c'
-            });
+            alert("Erro ao cadastrar: " + error.message);
         }
     }
 }
