@@ -171,3 +171,9 @@ h1 {
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
+
+#refreshCampanhas:hover i {
+  transform: rotate(180deg);
+  transition: transform 0.4s ease;
+  color: #0056b3;
+}
