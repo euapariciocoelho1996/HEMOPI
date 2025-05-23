@@ -1,146 +1,145 @@
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
-    margin: 0;
-    padding: 0;
-    color: #333;
+  font-family: "Segoe UI", sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
 h1 {
-    text-align: center;
-    color: #333;
-    margin-top: 50px;
-    font-size: 36px;
-    font-weight: bold;
+  text-align: center;
+  color: #333;
+  margin-top: 50px;
+  font-size: 36px;
+  font-weight: bold;
 }
 
 .botao-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
 .perfil-btn {
-    padding: 15px 30px;
-    background-color: #007bff;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
+  padding: 15px 30px;
+  background-color: #007bff;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
 }
 
 .perfil-btn:hover {
-    background-color: #0056b3;
-    transform: translateY(-3px);
+  background-color: #0056b3;
+  transform: translateY(-3px);
 }
 
 .profile-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 .profile-card h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #444;
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #444;
 }
 
 .profile-card p {
-    font-size: 18px;
-    margin: 10px 0;
-    line-height: 1.6;
+  font-size: 18px;
+  margin: 10px 0;
+  line-height: 1.6;
 }
 
 .donation-info p {
-    font-size: 18px;
-    margin: 5px 0;
-    display: flex;
-    align-items: center;
+  font-size: 18px;
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
 }
 
 .donation-info i {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .form-field {
-    padding: 15px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
+  padding: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
 }
 
 .form-field:focus {
-    border-color: #007bff;
-    outline: none;
+  border-color: #007bff;
+  outline: none;
 }
 
 .popup-form {
-    border-radius: 12px !important;
+  border-radius: 12px !important;
 }
 
 .btn-editar {
-    background-color: #ffc107;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background-color: #ffc107;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .btn-editar:hover {
-    background-color: #e0a800;
-    transform: translateY(-3px);
+  background-color: #e0a800;
+  transform: translateY(-3px);
 }
 
 .login-link {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .login-link:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
-
 
 /* estilo de botao de cadastrar campanha */
 .form-button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #ce483c;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #ce483c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 .form-button:hover {
-    background-color: #a03a2f;
+  background-color: #a03a2f;
 }
 
 /* estilo lista de camapnhas no perfil */
@@ -177,4 +176,45 @@ h1 {
   transform: rotate(180deg);
   transition: transform 0.4s ease;
   color: #cb0d0d;
+}
+
+/* Estilo para dados de doação do usuario comum */
+.donation-info {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.donation-info p {
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+}
+
+.donation-info i {
+  font-style: normal; /* Para garantir que emoji não fique itálico */
+  font-size: 22px;
+  margin-right: 10px;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+/* Destaque no strong para chamar atenção */
+.donation-info strong {
+  margin-right: 6px;
+  color: #cb0d0d;
+  font-weight: 600;
+}
+
+/* Pequena animação no hover dos ícones */
+.donation-info p:hover i {
+  transform: scale(1.2);
+  color: #e63946;
 }
