@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 // SweetAlert2 já está no HTML via CDN, mas se quiser usar import, pode fazer:
 // import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js";
 
@@ -108,17 +108,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 const campanhaId = docSnap.id;
 
-                // Objeto com os dados que você quer salvar
-                const intencao = {
-                  campanhaId,
-                  usuarioId: user.uid,
-                  usuarioEmail: user.email || "",
-                  campanhaTitulo: dados.titulo,
-                  campanhaResponsavel: dados.local || "",
-                  timestamp: new Date(),
-                };
-
                 try {
+                  // Busca dados completos do usuário na coleção "usuarios"
+                  const userRef = doc(db, "usuarios", user.uid);
+                  const userSnap = await getDoc(userRef);
+
+                  if (!userSnap.exists()) {
+                    Swal.showValidationMessage('Dados do usuário não encontrados.');
+                    return false;
+                  }
+
+                  const userData = userSnap.data();
+
                   // Verifica se já existe intenção registrada para essa campanha por este usuário
                   const q = query(
                     collection(db, "intencaoDoacao"),
@@ -132,6 +133,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                     return false; // impede fechamento do modal
                   }
 
+                  const intencao = {
+                    campanhaId,
+                    usuarioId: user.uid,
+                    usuarioEmail: user.email || "",
+                    usuarioNome: userData.nome || "Nome não disponível",
+                    usuarioIdade: userData.idade || "",
+                    usuarioSexo: userData.sexo || "",
+                    usuarioRua: userData.rua || "",
+                    usuarioBairro: userData.bairro || "",
+                    campanhaTitulo: dados.titulo,
+                    campanhaResponsavel: dados.local || "",
+                    timestamp: new Date(),
+                  };
+
                   await addDoc(collection(db, "intencaoDoacao"), intencao);
 
                   await Swal.fire({
@@ -139,6 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     title: 'Obrigado!',
                     text: 'Sua intenção de doar foi registrada. A equipe entrará em contato se necessário.',
                   });
+
                 } catch (error) {
                   Swal.showValidationMessage(`Erro ao registrar intenção: ${error.message}`);
                   return false;

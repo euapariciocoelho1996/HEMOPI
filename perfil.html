@@ -1,73 +1,97 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Perfil - Sangue Solidário</title>
     <link rel="stylesheet" href="css/perfil.css" />
     <link rel="stylesheet" href="css/estilos.css" />
-    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="stylesheet" href="css/perfil.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
     <header class="header-moderno">
-        <div class="logo">
-            <img src="img/icone.png" alt="Logo Sangue Solidário">
-            <span>Sangue Solidário</span>
-        </div>
-  
-        <!-- Menu de Navegação -->
-        <nav class="menu-centralizado">
-            <a href="index.html">Início</a>
-            <a href="#informacoes-doacao">Sobre a Doação</a>
-            <a href="#secao-perfil-doador">Perfil do Doador</a>
-            <a href="campanhas_para_usuarios.html" class="cta-button">Campanhas Ativas</a>
-        </nav>
-  
-        <!-- Área de Autenticação do Usuário -->
-        <div id="user-header-options">
-            <a href="login.html" class="login">
-                <img src="img/login.png" alt="Ícone de login" class="icon-login">
-                Entrar
-            </a>
-        </div>
+      <div class="logo">
+        <img src="img/icone.png" alt="Logo Sangue Solidário" />
+        <span>Sangue Solidário</span>
+      </div>
+
+      <!-- Menu de Navegação -->
+      <nav class="menu-centralizado">
+        <a href="index.html">Início</a>
+        <a href="#informacoes-doacao">Sobre a Doação</a>
+        <a href="#secao-perfil-doador">Perfil do Doador</a>
+        <a href="campanhas_para_usuarios.html" class="cta-button"
+          >Campanhas Ativas</a
+        >
+      </nav>
+
+      <!-- Área de Autenticação do Usuário -->
+      <div id="user-header-options">
+        <a href="login.html" class="login">
+          <img src="img/login.png" alt="Ícone de login" class="icon-login" />
+          Entrar
+        </a>
+      </div>
     </header>
 
     <h1 id="pageTitle">Perfil</h1>
 
     <div class="botao-container">
-        <button class="perfil-btn" id="abrirFormulario">Atualizar seus dados</button>
+      <button class="perfil-btn" id="abrirFormulario">
+        Atualizar seus dados
+      </button>
     </div>
 
     <div id="profileInfo">
-        <div class="profile-card">
-            <h3>Carregando...</h3>
-            <p>Aguarde enquanto buscamos suas informações...</p>
-        </div>
+      <div class="profile-card">
+        <h3>Carregando...</h3>
+        <p>Aguarde enquanto buscamos suas informações...</p>
+      </div>
     </div>
 
     <div id="localInfo">
-        <div class="profile-card">
-            <h3>Buscando informações do local...</h3>
-        </div>
+      <div class="profile-card">
+        <h3>Buscando informações do local...</h3>
+      </div>
     </div>
 
-   <div id="campanhasContainer" class="campanhas-lista" style="display: none;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h2 style="margin: 0;">Campanhas do Local</h2>
-            <button id="refreshCampanhas" title="Atualizar lista" style="background: none; border: none; cursor: pointer; font-size: 1.4rem; color: #007bff;">
-            <i class="fas fa-sync-alt"></i>
-            </button>
-        </div>
-        <input type="text" id="buscaCampanha" placeholder="Buscar campanha pelo título..." />
-        <ul id="listaCampanhas"></ul>
+    <div id="campanhasContainer" class="campanhas-lista" style="display: none">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <h2 style="margin: 0">Campanhas do Local</h2>
+        <button
+          id="refreshCampanhas"
+          title="Atualizar lista"
+          style="
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: #007bff;
+          "
+        >
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+      <input
+        type="text"
+        id="buscaCampanha"
+        placeholder="Buscar campanha pelo título..."
+      />
+      <ul id="listaCampanhas"></ul>
     </div>
-
-
 
     <script src="js/campanhas_no_perfil.js" type="module"></script>
     <script src="js/perfil.js" type="module"></script>
     <script src="js/header.js" type="module"></script>
-</body>
+  </body>
 </html>
