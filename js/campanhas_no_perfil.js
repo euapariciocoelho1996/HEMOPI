@@ -198,8 +198,15 @@ onAuthStateChanged(auth, async (user) => {
                           if (docSnap.exists()) {
                             // Atualiza quantidade incrementando 1
                             const dadosAtuais = docSnap.data();
-                            const novaQtd =
-                              (dadosAtuais.quantidadeDoacoes || 0) + 1;
+                            const novaQtd = (dadosAtuais.quantidadeDoacoes || 0) + 1;
+                            
+                            // Adiciona log para debug
+                            console.log('Atualizando documento existente:', {
+                              email,
+                              dadosAtuais,
+                              novaQtd
+                            });
+
                             await setDoc(
                               docRef,
                               {
@@ -208,10 +215,19 @@ onAuthStateChanged(auth, async (user) => {
                                 quantidadeDoacoes: novaQtd,
                                 ultimaDoacao: dataDoacao,
                                 proxDoacao,
+                                atualizadoEm: new Date().toISOString()
                               },
                               { merge: true }
                             );
                           } else {
+                            // Adiciona log para debug
+                            console.log('Criando novo documento:', {
+                              email,
+                              nome,
+                              dataDoacao,
+                              proxDoacao
+                            });
+
                             // Cria novo registro
                             await setDoc(docRef, {
                               nome,
@@ -219,6 +235,7 @@ onAuthStateChanged(auth, async (user) => {
                               quantidadeDoacoes: 1,
                               ultimaDoacao: dataDoacao,
                               proxDoacao,
+                              criadoEm: new Date().toISOString()
                             });
                           }
 
@@ -226,16 +243,22 @@ onAuthStateChanged(auth, async (user) => {
                             icon: "success",
                             title: "Doação registrada",
                             html: `
-                      Doação de <b>${nome}</b> registrada com sucesso.<br>
-                      Próxima doação em: <b>${proxDoacao}</b>
-                    `,
+                              Doação de <b>${nome}</b> registrada com sucesso.<br>
+                              Próxima doação em: <b>${proxDoacao}</b>
+                            `,
                           });
                         } catch (error) {
-                          console.error("Erro ao registrar doação:", error);
+                          console.error("Erro detalhado ao registrar doação:", {
+                            error: error.message,
+                            code: error.code,
+                            email,
+                            nome
+                          });
+                          
                           Swal.fire({
                             icon: "error",
-                            title: "Erro",
-                            text: "Não foi possível registrar a doação.",
+                            title: "Erro ao registrar doação",
+                            text: `Não foi possível registrar a doação. Erro: ${error.message}`,
                           });
                         }
                       }
