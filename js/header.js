@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebas
 import {
   getAuth,
   onAuthStateChanged,
-  signOut
+  signOut,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
 // Configuração do Firebase
@@ -12,11 +12,12 @@ const firebaseConfig = {
   projectId: "teste-2067f",
   storageBucket: "teste-2067f.appspot.com",
   messagingSenderId: "160483034987",
-  appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+  appId: "1:160483034987:web:944eb621b02efea11b2e2e",
 };
 
 // Inicializa Firebase
-const app = initializeApp(firebaseConfig);
+import { app } from "./firebase-config.js";
+
 const auth = getAuth(app);
 
 // Atualiza o header com base no login
