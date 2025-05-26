@@ -81,7 +81,7 @@ onAuthStateChanged(auth, async (user) => {
       const data = doc.data();
       const section = document.createElement("section");
       section.innerHTML = `
-        <h4>Registro ${index++}</h4>
+        
         <p><strong>Nome:</strong> ${data.nome || "Não informado"}</p>
         <p><strong>Última Doação:</strong> ${
           data.ultimaDoacao || "Não informado"
@@ -89,9 +89,12 @@ onAuthStateChanged(auth, async (user) => {
         <p><strong>Próxima Doação:</strong> ${
           data.proxDoacao || "Não informado"
         }</p>
-        <p><strong>Total de Doações:</strong> ${data.quantidadeDoacoes ?? 0}</p>
+        <p class="total-doacoes"><strong>Total de Doações:</strong> ${
+          data.quantidadeDoacoes ?? 0
+        }</p>
         <hr/>
       `;
+
       dadosDiv.appendChild(section);
     });
 
