@@ -1,177 +1,147 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-// SweetAlert2 já está no HTML via CDN, mas se quiser usar import, pode fazer:
-// import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js";
+/**
+ * Campaign management for users
+ * Displays active campaigns and handles donation intentions
+ */
 
+import { getAuthInstance } from './auth-manager.js';
+import { getAllDocuments, addDocument, queryDocuments, getDocument } from './firebase-services.js';
+import { showNotification } from './utils.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-  authDomain: "teste-2067f.firebaseapp.com",
-  projectId: "teste-2067f",
-  storageBucket: "teste-2067f.appspot.com",
-  messagingSenderId: "160483034987",
-  appId: "1:160483034987:web:944eb621b02efea11b2e2e"
-};
+const auth = getAuthInstance();
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-
-
-const auth = getAuth(app);
 document.addEventListener("DOMContentLoaded", async () => {
   const containerPai = document.getElementById("campanhasContainer");
-  if (!containerPai) return;
-
-  const campanhasRef = collection(db, "campanhas");
-  const querySnapshot = await getDocs(campanhasRef);
-
+  
+  // Create main section
   const section = document.createElement("section");
-  section.id = "campanhas";
-  section.classList.add("secao-campanhas");
-
+  section.className = "campanhas-section";
+  
   const container = document.createElement("div");
   container.className = "campanhas-container";
-
-  container.innerHTML = `
-    <h2>Campanhas de Doação Ativas</h2>
-    <p class="campanha-subtitulo">Veja todas as campanhas registradas na plataforma.</p>
-  `;
-
-  const cardsWrapper = document.createElement("div");
-  cardsWrapper.className = "campanhas-cards";
-
-  if (querySnapshot.empty) {
-    cardsWrapper.innerHTML = "<p>Nenhuma campanha cadastrada até o momento.</p>";
+  
+  const titulo = document.createElement("h2");
+  titulo.textContent = "Campanhas Ativas";
+  container.appendChild(titulo);
+  
+  const subtitulo = document.createElement("p");
+  subtitulo.className = "campanha-subtitulo";
+  subtitulo.textContent = "Participe das campanhas de doação e ajude a salvar vidas";
+  container.appendChild(subtitulo);
+  
+  // Get all campaigns
+  const campanhas = await getAllDocuments('campanhas');
+  
+  if (campanhas.length === 0) {
+    const mensagem = document.createElement("p");
+    mensagem.textContent = "Nenhuma campanha ativa no momento.";
+    mensagem.className = "no-campaigns-message";
+    container.appendChild(mensagem);
   } else {
-    querySnapshot.forEach(docSnap => {
-      const dados = docSnap.data();
-
-      const inicioData = dados.inicio?.toDate
-        ? dados.inicio.toDate().toISOString().split("T")[0]
-        : dados.inicio || "";
-
-      const fimData = dados.fim?.toDate
-        ? dados.fim.toDate().toISOString().split("T")[0]
-        : dados.fim || "";
-
-      const urgencia = dados.urgencia || "baixa";
-      const urgenciaTexto = {
-        urgente: "URGENTE",
-        media: "IMPORTANTE",
-        baixa: "REGULAR"
-      }[urgencia];
-
-      const card = document.createElement("div");
-      card.classList.add("campanha-card");
+    const cardsWrapper = document.createElement("div");
+    cardsWrapper.className = "campanhas-cards";
     
+    campanhas.forEach(campanha => {
+      const card = document.createElement("div");
+      card.className = "campanha-card";
+      
+      // Determine urgency level
+      const urgencia = campanha.urgencia || "baixa";
+      const urgenciaClass = urgencia === "alta" ? "urgente" : 
+                           urgencia === "media" ? "media" : "baixa";
+      
       card.innerHTML = `
-        <div class="urgencia ${urgencia}">${urgenciaTexto}</div>
-        <h3>${dados.titulo}</h3>
-        <p>${dados.descricao}</p>
-        <p class="campanha-data">Início: ${inicioData} | Fim: ${fimData}</p>
-        <p class="campanha-local">Organizada por: ${dados.local}</p>
-        <p class="campanha-localizacao">Localização: ${dados.cidade || "Cidade não informada"}, ${dados.estado || "Estado não informado"}</p>
+        <div class="urgencia ${urgenciaClass}">${urgencia.toUpperCase()}</div>
+        <h3>${campanha.titulo || 'Título não disponível'}</h3>
+        <p class="campanha-local">${campanha.local || campanha.responsavel || 'Local não informado'}</p>
+        <p>${campanha.descricao || 'Descrição não disponível'}</p>
+        <p class="campanha-data">Até: ${campanha.dataFim || 'Data não informada'}</p>
       `;
+      
+      card.addEventListener("click", () => {
+        Swal.fire({
+          title: campanha.titulo,
+          html: `
+            <div style="text-align: left;">
+              <p><strong>Local:</strong> ${campanha.local || campanha.responsavel}</p>
+              <p><strong>Descrição:</strong> ${campanha.descricao}</p>
+              <p><strong>Data de término:</strong> ${campanha.dataFim}</p>
+              <p><strong>Responsável:</strong> ${campanha.responsavel}</p>
+              ${campanha.observacoes ? `<p><strong>Observações:</strong> ${campanha.observacoes}</p>` : ''}
+            </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: 'Registrar Intenção de Doar',
+          cancelButtonText: 'Fechar',
+          confirmButtonColor: '#ce483c',
+          preConfirm: async () => {
+            const user = auth.currentUser;
+            if (!user) {
+              Swal.showValidationMessage('Você precisa estar logado para registrar sua intenção. Por favor, faça login.');
+              return false;
+            }
 
+            const campanhaId = campanha.id;
 
-        card.addEventListener("click", () => {
-          Swal.fire({
-            title: dados.titulo,
-            html: `
-              <p><strong>Descrição:</strong> ${dados.descricao}</p>
-              <p><strong>Início:</strong> ${inicioData} | <strong>Fim:</strong> ${fimData}</p>
-              <p><strong>Urgência:</strong> ${urgenciaTexto}</p>
-              <p><strong>Organizada por:</strong> ${dados.local}</p>
-              <p><strong>Localização:</strong> ${dados.cidade || "Cidade não informada"}, ${dados.estado || "Estado não informado"}</p>
-              <hr>
-              <p><strong>Contato:</strong> ${dados.contato || "Não informado"}</p>
-              <p><strong>Requisitos:</strong> ${dados.requisitos || "Nenhum requisito adicional"}</p>
-              <p><strong>Observações:</strong> ${dados.observacoes || "Sem observações"}</p>
-            `,
-            showCloseButton: true,
-            showCancelButton: true,
-            cancelButtonText: 'Fechar',
-            confirmButtonText: 'Quero doar nesta campanha',
-            focusConfirm: false,
-            customClass: {
-              popup: 'popup-campanha'
-            },
-            preConfirm: async () => {
-                const user = auth.currentUser;
-                if (!user) {
-                  Swal.showValidationMessage('Você precisa estar logado para registrar sua intenção. Por favor, faça login.');
-                  return false;
-                }
+            try {
+              // Get complete user data
+              const userData = await getDocument('usuarios', user.uid);
 
-                const campanhaId = docSnap.id;
-
-                try {
-                  // Busca dados completos do usuário na coleção "usuarios"
-                  const userRef = doc(db, "usuarios", user.uid);
-                  const userSnap = await getDoc(userRef);
-
-                  if (!userSnap.exists()) {
-                    Swal.showValidationMessage('Dados do usuário não encontrados.');
-                    return false;
-                  }
-
-                  const userData = userSnap.data();
-
-                  // Verifica se já existe intenção registrada para essa campanha por este usuário
-                  const q = query(
-                    collection(db, "intencaoDoacao"),
-                    where("usuarioId", "==", user.uid),
-                    where("campanhaId", "==", campanhaId)
-                  );
-                  const querySnapshot = await getDocs(q);
-
-                  if (!querySnapshot.empty) {
-                    Swal.showValidationMessage('Você já registrou intenção de doar nesta campanha.');
-                    return false; // impede fechamento do modal
-                  }
-
-                  const intencao = {
-                    campanhaId,
-                    usuarioId: user.uid,
-                    usuarioEmail: user.email || "",
-                    usuarioNome: userData.nome || "Nome não disponível",
-                    usuarioIdade: userData.idade || "",
-                    usuarioSexo: userData.sexo || "",
-                    usuarioRua: userData.rua || "",
-                    usuarioBairro: userData.bairro || "",
-                    campanhaTitulo: dados.titulo,
-                    campanhaResponsavel: dados.local || "",
-                    timestamp: new Date(),
-                  };
-
-                  await addDoc(collection(db, "intencaoDoacao"), intencao);
-
-                  await Swal.fire({
-                    icon: 'success',
-                    title: 'Obrigado!',
-                    text: 'Sua intenção de doar foi registrada. A equipe entrará em contato se necessário.',
-                  });
-
-                } catch (error) {
-                  Swal.showValidationMessage(`Erro ao registrar intenção: ${error.message}`);
-                  return false;
-                }
+              if (!userData) {
+                Swal.showValidationMessage('Dados do usuário não encontrados.');
+                return false;
               }
 
+              // Check if intention already exists
+              const existingIntentions = await queryDocuments('intencaoDoacao', [
+                ['usuarioId', '==', user.uid],
+                ['campanhaId', '==', campanhaId]
+              ]);
 
-          });
+              if (existingIntentions.length > 0) {
+                Swal.showValidationMessage('Você já registrou intenção de doar nesta campanha.');
+                return false;
+              }
+
+              const intencao = {
+                campanhaId,
+                usuarioId: user.uid,
+                usuarioEmail: user.email || "",
+                usuarioNome: userData.nome || "Nome não disponível",
+                usuarioIdade: userData.idade || "",
+                usuarioSexo: userData.sexo || "",
+                usuarioRua: userData.rua || "",
+                usuarioBairro: userData.bairro || "",
+                campanhaTitulo: campanha.titulo,
+                campanhaResponsavel: campanha.local || campanha.responsavel || "",
+                timestamp: new Date(),
+              };
+
+              const docId = await addDocument('intencaoDoacao', intencao);
+              
+              if (docId) {
+                await Swal.fire({
+                  icon: 'success',
+                  title: 'Obrigado!',
+                  text: 'Sua intenção de doar foi registrada. A equipe entrará em contato se necessário.',
+                });
+              } else {
+                throw new Error('Falha ao registrar intenção');
+              }
+
+            } catch (error) {
+              Swal.showValidationMessage(`Erro ao registrar intenção: ${error.message}`);
+              return false;
+            }
+          }
         });
-
-
+      });
 
       cardsWrapper.appendChild(card);
     });
+    
+    container.appendChild(cardsWrapper);
   }
 
-  container.appendChild(cardsWrapper);
   section.appendChild(container);
   containerPai.appendChild(section);
 });
