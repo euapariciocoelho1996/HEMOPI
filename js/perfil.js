@@ -1,196 +1,109 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+/**
+ * User profile management
+ * Handles user profile display, editing, and campaign management
+ */
+
+import { getAuthInstance, initAuthStateMonitoring } from './auth-manager.js';
+import { 
+    getUserProfile, 
+    saveUserProfile, 
+    addDocument, 
+    queryDocuments,
+    getDocument,
+    setDocument 
+} from './firebase-services.js';
+import { showNotification, showConfirmDialog } from './utils.js';
 import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signOut,
+    getAuth,
+    createUserWithEmailAndPassword,
+    signOut,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-  authDomain: "teste-2067f.firebaseapp.com",
-  projectId: "teste-2067f",
-  storageBucket: "teste-2067f.appspot.com",
-  messagingSenderId: "160483034987",
-  appId: "1:160483034987:web:944eb621b02efea11b2e2e",
-};
-
 import { app } from "./firebase-config.js";
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+const auth = getAuthInstance();
 
-function showNotification(title, message, type = "info") {
-  if (typeof Swal !== "undefined") {
-    Swal.fire({
-      title: title,
-      text: message,
-      icon: type,
-      confirmButtonColor: "#ce483c",
-    });
-  } else {
-    alert(`${title}: ${message}`);
-  }
-}
-
+/**
+ * Loads and displays user profile
+ * @param {string} uid - User ID
+ */
 async function loadUserProfile(uid) {
-  try {
-    const userRef = doc(db, "usuarios", uid);
-    const docSnap = await getDoc(userRef);
-    return docSnap.exists() ? docSnap.data() : null;
-  } catch (error) {
-    console.error("Erro ao carregar perfil:", error);
-    showNotification("Erro", "Erro ao carregar perfil do usuário.", "error");
-    return null;
-  }
+    try {
+        const userData = await getUserProfile(uid);
+        if (userData) {
+            renderUserProfile(userData);
+        }
+        return userData;
+    } catch (error) {
+        console.error("Erro ao carregar perfil:", error);
+        showNotification("Erro", "Erro ao carregar perfil do usuário.", "error");
+        return null;
+    }
 }
 
+/**
+ * Renders user profile information
+ * @param {Object} userData - User data
+ */
 function renderUserProfile(userData) {
-  const container = document.getElementById("profileInfo");
-  if (!container) return;
+    const profileInfo = document.getElementById("profileInfo");
+    if (!profileInfo) return;
 
-  container.innerHTML = `
+    profileInfo.innerHTML = `
         <div class="profile-card">
-            <h3>Dados do Usuário</h3>
+            <h3>Informações Pessoais</h3>
             <p><strong>Nome:</strong> ${userData.nome || "Não informado"}</p>
             <p><strong>Idade:</strong> ${userData.idade || "Não informada"}</p>
             <p><strong>Sexo:</strong> ${userData.sexo || "Não informado"}</p>
-            <p><strong>Rua:</strong> ${userData.rua || "Não informada"}</p>
-            <p><strong>Bairro:</strong> ${
-              userData.bairro || "Não informado"
-            }</p>
-            
+            <p><strong>Endereço:</strong> ${userData.rua || "Não informado"}, ${userData.bairro || "Não informado"}</p>
+            <p><strong>E-mail:</strong> ${userData.email || "Não informado"}</p>
         </div>
     `;
 }
 
-async function loadLocalByEmail(email) {
-  try {
-    const locaisRef = collection(db, "locais");
-    const q = query(locaisRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
+/**
+ * Loads and displays local information
+ * @param {string} email - User email
+ */
+async function loadLocalInfo(email) {
+    try {
+        const locais = await queryDocuments('locais', [['email', '==', email]]);
+        
+        const localInfo = document.getElementById("localInfo");
+        if (!localInfo) return;
 
-    if (!querySnapshot.empty) {
-      const localData = querySnapshot.docs[0].data();
-      renderLocalData(localData);
-      return true;
-    } else {
-      renderLocalData(null);
-      return false;
+        if (locais.length > 0) {
+            const localData = locais[0];
+            localInfo.innerHTML = `
+                <div class="profile-card">
+                    <h3>Informações do Local</h3>
+                    <p><strong>Nome:</strong> ${localData.nome}</p>
+                    <p><strong>Endereço:</strong> ${localData.endereco}</p>
+                    <p><strong>Contato:</strong> ${localData.contato}</p>
+                    <p><strong>CNPJ:</strong> ${localData.cnpj}</p>
+                </div>
+            `;
+        } else {
+            localInfo.innerHTML = `
+                <div class="profile-card">
+                    <h3>Local não encontrado</h3>
+                    <p>Nenhum local cadastrado com este e-mail.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error("Erro ao buscar dados do local:", error);
+        showNotification("Erro", "Erro ao buscar dados do local.", "error");
     }
-  } catch (error) {
-    console.error("Erro ao buscar local:", error);
-    showNotification("Erro", "Erro ao buscar dados do local.", "error");
-    return false;
-  }
 }
 
-function renderLocalData(localData) {
-  const container = document.getElementById("localInfo");
-  if (!container) return;
-
-  if (!localData) {
-    container.innerHTML = `
-            <div class="profile-card">
-                <h3>Local não encontrado</h3>
-                <p>Não há dados de local vinculados ao seu e-mail.</p>
-            </div>
-        `;
-    return;
-  }
-
-  // Renderiza os dados do local
-  container.innerHTML = `
-        <div class="profile-card">
-            <h3>Informações do Local Vinculado</h3>
-            <p><strong>Nome:</strong> ${localData.nome || "Não informado"}</p>
-            <p><strong>CNPJ:</strong> ${localData.cnpj || "Não informado"}</p>
-            <p><strong>Contato:</strong> ${
-              localData.contato || "Não informado"
-            }</p>
-            <p><strong>Email:</strong> ${localData.email || "Não informado"}</p>
-            <p><strong>Endereço:</strong> ${
-              localData.endereco || "Não informado"
-            }</p>
-        </div>
-    `;
-
-  // Cria os botões novamente
-  const buttonContainer = document.createElement("div");
-  buttonContainer.style.display = "flex";
-  buttonContainer.style.gap = "10px";
-  buttonContainer.style.justifyContent = "center";
-  buttonContainer.style.marginTop = "20px";
-
-  const campaignBtn = document.createElement("button");
-  campaignBtn.textContent = "Cadastrar Campanha";
-  campaignBtn.classList.add("form-button");
-  campaignBtn.addEventListener("click", () =>
-    showCampaignForm(localData.email)
-  );
-
-  const redirectBtn = document.createElement("button");
-  redirectBtn.textContent = "Editar Campanhas";
-  redirectBtn.classList.add("form-button");
-  redirectBtn.addEventListener("click", () => {
-    window.location.href = "campanhas_de_cada_local.html";
-  });
-
-  const registerUserBtn = document.createElement("button");
-  registerUserBtn.textContent = "Cadastrar Usuário";
-  registerUserBtn.classList.add("form-button");
-  registerUserBtn.addEventListener("click", () => {
-    // (copie aqui seu código do Swal.fire de cadastro de usuário)
-  });
-
-  const editLocalBtn = document.createElement("button");
-  editLocalBtn.textContent = "Editar Local";
-  editLocalBtn.classList.add("form-button");
-  editLocalBtn.addEventListener("click", () => {
-    showEditLocalForm(localData);
-  });
-
-  // Adiciona os botões ao container
-  buttonContainer.appendChild(campaignBtn);
-  buttonContainer.appendChild(redirectBtn);
-  buttonContainer.appendChild(registerUserBtn);
-  buttonContainer.appendChild(editLocalBtn);
-
-  container.appendChild(buttonContainer); // Anexa ao DOM
-}
-
-async function saveUserProfile(uid, data) {
-  try {
-    const userRef = doc(db, "usuarios", uid);
-    await setDoc(userRef, data, { merge: true });
-    return true;
-  } catch (error) {
-    console.error("Erro ao salvar perfil:", error);
-    showNotification(
-      "Erro",
-      "Não foi possível salvar os dados do perfil.",
-      "error"
-    );
-    return false;
-  }
-}
-
+/**
+ * Shows profile editing form
+ */
 function showProfileForm() {
-  Swal.fire({
-    title: "Atualize seus dados",
-    width: 600,
-    html: `
+    Swal.fire({
+        title: "Atualize seus dados",
+        width: 600,
+        html: `
             <div class="form-container">
                 <input type="text" id="nome" placeholder="Nome completo" class="form-field" required>
                 <input type="number" id="idade" placeholder="Idade" class="form-field" required>
@@ -204,356 +117,300 @@ function showProfileForm() {
                 <input type="text" id="bairro" placeholder="Bairro" class="form-field" required>
             </div>
         `,
-    confirmButtonText: "Salvar",
-    confirmButtonColor: "#ce483c",
-    focusConfirm: false,
-    preConfirm: () => {
-      const nome = document.getElementById("nome").value.trim();
-      const idade = document.getElementById("idade").value.trim();
-      const sexo = document.getElementById("sexo").value.trim();
-      const rua = document.getElementById("rua").value.trim();
-      const bairro = document.getElementById("bairro").value.trim();
+        confirmButtonText: "Salvar",
+        confirmButtonColor: "#ce483c",
+        focusConfirm: false,
+        preConfirm: () => {
+            const nome = document.getElementById("nome").value.trim();
+            const idade = document.getElementById("idade").value.trim();
+            const sexo = document.getElementById("sexo").value.trim();
+            const rua = document.getElementById("rua").value.trim();
+            const bairro = document.getElementById("bairro").value.trim();
 
-      if (!nome || !idade || !sexo || !rua || !bairro) {
-        Swal.showValidationMessage("Preencha todos os campos!");
-        return false;
-      }
+            if (!nome || !idade || !sexo || !rua || !bairro) {
+                Swal.showValidationMessage("Preencha todos os campos!");
+                return false;
+            }
 
-      return { nome, idade, sexo, rua, bairro };
-    },
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      const saved = await saveUserProfile(auth.currentUser.uid, result.value);
-      if (saved) {
-        showNotification("Sucesso", "Dados atualizados.", "success");
-        renderUserProfile(result.value);
-      }
-    }
-  });
+            return { nome, idade, sexo, rua, bairro };
+        },
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const saved = await saveUserProfile(auth.currentUser.uid, result.value);
+            if (saved) {
+                showNotification("Sucesso", "Dados atualizados.", "success");
+                renderUserProfile(result.value);
+            }
+        }
+    });
 }
 
+/**
+ * Registers a new campaign
+ * @param {Object} campanha - Campaign data
+ */
 async function cadastrarCampanha(campanha) {
-  try {
-    const campanhasRef = collection(db, "campanhas");
-    const docRef = await addDoc(campanhasRef, campanha);
-    console.log("Campanha cadastrada com ID:", docRef.id);
-    showNotification("Sucesso", "Campanha cadastrada com sucesso!", "success");
-  } catch (error) {
-    console.error("Erro ao cadastrar campanha:", error);
-    showNotification("Erro", "Não foi possível cadastrar a campanha.", "error");
-  }
+    try {
+        const docId = await addDocument('campanhas', campanha);
+        if (docId) {
+            console.log("Campanha cadastrada com ID:", docId);
+            showNotification("Sucesso", "Campanha cadastrada com sucesso!", "success");
+        } else {
+            throw new Error("Falha ao cadastrar campanha");
+        }
+    } catch (error) {
+        console.error("Erro ao cadastrar campanha:", error);
+        showNotification("Erro", "Não foi possível cadastrar a campanha.", "error");
+    }
 }
 
-function showCampaignForm(emailLocal) {
-  Swal.fire({
-    title: "Cadastrar Nova Campanha",
-    width: 600,
-    html: `
+/**
+ * Shows campaign registration form
+ */
+function showCampaignForm() {
+    Swal.fire({
+        title: "Cadastrar Nova Campanha",
+        width: 700,
+        html: `
             <div class="form-container">
                 <input type="text" id="titulo" placeholder="Título da campanha" class="form-field" required>
-                <input type="text" id="local" placeholder="Local (email do local)" class="form-field" value="${emailLocal}" readonly>
-                <textarea id="descricao" placeholder="Descrição da campanha" class="form-field" required></textarea>
+                <textarea id="descricao" placeholder="Descrição da campanha" class="form-field" rows="3" required></textarea>
+                <input type="date" id="inicio" class="form-field" required>
+                <input type="date" id="fim" class="form-field" required>
+                <select id="urgencia" class="form-field" required>
+                    <option value="">Selecione a urgência</option>
+                    <option value="baixa">Baixa</option>
+                    <option value="media">Média</option>
+                    <option value="alta">Alta</option>
+                </select>
+                <input type="text" id="local" placeholder="Local da campanha" class="form-field" required>
                 <input type="text" id="cidade" placeholder="Cidade" class="form-field" required>
                 <input type="text" id="estado" placeholder="Estado" class="form-field" required>
-                <label for="inicio">Data de Início:</label>
-                <input type="date" id="inicio" class="form-field" required>
-                <label for="fim">Data de Fim:</label>
-                <input type="date" id="fim" class="form-field" required>
-                
-                <input type="tel" id="contato" placeholder="Contato (telefone)" class="form-field" required>
-                <textarea id="requisitos" placeholder="Requisitos (opcional)" class="form-field"></textarea>
-                <textarea id="observacoes" placeholder="Observações (opcional)" class="form-field"></textarea>
+                <input type="text" id="contato" placeholder="Contato" class="form-field">
+                <textarea id="requisitos" placeholder="Requisitos especiais" class="form-field" rows="2"></textarea>
+                <textarea id="observacoes" placeholder="Observações" class="form-field" rows="2"></textarea>
             </div>
         `,
-    confirmButtonText: "Cadastrar",
-    confirmButtonColor: "#ce483c",
-    focusConfirm: false,
-    preConfirm: () => {
-      const titulo = document.getElementById("titulo").value.trim();
-      const local = document.getElementById("local").value.trim();
-      const descricao = document.getElementById("descricao").value.trim();
-      const cidade = document.getElementById("cidade").value.trim();
-      const estado = document
-        .getElementById("estado")
-        .value.trim()
-        .toUpperCase();
-      const inicio = document.getElementById("inicio").value;
-      const fim = document.getElementById("fim").value;
-      const contato = document.getElementById("contato").value.trim();
-      const requisitos = document.getElementById("requisitos").value.trim();
-      const observacoes = document.getElementById("observacoes").value.trim();
+        confirmButtonText: "Cadastrar Campanha",
+        confirmButtonColor: "#ce483c",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        focusConfirm: false,
+        preConfirm: () => {
+            const titulo = document.getElementById("titulo").value.trim();
+            const descricao = document.getElementById("descricao").value.trim();
+            const inicio = document.getElementById("inicio").value;
+            const fim = document.getElementById("fim").value;
+            const urgencia = document.getElementById("urgencia").value;
+            const local = document.getElementById("local").value.trim();
+            const cidade = document.getElementById("cidade").value.trim();
+            const estado = document.getElementById("estado").value.trim();
+            const contato = document.getElementById("contato").value.trim();
+            const requisitos = document.getElementById("requisitos").value.trim();
+            const observacoes = document.getElementById("observacoes").value.trim();
 
-      if (
-        !titulo ||
-        !local ||
-        !descricao ||
-        !cidade ||
-        !estado ||
-        !inicio ||
-        !fim ||
-        !contato
-      ) {
-        Swal.showValidationMessage("Preencha todos os campos obrigatórios!");
-        return false;
-      }
+            if (!titulo || !descricao || !inicio || !fim || !urgencia || !local || !cidade || !estado) {
+                Swal.showValidationMessage("Preencha todos os campos obrigatórios!");
+                return false;
+            }
 
-      return {
-        titulo,
-        local,
-        descricao,
-        cidade,
-        estado,
-        inicio,
-        fim,
-        contato,
-        requisitos,
-        observacoes,
-      };
-    },
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      await cadastrarCampanha(result.value);
-    }
-  });
+            return {
+                titulo,
+                descricao,
+                inicio,
+                fim,
+                urgencia,
+                local,
+                cidade,
+                estado,
+                contato,
+                requisitos,
+                observacoes,
+                responsavel: auth.currentUser.email,
+                dataCriacao: new Date().toISOString(),
+                ativa: true
+            };
+        },
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            await cadastrarCampanha(result.value);
+        }
+    });
 }
 
-function validarCNPJ(cnpj) {
-  // Remove tudo que não for dígito
-  cnpj = cnpj.replace(/[^\d]+/g, "");
-  // Verifica se tem exatamente 14 dígitos
-  return cnpj.match(/^\d{14}$/) !== null;
-}
-
+/**
+ * Shows local editing form
+ * @param {Object} localData - Current local data
+ */
 function showEditLocalForm(localData) {
-  Swal.fire({
-    title: "Editar Informações do Local",
-    width: 600,
-    html: `
+    Swal.fire({
+        title: "Editar Informações do Local",
+        width: 600,
+        html: `
             <div class="form-container">
-                <input type="text" id="nomeLocal" value="${
-                  localData.nome || ""
-                }" placeholder="Nome do local" class="form-field" required>
-                <input type="text" id="cnpjLocal" value="${
-                  localData.cnpj || ""
-                }" placeholder="CNPJ" class="form-field" required>
-                <input type="text" id="contatoLocal" value="${
-                  localData.contato || ""
-                }" placeholder="Contato" class="form-field" required>
-                <input type="text" id="enderecoLocal" value="${
-                  localData.endereco || ""
-                }" placeholder="Endereço" class="form-field" required>
+                <input type="text" id="edit-nome" placeholder="Nome do local" class="form-field" value="${localData.nome || ''}" required>
+                <input type="text" id="edit-endereco" placeholder="Endereço" class="form-field" value="${localData.endereco || ''}" required>
+                <input type="text" id="edit-contato" placeholder="Contato" class="form-field" value="${localData.contato || ''}" required>
             </div>
         `,
-    confirmButtonText: "Salvar",
-    confirmButtonColor: "#ce483c",
-    focusConfirm: false,
-    preConfirm: async () => {
-      const nome = document.getElementById("nomeLocal").value.trim();
-      const cnpj = document.getElementById("cnpjLocal").value.trim();
-      const contato = document.getElementById("contatoLocal").value.trim();
-      const endereco = document.getElementById("enderecoLocal").value.trim();
+        confirmButtonText: "Salvar Alterações",
+        confirmButtonColor: "#ce483c",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        focusConfirm: false,
+        preConfirm: () => {
+            const nome = document.getElementById("edit-nome").value.trim();
+            const endereco = document.getElementById("edit-endereco").value.trim();
+            const contato = document.getElementById("edit-contato").value.trim();
 
-      if (!nome || !cnpj || !contato || !endereco) {
-        Swal.showValidationMessage("Preencha todos os campos!");
-        return false;
-      }
+            if (!nome || !endereco || !contato) {
+                Swal.showValidationMessage("Preencha todos os campos!");
+                return false;
+            }
 
-      if (!validarCNPJ(cnpj)) {
-        Swal.showValidationMessage("CNPJ inválido!");
-        return false;
-      }
+            return { nome, endereco, contato };
+        },
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const success = await setDocument('locais', localData.cnpj, {
+                    ...localData,
+                    ...result.value,
+                    ultimaAtualizacao: new Date().toISOString()
+                });
 
-      // Verifica se o CNPJ já está cadastrado (exceto para o próprio documento)
-      const locaisRef = collection(db, "locais");
-      const cnpjQuery = query(locaisRef, where("cnpj", "==", cnpj));
-      const cnpjSnapshot = await getDocs(cnpjQuery);
-      const outroCadastrado = cnpjSnapshot.docs.find(
-        (docSnap) => docSnap.data().email !== localData.email
-      );
-
-      if (outroCadastrado) {
-        Swal.showValidationMessage(
-          "Este CNPJ já está cadastrado para outro local."
-        );
-        return false;
-      }
-
-      return { nome, cnpj, contato, endereco };
-    },
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        const locaisRef = collection(db, "locais");
-        const q = query(locaisRef, where("email", "==", localData.email));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const docId = querySnapshot.docs[0].id;
-          const docRef = doc(db, "locais", docId);
-          await setDoc(
-            docRef,
-            { ...localData, ...result.value },
-            { merge: true }
-          );
-          showNotification(
-            "Sucesso",
-            "Informações do local atualizadas!",
-            "success"
-          );
-          renderLocalData({ ...localData, ...result.value });
+                if (success) {
+                    showNotification("Sucesso", "Dados do local atualizados.", "success");
+                    await loadLocalInfo(auth.currentUser.email);
+                } else {
+                    throw new Error("Falha ao atualizar dados");
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar local:", error);
+                showNotification("Erro", "Erro ao atualizar dados do local.", "error");
+            }
         }
-      } catch (error) {
-        console.error("Erro ao atualizar local:", error);
-        showNotification(
-          "Erro",
-          "Não foi possível atualizar as informações do local.",
-          "error"
-        );
-      }
-    }
-  });
+    });
 }
 
+// Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  const profileBtn = document.getElementById("abrirFormulario");
-  const profileInfoContainer = document.getElementById("profileInfo");
-  const localInfoContainer = document.getElementById("localInfo");
-  const pageTitle = document.getElementById("pageTitle");
+    const profileBtn = document.getElementById("abrirFormulario");
+    if (profileBtn) {
+        profileBtn.addEventListener("click", showProfileForm);
+    }
+});
 
-  onAuthStateChanged(auth, async (user) => {
+// Initialize authentication monitoring with callback
+initAuthStateMonitoring(async (user) => {
     if (!user) {
-      profileInfoContainer.innerHTML = `
-                <div class="profile-card">
-                    <h3>Não autenticado</h3>
-                    <p>Faça login para visualizar seu perfil.</p>
-                    <a href="login.html" class="login-link">Fazer Login</a>
-                </div>
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Load user profile
+    await loadUserProfile(user.uid);
+    
+    // Load local info
+    await loadLocalInfo(user.email);
+
+    // Check if user is a location admin and show appropriate buttons
+    const locais = await queryDocuments('locais', [['email', '==', user.email]]);
+    
+    if (locais.length > 0) {
+        // User is a location admin - show admin buttons
+        const profileInfo = document.getElementById("profileInfo");
+        if (profileInfo) {
+            const adminButtons = document.createElement("div");
+            adminButtons.className = "admin-buttons";
+            adminButtons.innerHTML = `
+                <button id="cadastrarCampanha" class="form-button">Cadastrar Campanha</button>
+                <button id="cadastrarUsuario" class="form-button">Cadastrar Usuário</button>
+                <button id="editarLocal" class="form-button">Editar Local</button>
             `;
-      localInfoContainer.innerHTML = "";
-      profileBtn.style.display = "none";
-      return;
-    }
+            profileInfo.appendChild(adminButtons);
 
-    const isLocal = await loadLocalByEmail(user.email);
+            // Add event listeners for admin buttons
+            document.getElementById("cadastrarCampanha").addEventListener("click", showCampaignForm);
+            
+            document.getElementById("cadastrarUsuario").addEventListener("click", () => {
+                Swal.fire({
+                    title: "Cadastrar Novo Usuário",
+                    width: 500,
+                    html: `
+                        <div class="form-container">
+                            <input type="email" id="user-email" placeholder="E-mail do usuário" class="form-field" required>
+                            <input type="password" id="user-senha" placeholder="Senha" class="form-field" required>
+                        </div>
+                    `,
+                    confirmButtonText: "Cadastrar",
+                    confirmButtonColor: "#ce483c",
+                    showCancelButton: true,
+                    cancelButtonText: "Cancelar",
+                    focusConfirm: false,
+                    preConfirm: async () => {
+                        const email = document.getElementById("user-email").value.trim();
+                        const senha = document.getElementById("user-senha").value;
 
-    if (isLocal) {
-      profileInfoContainer.innerHTML = "";
-      profileBtn.style.display = "none";
-      pageTitle.textContent = "Perfil do Local";
+                        if (!email || !senha) {
+                            Swal.showValidationMessage("Preencha todos os campos!");
+                            return false;
+                        }
 
-      const buttonContainer = document.createElement("div");
-      buttonContainer.style.display = "flex";
-      buttonContainer.style.gap = "10px";
-      buttonContainer.style.justifyContent = "center"; // Centraliza os botões horizontalmente
-      buttonContainer.style.width = "100%"; // Garante que ocupe toda a largura do container pai
-      buttonContainer.style.marginTop = "20px"; // Espaço entre o título e os botões
+                        try {
+                            const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+                            const secondaryAuth = getAuth(secondaryApp);
 
-      const campaignBtn = document.createElement("button");
-      campaignBtn.textContent = "Cadastrar Campanha";
-      campaignBtn.classList.add("form-button");
-      campaignBtn.addEventListener("click", () => showCampaignForm(user.email));
+                            const userCredential = await createUserWithEmailAndPassword(
+                                secondaryAuth,
+                                email,
+                                senha
+                            );
+                            const newUser = userCredential.user;
 
-      const redirectBtn = document.createElement("button");
-      redirectBtn.textContent = "Editar Campanhas";
-      redirectBtn.classList.add("form-button");
-      redirectBtn.addEventListener("click", () => {
-        window.location.href = "campanhas_de_cada_local.html";
-      });
+                            await setDocument('usuarios', newUser.uid, {
+                                email: email,
+                                dataCadastro: new Date().toISOString(),
+                            });
 
-      const registerUserBtn = document.createElement("button");
-      registerUserBtn.textContent = "Cadastrar Usuário";
-      registerUserBtn.classList.add("form-button");
-      registerUserBtn.addEventListener("click", () => {
-        Swal.fire({
-          title: "Cadastrar Novo Usuário",
-          html:
-            '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
-            '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
-            '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
-          focusConfirm: false,
-          showCancelButton: true,
-          confirmButtonText: "Cadastrar",
-          confirmButtonColor: "#ce483c",
-          preConfirm: async () => {
-            const email = document
-              .getElementById("swal-input-email")
-              .value.trim();
-            const senha = document.getElementById("swal-input-password").value;
-            const confirmar =
-              document.getElementById("swal-input-confirm").value;
+                            await signOut(secondaryAuth);
+                            return true;
+                        } catch (error) {
+                            if (error.code === "auth/email-already-in-use") {
+                                Swal.showValidationMessage("Este e-mail já está cadastrado.");
+                            } else if (error.code === "auth/weak-password") {
+                                Swal.showValidationMessage("A senha deve ter pelo menos 6 caracteres.");
+                            } else {
+                                Swal.showValidationMessage("Erro ao cadastrar usuário: " + error.message);
+                            }
+                            return false;
+                        }
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
+                    }
+                });
+            });
 
-            if (!email || !senha || !confirmar) {
-              Swal.showValidationMessage(
-                "Por favor, preencha todos os campos."
-              );
-              return false;
-            }
-
-            if (senha !== confirmar) {
-              Swal.showValidationMessage("As senhas não coincidem.");
-              return false;
-            }
-
-            try {
-              const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-              const secondaryAuth = getAuth(secondaryApp);
-
-              const userCredential = await createUserWithEmailAndPassword(
-                secondaryAuth,
-                email,
-                senha
-              );
-              const newUser = userCredential.user;
-
-              await setDoc(doc(db, "usuarios", newUser.uid), {
-                email: email,
-                dataCadastro: new Date().toISOString(),
-              });
-
-              await signOut(secondaryAuth);
-              return true;
-            } catch (error) {
-              if (error.code === "auth/email-already-in-use") {
-                Swal.showValidationMessage("Este e-mail já está cadastrado.");
-              } else if (error.code === "auth/weak-password") {
-                Swal.showValidationMessage(
-                  "A senha deve ter pelo menos 6 caracteres."
-                );
-              } else {
-                Swal.showValidationMessage(
-                  "Erro ao cadastrar usuário: " + error.message
-                );
-              }
-              return false;
-            }
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
-          }
-        });
-      });
-
-      const editLocalBtn = document.createElement("button");
-      editLocalBtn.textContent = "Editar Local";
-      editLocalBtn.classList.add("form-button");
-      editLocalBtn.addEventListener("click", async () => {
-        const locaisRef = collection(db, "locais");
-        const q = query(locaisRef, where("email", "==", user.email));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const localData = querySnapshot.docs[0].data();
-          showEditLocalForm(localData);
+            document.getElementById("editarLocal").addEventListener("click", async () => {
+                if (locais.length > 0) {
+                    const localData = locais[0];
+                    showEditLocalForm(localData);
+                }
+            });
         }
-      });
+
+        // Show campaigns container for location admins
+        const campanhasContainer = document.getElementById("campanhasContainer");
+        if (campanhasContainer) {
+            campanhasContainer.style.display = "block";
+        }
     } else {
-      const userData = await loadUserProfile(user.uid);
-      if (userData) {
-        renderUserProfile(userData);
-      }
-      localInfoContainer.innerHTML = "";
-      profileBtn.style.display = "inline-block";
-      profileBtn.addEventListener("click", showProfileForm);
-      pageTitle.textContent = "Perfil do Usuário";
+        // Regular user - show donation info
+        const userDonationInfo = document.getElementById("userDonationInfo");
+        if (userDonationInfo) {
+            userDonationInfo.style.display = "block";
+        }
     }
-  });
 });
