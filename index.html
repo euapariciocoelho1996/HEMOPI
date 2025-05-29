@@ -8,7 +8,8 @@
     <meta name="description" content="Acompanhe suas doações, receba alertas e saiba quando poderá doar novamente com o nosso Sistema de Gerenciamento de Doações de Sangue.">
     <link rel="stylesheet" href="css/estilos.css">
     <link rel="stylesheet" href="css/chatbot.css">
-    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/css/icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 
 <body>
@@ -127,7 +128,7 @@
     <section class="secao-perfil-doador reveal" id="secao-perfil-doador">
         <div class="perfil-container">
             <div class="perfil-texto">
-                <h2><i class="ph ph-hand-heart"></i> Seu Perfil de Doador</h2>
+                <h2><i class="fas fa-hand-heart"></i> Seu Perfil de Doador</h2>
                 <p>
                     Aqui é onde a sua jornada ganha forma. Veja como suas ações estão salvando vidas e mantenha-se
                     sempre pronto para doar novamente.
@@ -138,22 +139,22 @@
             <!-- Cards do Perfil -->
             <div class="perfil-cards">
                 <div class="perfil-card">
-                    <i class="ph ph-drop-half-bottom"></i>
+                    <i class="fas fa-drop-half-bottom"></i>
                     <h3>Tipo Sanguíneo</h3>
                     <p>Visualize seu tipo e descubra quais grupos você pode ajudar. Você é parte essencial dessa rede de solidariedade.</p>
                 </div>
                 <div class="perfil-card">
-                    <i class="ph ph-calendar-check"></i>
+                    <i class="fas fa-calendar-check"></i>
                     <h3>Histórico de Doações</h3>
                     <p>Acompanhe datas, locais e o status das suas doações. Cada registro é uma história de vida salva.</p>
                 </div>
                 <div class="perfil-card">
-                    <i class="ph ph-heartbeat"></i>
+                    <i class="fas fa-heartbeat"></i>
                     <h3>Total de Doações</h3>
                     <p>Veja quantas vezes você estendeu a mão para o próximo — e inspire-se a continuar!</p>
                 </div>
                 <div class="perfil-card">
-                    <i class="ph ph-clock-countdown"></i>
+                    <i class="fas fa-clock-countdown"></i>
                     <h3>Próxima Doação</h3>
                     <p>Fique por dentro de quando poderá doar novamente. Sempre no tempo certo, sempre salvando.</p>
                 </div>
@@ -201,10 +202,15 @@
     </section>
 
     <!-- Chatbot -->
+    <div class="chat-icon" id="chat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+        </svg>
+    </div>
     <div class="chat-container" id="chat-container">
         <div class="chat-header">
             <h3>Assistente HEMOPI</h3>
-            <button class="chat-toggle" id="chat-toggle">−</button>
+            <button class="chat-toggle" id="chat-toggle">×</button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
     </div>
@@ -242,22 +248,7 @@
     <!-- Scripts -->
     <script src="js/script.js"></script>
     <script type="module" src="js/verifica_user_autenticado.js"></script>
-    <script type="module" src="js/chatbot.js"></script>
-    <script type="module">
-        import { initChatbot } from './js/chatbot.js';
-        document.addEventListener('DOMContentLoaded', () => {
-            initChatbot();
-            
-            // Toggle do chatbot
-            const chatToggle = document.querySelector('.chat-toggle');
-            const chatContainer = document.querySelector('.chat-container');
-            
-            chatToggle.addEventListener('click', () => {
-                chatContainer.classList.toggle('chat-minimized');
-                chatToggle.textContent = chatContainer.classList.contains('chat-minimized') ? '+' : '−';
-            });
-        });
-    </script>
+    <script type="module" src="js/chatbot-init.js"></script>
 </body>
 
 </html>
