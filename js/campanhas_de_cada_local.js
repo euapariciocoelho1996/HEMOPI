@@ -1,215 +1,181 @@
-/**
- * Campaign management for location administrators
- * Handles campaign display, editing, and deletion for specific locations
- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js"; 
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/+esm'
 
-import { getAuthInstance, initAuthStateMonitoring } from './auth-manager.js';
-import { queryDocuments, updateDocument, deleteDocument } from './firebase-services.js';
-import { showNotification, showConfirmDialog } from './utils.js';
-import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/+esm';
 
-const auth = getAuthInstance();
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+  authDomain: "teste-2067f.firebaseapp.com",
+  projectId: "teste-2067f",
+  storageBucket: "teste-2067f.appspot.com",
+  messagingSenderId: "160483034987",
+  appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+};
 
-/**
- * Renders campaigns for the authenticated location
- * @param {Array} campanhas - Array of campaigns
- */
-function renderCampaigns(campanhas) {
-    const container = document.getElementById("campanhasContainer");
-    if (!container) return;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    if (campanhas.length === 0) {
-        container.innerHTML = `
-            <div class="no-content-message">
-                <h2>Nenhuma campanha encontrada</h2>
-                <p>Você ainda não cadastrou nenhuma campanha.</p>
-            </div>
-        `;
-        return;
-    }
+onAuthStateChanged(auth, async (user) => {
+  const containerPai = document.getElementById("campanhasContainer");
+  if (!containerPai) return;
+
+  if (user) {
+    const campanhasRef = collection(db, "campanhas");
+    const q = query(campanhasRef, where("local", "==", user.email));
+    const querySnapshot = await getDocs(q);
 
     const section = document.createElement("section");
-    section.className = "campanhas-section";
-    
-    const header = document.createElement("div");
-    header.className = "campanhas-header";
-    header.innerHTML = `
-        <h2>Suas Campanhas</h2>
-        <p>Gerencie as campanhas do seu local de doação</p>
-    `;
-    
-    const cardsContainer = document.createElement("div");
-    cardsContainer.className = "campanhas-cards";
+    section.id = "campanhas";
+    section.classList.add("secao-campanhas", "reveal");
 
-    campanhas.forEach(campanha => {
-        const card = createCampaignCard(campanha);
-        cardsContainer.appendChild(card);
-    });
+    const container = document.createElement("div");
+    container.className = "campanhas-container";
 
-    section.appendChild(header);
-    section.appendChild(cardsContainer);
-    container.appendChild(section);
-}
-
-/**
- * Creates a campaign card element
- * @param {Object} campanha - Campaign data
- * @returns {HTMLElement} - Campaign card element
- */
-function createCampaignCard(campanha) {
-    const card = document.createElement("div");
-    card.className = "campanha-card";
-    
-    const urgenciaClass = campanha.urgencia === "alta" ? "urgente" : 
-                         campanha.urgencia === "media" ? "media" : "baixa";
-    
-    card.innerHTML = `
-        <div class="urgencia ${urgenciaClass}">${(campanha.urgencia || 'baixa').toUpperCase()}</div>
-        <h3>${campanha.titulo || 'Título não disponível'}</h3>
-        <p class="campanha-local">${campanha.local || 'Local não informado'}</p>
-        <p>${campanha.descricao || 'Descrição não disponível'}</p>
-        <p class="campanha-data">
-            ${campanha.inicio ? `Início: ${campanha.inicio}` : ''} 
-            ${campanha.fim ? `| Fim: ${campanha.fim}` : ''}
-        </p>
-        <div class="campaign-actions">
-            <button class="form-button edit-btn" data-id="${campanha.id}">Editar</button>
-            <button class="form-button delete-btn" data-id="${campanha.id}">Excluir</button>
-        </div>
+    container.innerHTML = `
+      <h2>Campanhas de Doação Ativas</h2>
+      <p class="campanha-subtitulo">
+        Gerencie suas campanhas de doação ativas. Você pode editar as informações de cada campanha clicando no botão "Editar".
+      </p>
     `;
 
-    // Add event listeners
-    const editBtn = card.querySelector('.edit-btn');
-    const deleteBtn = card.querySelector('.delete-btn');
-    
-    editBtn.addEventListener('click', () => editCampaign(campanha));
-    deleteBtn.addEventListener('click', () => deleteCampaign(campanha.id));
+    const cardsWrapper = document.createElement("div");
+    cardsWrapper.className = "campanhas-cards";
 
-    return card;
-}
+    if (querySnapshot.empty) {
+      cardsWrapper.innerHTML = "<p>Você não possui campanhas cadastradas.</p>";
+    } else {
+      querySnapshot.forEach(docSnap => {
+        const dados = docSnap.data();
+        const docId = docSnap.id;
 
-/**
- * Shows campaign editing form
- * @param {Object} campanha - Campaign data to edit
- */
-async function editCampaign(campanha) {
-    const result = await Swal.fire({
-        title: "Editar Campanha",
-        width: 700,
-        html: `
-            <div class="form-container">
-                <input type="text" id="edit-titulo" placeholder="Título da campanha" class="form-field" value="${campanha.titulo || ''}" required>
-                <textarea id="edit-descricao" placeholder="Descrição da campanha" class="form-field" rows="3" required>${campanha.descricao || ''}</textarea>
-                <input type="date" id="edit-inicio" class="form-field" value="${campanha.inicio || ''}" required>
-                <input type="date" id="edit-fim" class="form-field" value="${campanha.fim || ''}" required>
-                <select id="edit-urgencia" class="form-field" required>
-                    <option value="baixa" ${campanha.urgencia === 'baixa' ? 'selected' : ''}>Baixa</option>
-                    <option value="media" ${campanha.urgencia === 'media' ? 'selected' : ''}>Média</option>
-                    <option value="alta" ${campanha.urgencia === 'alta' ? 'selected' : ''}>Alta</option>
-                </select>
-                <input type="text" id="edit-local" placeholder="Local da campanha" class="form-field" value="${campanha.local || ''}" required>
-                <input type="text" id="edit-cidade" placeholder="Cidade" class="form-field" value="${campanha.cidade || ''}" required>
-                <input type="text" id="edit-estado" placeholder="Estado" class="form-field" value="${campanha.estado || ''}" required>
-                <input type="text" id="edit-contato" placeholder="Contato" class="form-field" value="${campanha.contato || ''}">
-                <textarea id="edit-requisitos" placeholder="Requisitos especiais" class="form-field" rows="2">${campanha.requisitos || ''}</textarea>
-                <textarea id="edit-observacoes" placeholder="Observações" class="form-field" rows="2">${campanha.observacoes || ''}</textarea>
-            </div>
-        `,
-        confirmButtonText: "Salvar Alterações",
-        confirmButtonColor: "#ce483c",
-        showCancelButton: true,
-        cancelButtonText: "Cancelar",
-        focusConfirm: false,
-        preConfirm: () => {
-            const titulo = document.getElementById("edit-titulo").value.trim();
-            const descricao = document.getElementById("edit-descricao").value.trim();
-            const inicio = document.getElementById("edit-inicio").value;
-            const fim = document.getElementById("edit-fim").value;
-            const urgencia = document.getElementById("edit-urgencia").value;
-            const local = document.getElementById("edit-local").value.trim();
-            const cidade = document.getElementById("edit-cidade").value.trim();
-            const estado = document.getElementById("edit-estado").value.trim();
-            const contato = document.getElementById("edit-contato").value.trim();
-            const requisitos = document.getElementById("edit-requisitos").value.trim();
-            const observacoes = document.getElementById("edit-observacoes").value.trim();
+        const inicioData = dados.inicio?.toDate
+          ? dados.inicio.toDate().toISOString().split("T")[0]
+          : dados.inicio || "";
 
-            if (!titulo || !descricao || !inicio || !fim || !urgencia || !local || !cidade || !estado) {
-                Swal.showValidationMessage("Preencha todos os campos obrigatórios!");
-                return false;
+        const fimData = dados.fim?.toDate
+          ? dados.fim.toDate().toISOString().split("T")[0]
+          : dados.fim || "";
+
+        const urgencia = dados.urgencia || "baixa";
+        const urgenciaTexto = {
+          urgente: "URGENTE",
+          media: "IMPORTANTE",
+          baixa: "REGULAR"
+        }[urgencia];
+
+        const card = document.createElement("div");
+        card.classList.add("campanha-card");
+
+        card.innerHTML = `
+          <div class="urgencia ${urgencia}">${urgenciaTexto}</div>
+          <h3>${dados.titulo}</h3>
+          <p>${dados.descricao}</p>
+          <p><strong>Cidade:</strong> ${dados.cidade || "Não informada"}</p>
+          <p><strong>Estado:</strong> ${dados.estado || "Não informado"}</p>
+          <p class="campanha-data">Início: ${inicioData} | Fim: ${fimData}</p>
+          <button class="btn-editar" style="margin-top:10px;">Editar</button>
+      `;
+
+
+        // Evento de edição
+        // Evento de edição
+      card.querySelector(".btn-editar").addEventListener("click", async () => {
+         const result = await Swal.fire({
+            title: "Editar Campanha",
+            html: `
+              <input id="swal-titulo" class="swal2-input" placeholder="Título" value="${dados.titulo}">
+              <textarea id="swal-desc" class="swal2-textarea" placeholder="Descrição">${dados.descricao}</textarea>
+              <input id="swal-inicio" class="swal2-input" type="date" value="${inicioData}">
+              <input id="swal-fim" class="swal2-input" type="date" value="${fimData}">
+              <input id="swal-cidade" class="swal2-input" placeholder="Cidade" value="${dados.cidade || ""}">
+              <input id="swal-estado" class="swal2-input" placeholder="Estado" value="${dados.estado || ""}">
+              <select id="swal-urgencia" class="swal2-select">
+                <option value="urgente" ${urgencia === "urgente" ? "selected" : ""}>URGENTE</option>
+                <option value="media" ${urgencia === "media" ? "selected" : ""}>IMPORTANTE</option>
+                <option value="baixa" ${urgencia === "baixa" ? "selected" : ""}>REGULAR</option>
+              </select>
+              <input id="swal-contato" class="swal2-input" placeholder="Contato (telefone)" value="${dados.contato || ""}">
+              <textarea id="swal-requisitos" class="swal2-textarea" placeholder="Requisitos (opcional)">${dados.requisitos || ""}</textarea>
+              <textarea id="swal-observacoes" class="swal2-textarea" placeholder="Observações (opcional)">${dados.observacoes || ""}</textarea>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: "Salvar",
+            denyButtonText: "Excluir",
+            cancelButtonText: "Cancelar",
+            preConfirm: () => {
+              return {
+                titulo: document.getElementById("swal-titulo").value,
+                descricao: document.getElementById("swal-desc").value,
+                inicio: document.getElementById("swal-inicio").value,
+                fim: document.getElementById("swal-fim").value,
+                cidade: document.getElementById("swal-cidade").value,
+                estado: document.getElementById("swal-estado").value,
+                urgencia: document.getElementById("swal-urgencia").value,
+                contato: document.getElementById("swal-contato").value,
+                requisitos: document.getElementById("swal-requisitos").value,
+                observacoes: document.getElementById("swal-observacoes").value
+              };
             }
+          });
 
-            return {
-                titulo,
-                descricao,
-                inicio,
-                fim,
-                urgencia,
-                local,
-                cidade,
-                estado,
-                contato,
-                requisitos,
-                observacoes,
-                ultimaAtualizacao: new Date().toISOString()
-            };
+        // Salvar alterações
+        if (result.isConfirmed && result.value) {
+          try {
+            await updateDoc(doc(db, "campanhas", docId), {
+              ...result.value,
+              inicio: new Date(result.value.inicio),
+              fim: new Date(result.value.fim)
+            });
+
+            Swal.fire("Sucesso!", "Campanha atualizada com sucesso.", "success").then(() => {
+              location.reload();
+            });
+          } catch (err) {
+            console.error("Erro ao atualizar campanha:", err);
+            Swal.fire("Erro", "Não foi possível atualizar a campanha.", "error");
+          }
         }
-    });
 
-    if (result.isConfirmed) {
-        const success = await updateDocument('campanhas', campanha.id, result.value);
-        if (success) {
-            showNotification("Sucesso", "Campanha atualizada com sucesso.", "success");
-            await loadUserCampaigns();
-        } else {
-            showNotification("Erro", "Não foi possível atualizar a campanha.", "error");
+        // Excluir campanha
+        if (result.isDenied) {
+          const confirmDelete = await Swal.fire({
+            title: "Tem certeza?",
+            text: "Você não poderá reverter essa ação!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim, excluir!",
+            cancelButtonText: "Cancelar"
+          });
+
+          if (confirmDelete.isConfirmed) {
+            try {
+              await deleteDoc(doc(db, "campanhas", docId));
+              Swal.fire("Excluído!", "A campanha foi removida com sucesso.", "success").then(() => {
+                location.reload();
+              });
+            } catch (err) {
+              console.error("Erro ao excluir campanha:", err);
+              Swal.fire("Erro", "Não foi possível excluir a campanha.", "error");
+            }
+          }
         }
+      });
+
+
+        cardsWrapper.appendChild(card);
+      });
     }
-}
 
-/**
- * Deletes a campaign after confirmation
- * @param {string} campanhaId - Campaign ID to delete
- */
-async function deleteCampaign(campanhaId) {
-    const confirmed = await showConfirmDialog(
-        "Excluir Campanha",
-        "Tem certeza que deseja excluir esta campanha? Esta ação não pode ser desfeita.",
-        "Excluir"
-    );
+    container.appendChild(cardsWrapper);
+    section.appendChild(container);
+    containerPai.appendChild(section);
 
-    if (confirmed) {
-        const success = await deleteDocument('campanhas', campanhaId);
-        if (success) {
-            showNotification("Sucesso", "Campanha excluída com sucesso.", "success");
-            await loadUserCampaigns();
-        } else {
-            showNotification("Erro", "Não foi possível excluir a campanha.", "error");
-        }
-    }
-}
-
-/**
- * Loads campaigns for the current user's location
- */
-async function loadUserCampaigns() {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    try {
-        const campanhas = await queryDocuments('campanhas', [['responsavel', '==', user.email]]);
-        renderCampaigns(campanhas);
-    } catch (error) {
-        console.error("Erro ao carregar campanhas:", error);
-        showNotification("Erro", "Erro ao carregar campanhas.", "error");
-    }
-}
-
-// Initialize authentication monitoring and load campaigns
-initAuthStateMonitoring(async (user) => {
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
-    
-    await loadUserCampaigns();
+  } else {
+    containerPai.innerHTML = "<p>Você precisa estar logado para visualizar suas campanhas.</p>";
+  }
 });

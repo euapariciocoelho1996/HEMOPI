@@ -7,12 +7,8 @@
     <title>Sangue Solidário - Doação de Sangue</title>
     <meta name="description" content="Acompanhe suas doações, receba alertas e saiba quando poderá doar novamente com o nosso Sistema de Gerenciamento de Doações de Sangue.">
     <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/chatbot.css">
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/css/icons.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -204,6 +200,15 @@
         </div>
     </section>
 
+    <!-- Chatbot -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <h3>Assistente HEMOPI</h3>
+            <button class="chat-toggle" id="chat-toggle">−</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+    </div>
+
     <!-- Rodapé -->
     <footer class="rodape">
         <div class="rodape-container">
@@ -237,6 +242,22 @@
     <!-- Scripts -->
     <script src="js/script.js"></script>
     <script type="module" src="js/verifica_user_autenticado.js"></script>
+    <script type="module" src="js/chatbot.js"></script>
+    <script type="module">
+        import { initChatbot } from './js/chatbot.js';
+        document.addEventListener('DOMContentLoaded', () => {
+            initChatbot();
+            
+            // Toggle do chatbot
+            const chatToggle = document.querySelector('.chat-toggle');
+            const chatContainer = document.querySelector('.chat-container');
+            
+            chatToggle.addEventListener('click', () => {
+                chatContainer.classList.toggle('chat-minimized');
+                chatToggle.textContent = chatContainer.classList.contains('chat-minimized') ? '+' : '−';
+            });
+        });
+    </script>
 </body>
 
 </html>

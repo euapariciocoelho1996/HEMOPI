@@ -1,27 +1,38 @@
-/**
- * Local registration functionality
- * Handles registration of blood donation locations
- */
-
-import { app } from './firebase-config.js';
+// Import Firebase modules 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import {
     getAuth,
     onAuthStateChanged,
     signOut,
     createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { getDocument, setDocument, queryDocuments } from './firebase-services.js';
-import { validateEmail, validateCNPJ, validatePassword } from './utils.js';
-import { initAuthStateMonitoring } from './auth-manager.js';
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    collection,
+    query,
+    where,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+    authDomain: "teste-2067f.firebaseapp.com",
+    projectId: "teste-2067f",
+    storageBucket: "teste-2067f.firebasestorage.app",
+    messagingSenderId: "160483034987",
+    appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+};
 
 // Initialize Firebase services
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 
-/**
- * Shows field error message
- * @param {string} id - Field ID without 'local-' prefix
- * @param {string} message - Error message
- */
+// Mostrar erro abaixo do input
 function showFieldError(id, message) {
     const span = document.getElementById(`error-${id}`);
     const input = document.getElementById(`local-${id}`);
@@ -32,10 +43,7 @@ function showFieldError(id, message) {
     }
 }
 
-/**
- * Clears field error
- * @param {string} id - Field ID without 'local-' prefix
- */
+// Limpar erro do input
 function clearFieldError(id) {
     const span = document.getElementById(`error-${id}`);
     const input = document.getElementById(`local-${id}`);
@@ -46,30 +54,28 @@ function clearFieldError(id) {
     }
 }
 
-/**
- * Checks if CNPJ already exists
- * @param {string} cnpj - CNPJ to check
- * @returns {Promise<boolean>} - True if CNPJ exists
- */
+// Validar email
+function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
+
+// Verifica se o CNPJ já está cadastrado no Firestore
 async function isCNPJExists(cnpj) {
-    const localData = await getDocument("locais", cnpj);
-    return !!localData;
+    const localRef = doc(db, "locais", cnpj);
+    const localSnap = await getDoc(localRef);
+    return localSnap.exists();
 }
 
-/**
- * Checks if email already exists in locations
- * @param {string} email - Email to check
- * @returns {Promise<boolean>} - True if email exists
- */
+// Verifica se o e-mail já está cadastrado em um local (Firestore)
 async function isEmailExistsInLocais(email) {
-    const locations = await queryDocuments('locais', [['email', '==', email]]);
-    return locations.length > 0;
+    const usersRef = collection(db, "locais");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
 }
 
-/**
- * Validates and submits local registration form
- * @param {Event} event - Form submit event
- */
+// Validação e envio do formulário de cadastro de local
 async function validateLocalForm(event) {
     event.preventDefault();
 
@@ -86,7 +92,6 @@ async function validateLocalForm(event) {
 
     let hasError = false;
 
-    // Validate fields
     if (!nome) {
         showFieldError("name", "Informe o nome do local.");
         hasError = true;
@@ -107,14 +112,13 @@ async function validateLocalForm(event) {
         hasError = true;
     }
 
-    if (!validateCNPJ(cnpj)) {
+    if (!cnpj.match(/^\d{14}$/)) {
         showFieldError("cnpj", "CNPJ inválido (14 dígitos numéricos).");
         hasError = true;
     }
 
-    const passwordValidation = validatePassword(senha);
-    if (!passwordValidation.isValid) {
-        showFieldError("senha", passwordValidation.message);
+    if (!senha || senha.length < 6) {
+        showFieldError("senha", "A senha deve ter pelo menos 6 caracteres.");
         hasError = true;
     }
 
@@ -125,7 +129,7 @@ async function validateLocalForm(event) {
 
     if (hasError) return;
 
-    // Check for duplicates
+    // Verifica duplicidade no Firestore
     if (await isEmailExistsInLocais(email)) {
         showFieldError("email", "Este e-mail já está vinculado a um local.");
         return;
@@ -137,11 +141,12 @@ async function validateLocalForm(event) {
     }
 
     try {
-        // Create user in Firebase Auth
+        // Cria o usuário no Firebase Auth
         await createUserWithEmailAndPassword(auth, email, senha);
 
-        // Save data to Firestore
-        const success = await setDocument("locais", cnpj, {
+        // Salva os dados no Firestore
+        const localRef = doc(db, "locais", cnpj);
+        await setDoc(localRef, {
             nome,
             endereco,
             contato,
@@ -151,13 +156,12 @@ async function validateLocalForm(event) {
             dataCadastro: new Date().toISOString()
         });
 
-        if (success) {
-            alert("Local cadastrado com sucesso!");
-            document.getElementById("local-form").reset();
-            window.location.href = "index.html";
-        } else {
-            throw new Error("Falha ao salvar dados do local");
-        }
+        alert("Local cadastrado com sucesso!");
+        document.getElementById("local-form").reset();
+
+        updateHeaderUI({ displayName: nome, email: email });
+
+        window.location.href = "index.html";
 
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {
@@ -168,49 +172,72 @@ async function validateLocalForm(event) {
     }
 }
 
-/**
- * Shows/hides local form
- */
-function toggleLocalForm() {
-    const authContainer = document.getElementById('auth-container');
-    const localContainer = document.getElementById('local-form-container');
-    
-    if (localContainer.style.display === 'none' || !localContainer.style.display) {
-        authContainer.style.display = 'none';
-        localContainer.style.display = 'block';
+// Atualiza o cabeçalho com o status de login
+function updateHeaderUI(user) {
+    const userHeader = document.getElementById("user-header-options");
+    if (!userHeader) return;
+
+    if (user) {
+        userHeader.innerHTML = `
+            <div class="user-info">
+                <span class="user-greeting">
+                    Olá, <strong>${user.displayName || "Herói"}</strong> ❤️
+                </span>
+                <a href="perfil.html" class="profile-link">Ver Perfil</a>
+                <button id="logout-btn" class="logout-button">Sair</button>
+            </div>
+        `;
+        const logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                signOut(auth).then(() => {
+                    window.location.reload();
+                }).catch(error => {
+                    console.error("Erro ao fazer logout:", error);
+                });
+            });
+        }
     } else {
-        authContainer.style.display = 'block';
-        localContainer.style.display = 'none';
+        userHeader.innerHTML = `
+            <a href="login.html" class="login">
+                <img src="img/login.png" alt="Ícone de login" class="icon-login">
+                Entrar
+            </a>
+        `;
     }
 }
 
-/**
- * Returns to login form
- */
+// Monitorar mudanças no estado de autenticação
+onAuthStateChanged(auth, (user) => {
+    updateHeaderUI(user);
+    const authEvent = new CustomEvent('authStateChanged', {
+        detail: {
+            isAuthenticated: !!user,
+            user: user
+        }
+    });
+    document.dispatchEvent(authEvent);
+});
+
 function voltarLogin() {
-    const authContainer = document.getElementById('auth-container');
-    const localContainer = document.getElementById('local-form-container');
-    
-    authContainer.style.display = 'block';
-    localContainer.style.display = 'none';
+    document.getElementById("local-form-container").style.display = "none";
+    document.getElementById("auth-container").style.display = "flex";
 }
 
-/**
- * Initialize the module
- */
+function toggleLocalForm() {
+    document.getElementById("auth-container").style.display = "none";
+    document.getElementById("local-form-container").style.display = "flex";
+}
+
 function init() {
-    const localForm = document.getElementById("local-form");
+    const localForm = document.getElementById('local-form');
     if (localForm) {
-        localForm.addEventListener("submit", validateLocalForm);
+        localForm.addEventListener('submit', validateLocalForm);
     }
 
-    // Make functions globally available
     window.toggleLocalForm = toggleLocalForm;
     window.voltarLogin = voltarLogin;
-    
-    // Initialize authentication monitoring
-    initAuthStateMonitoring();
+    window.validateLocalForm = validateLocalForm;
 }
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
