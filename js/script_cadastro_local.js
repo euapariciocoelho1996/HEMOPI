@@ -156,18 +156,34 @@ async function validateLocalForm(event) {
             dataCadastro: new Date().toISOString()
         });
 
-        alert("Local cadastrado com sucesso!");
+        // Mostrar mensagem de sucesso com animação
+        await Swal.fire({
+            title: 'Local Cadastrado!',
+            text: 'Seu local foi cadastrado com sucesso.',
+            icon: 'success',
+            confirmButtonColor: '#ce483c',
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            }
+        });
+
         document.getElementById("local-form").reset();
-
         updateHeaderUI({ displayName: nome, email: email });
-
         window.location.href = "index.html";
 
     } catch (error) {
         if (error.code === "auth/email-already-in-use") {
             showFieldError("email", "Este e-mail já está em uso para login.");
         } else {
-            alert("Erro ao cadastrar: " + error.message);
+            Swal.fire({
+                title: 'Erro',
+                text: 'Erro ao cadastrar: ' + error.message,
+                icon: 'error',
+                confirmButtonColor: '#ce483c'
+            });
         }
     }
 }
