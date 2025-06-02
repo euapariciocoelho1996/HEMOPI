@@ -20,6 +20,34 @@ import { app } from "./firebase-config.js";
 
 const auth = getAuth(app);
 
+// Função para gerenciar navegação com âncoras
+function handleAnchorNavigation(event) {
+  const target = event.target;
+  if (target.tagName === 'A' && target.hash) {
+    event.preventDefault();
+    const hash = target.hash;
+    
+    // Se não estiver na página inicial, redireciona para index.html com a âncora
+    if (window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
+      window.location.href = `index.html${hash}`;
+    } else {
+      // Se já estiver na página inicial, apenas rola para a seção
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+}
+
+// Adiciona o evento de clique para todos os links do menu
+function setupNavigation() {
+  const menuLinks = document.querySelectorAll('.menu-centralizado a');
+  menuLinks.forEach(link => {
+    link.addEventListener('click', handleAnchorNavigation);
+  });
+}
+
 // Atualiza o header com base no login
 function updateHeaderUI(user) {
   const userHeader = document.getElementById("user-header-options");
@@ -57,4 +85,19 @@ function updateHeaderUI(user) {
 onAuthStateChanged(auth, (user) => {
   console.log("Usuário autenticado:", user);
   updateHeaderUI(user);
+});
+
+// Inicializa a navegação quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+  setupNavigation();
+  
+  // Se houver uma âncora na URL, rola para a seção correspondente
+  if (window.location.hash) {
+    const element = document.querySelector(window.location.hash);
+    if (element) {
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
 });
