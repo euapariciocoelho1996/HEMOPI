@@ -197,14 +197,31 @@ function validateSignupForm() {
     
     createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-            alert("Usuário cadastrado com sucesso!");
-            window.location.href = "index.html";
+            Swal.fire({
+                title: 'Cadastro Realizado!',
+                text: 'Sua conta foi criada com sucesso.',
+                icon: 'success',
+                confirmButtonColor: '#ce483c',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            }).then(() => {
+                window.location.href = "index.html";
+            });
         })
         .catch((error) => {
             if (error.code === 'auth/email-already-in-use') {
                 showFieldError(emailInput, "Este e-mail já está em uso.");
             } else {
-                showFieldError(emailInput, `Erro: ${error.message}`);
+                Swal.fire({
+                    title: 'Erro',
+                    text: 'Erro ao cadastrar: ' + error.message,
+                    icon: 'error',
+                    confirmButtonColor: '#ce483c'
+                });
             }
         });
     
