@@ -11,33 +11,13 @@
   <link rel="stylesheet" href="css/chatbot.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script>
-    // Configuração do Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-      authDomain: "teste-2067f.firebaseapp.com",
-      projectId: "teste-2067f",
-      storageBucket: "teste-2067f.appspot.com",
-      messagingSenderId: "160483034987",
-      appId: "1:160483034987:web:944eb621b02efea11b2e2e"
-    };
-
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Verificar se o SweetAlert2 está carregado
-    window.addEventListener('load', function() {
-      if (typeof Swal === 'undefined') {
-        console.error('SweetAlert2 não está carregado!');
-      } else {
-        console.log('SweetAlert2 carregado com sucesso!');
-      }
-    });
-  </script>
   <style>
     #message-carousel {
       transition: opacity 0.5s;

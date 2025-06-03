@@ -14,9 +14,11 @@
 
 /* 1. General Styles */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
 /* 2. Media Queries */
@@ -163,7 +165,7 @@ body {
 
 .logo span {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 600;
   color: rgb(206, 72, 60);
 }
 
@@ -297,7 +299,7 @@ a[href="#conteudos"]:hover {
 
 .hero-texto .destaque {
   color: rgb(206, 72, 60);
-  font-weight: bold;
+  font-weight: 600;
   font-size: 16px;
   margin-bottom: 10px;
 }
@@ -307,12 +309,14 @@ a[href="#conteudos"]:hover {
   color: #1e1e1e;
   margin: 0 0 20px 0;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .hero-texto .descricao {
   font-size: 16px;
   color: #444;
   margin-bottom: 30px;
+  font-weight: 400;
 }
 
 .cta-hero {
@@ -397,6 +401,7 @@ a[href="#conteudos"]:hover {
   font-size: 20px;
   color: rgb(206, 72, 60);
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .info-card p {
@@ -404,6 +409,7 @@ a[href="#conteudos"]:hover {
   color: #444;
   line-height: 1.5;
   text-align: justify;
+  font-weight: 400;
 }
 
 .secao-doacao-informativa {
@@ -445,6 +451,7 @@ a[href="#conteudos"]:hover {
   color: #444;
   line-height: 1.6;
   text-align: justify;
+  font-weight: 400;
 }
 
 .reveal {
@@ -604,6 +611,7 @@ a[href="#conteudos"]:hover {
   justify-content: center;
   align-items: center;
   gap: 10px;
+  font-weight: 700;
 }
 
 .perfil-texto p {
@@ -611,6 +619,7 @@ a[href="#conteudos"]:hover {
   color: #444;
   max-width: 700px;
   margin: 0 auto 40px;
+  font-weight: 400;
 }
 
 .perfil-cards {
@@ -642,11 +651,13 @@ a[href="#conteudos"]:hover {
   font-size: 20px;
   margin-bottom: 10px;
   color: #333;
+  font-weight: 600;
 }
 
 .perfil-card p {
   font-size: 15px;
   color: #555;
+  font-weight: 400;
 }
 
 /* Estilo Para Campanhas */
@@ -666,6 +677,7 @@ a[href="#conteudos"]:hover {
   font-size: 32px;
   color: #333;
   margin-bottom: 15px;
+  font-weight: 700;
 }
 
 .campanha-subtitulo {
@@ -675,6 +687,7 @@ a[href="#conteudos"]:hover {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  font-weight: 400;
 }
 
 .campanhas-cards {
@@ -729,6 +742,7 @@ a[href="#conteudos"]:hover {
   font-size: 20px;
   color: #333;
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .campanha-local {

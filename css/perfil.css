@@ -1,6 +1,6 @@
 body {
-  font-family: "Segoe UI", sans-serif;
-  background: #f4f6f9;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f5f5;
   margin: 0;
   padding: 0;
   color: #333;
@@ -12,7 +12,7 @@ h1 {
   color: #333;
   margin-top: 50px;
   font-size: 36px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .botao-container {
@@ -32,6 +32,7 @@ h1 {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
+  font-weight: 500;
 }
 
 .perfil-btn:hover {
@@ -78,6 +79,7 @@ h1 {
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
   margin-top: 5px;
+  font-weight: 600;
 }
 
 .profile-card p {
@@ -85,6 +87,7 @@ h1 {
   margin: 15px 0;
   line-height: 1.8;
   color: #444;
+  font-weight: 400;
 }
 
 .donation-info p {
@@ -148,8 +151,6 @@ h1 {
   font-weight: bold;
   transition: background-color 0.3s;
 }
-
-
 
 /* estilo de botao de cadastrar campanha */
 .form-button {

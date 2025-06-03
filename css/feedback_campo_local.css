@@ -1,3 +1,31 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.feedback-form h2 {
+    font-weight: 700;
+    color: #333;
+}
+
+.feedback-form label {
+    font-weight: 500;
+    color: #333;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+}
+
+.feedback-form button {
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
 input {
     border: 1px solid #ccc;
     border-radius: 8px;

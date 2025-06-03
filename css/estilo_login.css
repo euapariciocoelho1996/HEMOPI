@@ -75,10 +75,11 @@
     }
 }
 
-
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f2f2f2;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
 }
 
 .container {
@@ -193,5 +194,26 @@ form input {
   font-size: 0.85rem;   /* Fonte um pouco menor que o padrão */
   margin: 8px 0;        /* Margem vertical de 8px, zero nas laterais */
   color: inherit;       /* Mantém a cor herdada (ou ajuste conforme quiser) */
+}
+
+.login-container h2 {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+}
+
+.login-button {
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
 }
 

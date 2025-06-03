@@ -2,7 +2,11 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil - Sangue Solidário</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/perfil.css" />
     <link rel="stylesheet" href="css/estilos.css" />
     <link rel="stylesheet" href="css/chatbot.css" />
@@ -51,12 +55,7 @@
       </button>
     </div>
 
-    <div id="profileInfo">
-      <div class="profile-card">
-        <h3>Quase lá...</h3>
-        <p>Você precisa atualizar seus dados no botão acima para continuar.</p>
-      </div>
-    </div>
+    
 
     <div class="info-campanhas-container">
       <div id="localInfo" style="margin: -10px; padding: 0;">
@@ -97,12 +96,23 @@
       </div>
     </div>
 
-    <div id="userDonationInfo" style="display: none">
-      <div class="profile-card">
-        <h3>Informações do Doador</h3>
-        <div id="dadosDoacao">Carregando dados da doação...</div>
+    <div class="info-campanhas-container">
+      <div id="userDonationInfo" style="display: none">
+        <div class="profile-card">
+          <h3>Doações</h3>
+          <div id="dadosDoacao">Carregando dados da doação...</div>
+        </div>
+      </div>
+
+      <div id="profileInfo">
+        <div class="profile-card">
+          <h3>Quase lá...</h3>
+          <p>Você precisa atualizar seus dados no botão acima para continuar.</p>
+        </div>
       </div>
     </div>
+
+ 
 
     <!-- Chatbot -->
     <div class="chat-icon" id="chat-icon">
