@@ -349,6 +349,55 @@ h1 {
     }
 }
 
+.info-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+.info-item:last-of-type {
+  border-bottom: none;
+}
+
+.info-item:hover {
+  background: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.info-item i {
+  font-size: 20px;
+  color: #cb0d0d;
+  width: 30px;
+  text-align: center;
+}
+
+.info-item p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.info-item strong {
+  color: #555;
+  font-weight: 600;
+}
+
+.info-value {
+  color: #cb0d0d;
+  font-weight: 500;
+}
+
 .total-doacoes {
   display: flex;
   align-items: center;
@@ -358,6 +407,19 @@ h1 {
   border-radius: 10px;
   margin: 15px 0;
   box-shadow: 0 4px 15px rgba(255, 75, 75, 0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 15px rgba(255, 75, 75, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(255, 75, 75, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 15px rgba(255, 75, 75, 0.2);
+  }
 }
 
 .total-doacoes i {

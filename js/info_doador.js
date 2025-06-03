@@ -81,20 +81,30 @@ onAuthStateChanged(auth, async (user) => {
       const data = doc.data();
       const section = document.createElement("section");
       section.innerHTML = `
-        <p><strong>Nome:</strong> ${data.nome || "Não informado"}</p>
-        <p><strong>Última Doação:</strong> ${
-          data.ultimaDoacao || "Não informado"
-        }</p>
-        <p><strong>Próxima Doação:</strong> ${
-          data.proxDoacao || "Não informado"
-        }</p>
-        <div class="total-doacoes">
-          <i class="fas fa-trophy"></i>
-          <p><strong>Total de Doações:</strong> <span class="numero-doacoes">${
-            data.quantidadeDoacoes ?? 0
-          }</span></p>
+        <div class="info-card">
+          <div class="info-item">
+            <i class="fas fa-user"></i>
+            <p><strong>Nome:</strong> <span class="info-value">${data.nome || "Não informado"}</span></p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar-check"></i>
+            <p><strong>Última Doação:</strong> <span class="info-value">${
+              data.ultimaDoacao || "Não informado"
+            }</span></p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar-alt"></i>
+            <p><strong>Próxima Doação:</strong> <span class="info-value">${
+              data.proxDoacao || "Não informado"
+            }</span></p>
+          </div>
+          <div class="total-doacoes">
+            <i class="fas fa-trophy"></i>
+            <p><strong>Total de Doações:</strong> <span class="numero-doacoes">${
+              data.quantidadeDoacoes ?? 0
+            }</span></p>
+          </div>
         </div>
-        <hr/>
       `;
 
       dadosDiv.appendChild(section);
