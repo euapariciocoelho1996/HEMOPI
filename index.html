@@ -10,36 +10,40 @@
     <link rel="stylesheet" href="css/chatbot.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- Adicionando suporte a leitor de tela -->
+    <link rel="alternate" type="application/rss+xml" title="Atualizações de campanhas de doação" href="/feed.xml">
 </head>
 
 <body>
+    <!-- Skip Navigation para acessibilidade -->
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
 
     <!-- Início do Cabeçalho Principal -->
-    <header class="header-moderno">
+    <header class="header-moderno" role="banner">
         <div class="logo">
-            <img src="img/icone.png" alt="Logo Sangue Solidário">
+            <img src="img/icone.png" alt="Logo do Sangue Solidário - Uma gota de sangue estilizada">
             <span>Sangue Solidário</span>
         </div>
 
         <!-- Botão Menu Mobile -->
-        <button class="menu-mobile-btn" aria-label="Menu">
+        <button class="menu-mobile-btn" aria-label="Menu de navegação" aria-expanded="false" aria-controls="menu-principal">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
         <!-- Menu de Navegação -->
-        <nav class="menu-centralizado">
-            <a href="index.html">Início</a>
+        <nav class="menu-centralizado" role="navigation" id="menu-principal" aria-label="Menu principal">
+            <a href="index.html" aria-current="page">Início</a>
             <a href="#informacoes-doacao">Sobre a Doação</a>
             <a href="#secao-perfil-doador">Perfil do Doador</a>
             <a href="campanhas_para_usuarios.html" class="cta-button">Campanhas Ativas</a>
         </nav>
 
         <!-- Área de Autenticação do Usuário -->
-        <div id="user-header-options">
-            <a href="login.html" class="login">
-                <img src="img/login.png" alt="Ícone de login" class="icon-login">
+        <div id="user-header-options" role="navigation" aria-label="Menu de usuário">
+            <a href="login.html" class="login" aria-label="Fazer login no sistema">
+                <img src="img/login.png" alt="" aria-hidden="true" class="icon-login">
                 Entrar
             </a>
         </div>
