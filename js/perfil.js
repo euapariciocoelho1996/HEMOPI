@@ -4,6 +4,7 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signOut,
+  signInWithEmailAndPassword,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
   getFirestore,
@@ -151,7 +152,83 @@ function renderLocalData(localData) {
   registerUserBtn.textContent = "Cadastrar Usuário";
   registerUserBtn.classList.add("form-button");
   registerUserBtn.addEventListener("click", () => {
-    // (copie aqui seu código do Swal.fire de cadastro de usuário)
+    if (typeof Swal === 'undefined') {
+      alert('Erro: SweetAlert2 não está carregado. Por favor, recarregue a página.');
+      return;
+    }
+
+    // Criar uma nova instância do Firebase para o novo usuário
+    const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+    const secondaryAuth = getAuth(secondaryApp);
+
+    Swal.fire({
+      title: "Cadastrar Novo Usuário",
+      html:
+        '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
+        '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
+        '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "Cadastrar",
+      confirmButtonColor: "#ce483c",
+      preConfirm: async () => {
+        const email = document
+          .getElementById("swal-input-email")
+          .value.trim();
+        const senha = document.getElementById("swal-input-password").value;
+        const confirmar =
+          document.getElementById("swal-input-confirm").value;
+
+        if (!email || !senha || !confirmar) {
+          Swal.showValidationMessage(
+            "Por favor, preencha todos os campos."
+          );
+          return false;
+        }
+
+        if (senha !== confirmar) {
+          Swal.showValidationMessage("As senhas não coincidem.");
+          return false;
+        }
+
+        try {
+          // Usar a instância secundária para criar o novo usuário
+          const userCredential = await createUserWithEmailAndPassword(
+            secondaryAuth,
+            email,
+            senha
+          );
+          const newUser = userCredential.user;
+
+          // Usar a instância principal do Firestore para salvar os dados
+          await setDoc(doc(db, "usuarios", newUser.uid), {
+            email: email,
+            dataCadastro: new Date().toISOString(),
+          });
+
+          // Fazer logout apenas da instância secundária
+          await signOut(secondaryAuth);
+          return true;
+        } catch (error) {
+          if (error.code === "auth/email-already-in-use") {
+            Swal.showValidationMessage("Este e-mail já está cadastrado.");
+          } else if (error.code === "auth/weak-password") {
+            Swal.showValidationMessage(
+              "A senha deve ter pelo menos 6 caracteres."
+            );
+          } else {
+            Swal.showValidationMessage(
+              "Erro ao cadastrar usuário: " + error.message
+            );
+          }
+          return false;
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
+      }
+    });
   });
 
   const editLocalBtn = document.createElement("button");
@@ -463,6 +540,15 @@ document.addEventListener("DOMContentLoaded", () => {
       registerUserBtn.textContent = "Cadastrar Usuário";
       registerUserBtn.classList.add("form-button");
       registerUserBtn.addEventListener("click", () => {
+        if (typeof Swal === 'undefined') {
+          alert('Erro: SweetAlert2 não está carregado. Por favor, recarregue a página.');
+          return;
+        }
+
+        // Criar uma nova instância do Firebase para o novo usuário
+        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+        const secondaryAuth = getAuth(secondaryApp);
+
         Swal.fire({
           title: "Cadastrar Novo Usuário",
           html:
@@ -494,9 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-              const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-              const secondaryAuth = getAuth(secondaryApp);
-
+              // Usar a instância secundária para criar o novo usuário
               const userCredential = await createUserWithEmailAndPassword(
                 secondaryAuth,
                 email,
@@ -504,11 +588,13 @@ document.addEventListener("DOMContentLoaded", () => {
               );
               const newUser = userCredential.user;
 
+              // Usar a instância principal do Firestore para salvar os dados
               await setDoc(doc(db, "usuarios", newUser.uid), {
                 email: email,
                 dataCadastro: new Date().toISOString(),
               });
 
+              // Fazer logout apenas da instância secundária
               await signOut(secondaryAuth);
               return true;
             } catch (error) {
