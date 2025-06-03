@@ -168,85 +168,75 @@ h1 {
 
 /* estilo lista de camapnhas no perfil */
 .campanhas-lista {
-  max-width: 600px;
-  height: 355px;
-  margin: 20px auto;
-  padding: 30px;
-  background: #fefefe;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05), 0 15px 35px rgba(0, 0, 0, 0.03);
-  transition: all 0.4s ease-in-out;
+  max-height: 500px;
   overflow: hidden;
-  position: relative;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
-.campanhas-lista::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(to right, #cb0d0d, #cb0d0d);
+.campanhas-lista .header-campanhas {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-.campanhas-lista:hover {
-  transform: translateY(-7px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08), 0 20px 40px rgba(0, 0, 0, 0.05);
-}
-
-.campanhas-lista h2 {
-  margin: 0 0 15px 0;
-  color: #222;
+.campanhas-lista .search-campanhas {
+  padding: 15px 20px;
   border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  margin-top: 5px;
-  font-size: 20px;
+  background: #fff;
 }
 
-.campanhas-lista input {
-  width: calc(100% - 24px);
-  padding: 12px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+.campanhas-lista .lista-campanhas {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #fff;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
-.campanhas-lista input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-  outline: none;
+/* Estilização da barra de rolagem */
+.campanhas-lista .lista-campanhas::-webkit-scrollbar {
+  width: 8px;
 }
 
-.campanhas-lista ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.campanhas-lista .lista-campanhas::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
-.campanhas-lista li {
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 17px;
-  color: #444;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.3s ease;
+.campanhas-lista .lista-campanhas::-webkit-scrollbar-thumb {
+  background: #ce483c;
+  border-radius: 4px;
 }
 
-.campanhas-lista li:last-child {
-  border-bottom: none;
+.campanhas-lista .lista-campanhas::-webkit-scrollbar-thumb:hover {
+  background: #a03a2f;
 }
 
-.campanhas-lista li:hover {
-  background-color: #f9f9f9;
+/* Responsividade */
+@media (max-width: 768px) {
+  .flex-container {
+    flex-direction: column;
+  }
+
+  .botoes-container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .info-content {
+    width: 100%;
+  }
+
+  .campanhas-lista {
+    max-height: 400px;
+  }
 }
 
 #refreshCampanhas {
@@ -767,5 +757,111 @@ h1 {
 
   .botoes-container .form-button {
     width: 100%;
+  }
+}
+
+/* Container Principal com Flex */
+.flex-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Container de Botões */
+.botoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  min-width: 220px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+/* Container de Informações */
+.info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Linha de cards de informação */
+.info-cards-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Ajustes para a lista de campanhas */
+.campanhas-lista {
+  flex: 1;
+  max-height: 500px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 300px; /* Largura mínima para o card de campanhas */
+}
+
+.campanhas-lista .info-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.campanhas-lista .lista-campanhas {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Estilização da barra de rolagem */
+.campanhas-lista .lista-campanhas::-webkit-scrollbar {
+  width: 8px;
+}
+
+.campanhas-lista .lista-campanhas::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.campanhas-lista .lista-campanhas::-webkit-scrollbar-thumb {
+  background: #ce483c;
+  border-radius: 4px;
+}
+
+.campanhas-lista .lista-campanhas::-webkit-scrollbar-thumb:hover {
+  background: #a03a2f;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .flex-container {
+    flex-direction: column;
+  }
+
+  .botoes-container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .info-content {
+    width: 100%;
+  }
+
+  .info-cards-row {
+    flex-direction: column;
+  }
+
+  .campanhas-lista {
+    max-height: 400px;
+    min-width: 100%;
   }
 }

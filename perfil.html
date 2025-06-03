@@ -60,15 +60,8 @@
 
       <!-- Seção de Informações -->
       <section class="info-section">
-        <!-- Container de Informações do Local e Campanhas -->
-        <div class="info-campanhas-container">
-          <!-- Informações do Local -->
-          <div id="localInfo" class="info-card-container">
-            <div class="profile-card">
-              <h3>Buscando informações do local...</h3>
-            </div>
-          </div>
-
+        <!-- Container Principal com Flex -->
+        <div class="flex-container">
           <!-- Botões de Ação -->
           <div class="botoes-container">
             <button class="form-button" id="btnCadastrarCampanha">
@@ -89,30 +82,32 @@
             </button>
           </div>
 
-          <!-- Lista de Campanhas -->
-          <div id="campanhasContainer" class="campanhas-lista" style="display: none;">
-            <div class="info-card">
-              <div class="info-item header-campanhas">
-                <i class="fas fa-bullhorn"></i>
-                <h2>Campanhas Ativas</h2>
-                <button
-                  id="refreshCampanhas"
-                  title="Atualizar lista"
-                  class="refresh-button"
-                >
-                  <i class="fas fa-sync-alt"></i>
-                </button>
+          <!-- Container de Informações -->
+          <div class="info-content">
+            <div class="info-cards-row">
+              <!-- Informações do Local -->
+              <div id="localInfo" class="info-card-container">
+                <div class="profile-card">
+                  <h3>Buscando informações do local...</h3>
+                </div>
               </div>
-              <div class="info-item search-campanhas">
-                <i class="fas fa-search"></i>
-                <input
-                  type="text"
-                  id="buscaCampanha"
-                  placeholder="Buscar campanha pelo título..."
-                />
-              </div>
-              <div class="info-item lista-campanhas">
-                <ul id="listaCampanhas"></ul>
+
+              <!-- Lista de Campanhas -->
+              <div id="campanhasContainer" class="campanhas-lista" style="display: none;">
+                <div class="info-item header-campanhas">
+                  <i class="fas fa-bullhorn"></i>
+                  <h2>Campanhas Ativas</h2>
+                  <button id="refreshCampanhas" title="Atualizar lista" class="refresh-button">
+                    <i class="fas fa-sync-alt"></i>
+                  </button>
+                </div>
+                <div class="info-item search-campanhas">
+                  <i class="fas fa-search"></i>
+                  <input type="text" id="buscaCampanha" placeholder="Buscar campanha pelo título..." />
+                </div>
+                <div class="info-item lista-campanhas">
+                  <ul id="listaCampanhas"></ul>
+                </div>
               </div>
             </div>
           </div>
