@@ -180,29 +180,101 @@
             <h2>Campanhas de Doação Ativas</h2>
             <p class="campanha-subtitulo">Fique por dentro das campanhas atuais e faça parte da corrente de solidariedade</p>
             
+            <!-- Filtros de Campanhas -->
+            <div class="campanhas-filtros">
+                <div class="filtro-grupo">
+                    <label for="filtro-sangue">Filtrar por tipo sanguíneo:</label>
+                    <select id="filtro-sangue" class="filtro-select">
+                        <option value="todos">Todos os tipos</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtro-urgencia">Filtrar por urgência:</label>
+                    <select id="filtro-urgencia" class="filtro-select">
+                        <option value="todos">Todas</option>
+                        <option value="urgente">Urgente</option>
+                        <option value="media">Importante</option>
+                        <option value="baixa">Regular</option>
+                    </select>
+                </div>
+            </div>
+            
             <div class="campanhas-cards">
-                <div class="campanha-card">
+                <div class="campanha-card" data-tipo-sangue="O-" data-urgencia="urgente">
                     <div class="urgencia urgente">URGENTE</div>
                     <h3>Precisamos de Sangue Tipo O-</h3>
-                    <p class="campanha-local">HEMOPI - Teresina</p>
-                    <p>Os estoques estão criticamente baixos. Sua doação pode salvar vidas ainda hoje!</p>
+                    <p class="campanha-local">
+                        <i class="fas fa-hospital"></i>
+                        HEMOPI - Teresina
+                    </p>
+                    <div class="campanha-info">
+                        <p><i class="fas fa-clock"></i> Horário: 7h às 18h</p>
+                        <p><i class="fas fa-calendar-alt"></i> Segunda a Sábado</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Rua 1º de Maio, 235 - Centro</p>
+                    </div>
+                    <p class="campanha-descricao">Os estoques estão criticamente baixos. Sua doação pode salvar vidas ainda hoje!</p>
+                    <div class="campanha-status">
+                        <div class="status-bar">
+                            <div class="status-progress" style="width: 15%"></div>
+                        </div>
+                        <p>Estoque atual: 15%</p>
+                    </div>
                     <p class="campanha-data">Até: 30/12/2025</p>
+                    <a href="#" class="campanha-acao">Quero Doar</a>
                 </div>
 
-                <div class="campanha-card">
+                <div class="campanha-card" data-tipo-sangue="todos" data-urgencia="media">
                     <div class="urgencia media">IMPORTANTE</div>
                     <h3>Todos os Tipos Sanguíneos</h3>
-                    <p class="campanha-local">Hospital São Marcos</p>
-                    <p>Ajude a manter nossos estoques preparados para emergências e cirurgias.</p>
+                    <p class="campanha-local">
+                        <i class="fas fa-hospital"></i>
+                        Hospital São Marcos
+                    </p>
+                    <div class="campanha-info">
+                        <p><i class="fas fa-clock"></i> Horário: 8h às 17h</p>
+                        <p><i class="fas fa-calendar-alt"></i> Segunda a Sexta</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Rua Olavo Bilac, 2300</p>
+                    </div>
+                    <p class="campanha-descricao">Ajude a manter nossos estoques preparados para emergências e cirurgias.</p>
+                    <div class="campanha-status">
+                        <div class="status-bar">
+                            <div class="status-progress" style="width: 45%"></div>
+                        </div>
+                        <p>Estoque atual: 45%</p>
+                    </div>
                     <p class="campanha-data">Até: 15/01/2026</p>
+                    <a href="#" class="campanha-acao">Quero Doar</a>
                 </div>
 
-                <div class="campanha-card">
+                <div class="campanha-card" data-tipo-sangue="todos" data-urgencia="baixa">
                     <div class="urgencia baixa">REGULAR</div>
                     <h3>Campanha "Doe Vida"</h3>
-                    <p class="campanha-local">Shopping Teresina</p>
-                    <p>Unidade móvel para coleta com horário estendido, das 10h às 22h.</p>
+                    <p class="campanha-local">
+                        <i class="fas fa-shopping-mall"></i>
+                        Shopping Teresina
+                    </p>
+                    <div class="campanha-info">
+                        <p><i class="fas fa-clock"></i> Horário: 10h às 22h</p>
+                        <p><i class="fas fa-calendar-alt"></i> 10 a 15/12/2025</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Av. Raul Lopes, 1000</p>
+                    </div>
+                    <p class="campanha-descricao">Unidade móvel para coleta com horário estendido. Venha participar!</p>
+                    <div class="campanha-status">
+                        <div class="status-bar">
+                            <div class="status-progress" style="width: 75%"></div>
+                        </div>
+                        <p>Meta: 75% alcançada</p>
+                    </div>
                     <p class="campanha-data">Dias: 10-15/12/2025</p>
+                    <a href="#" class="campanha-acao">Quero Doar</a>
                 </div>
             </div>
         </div>

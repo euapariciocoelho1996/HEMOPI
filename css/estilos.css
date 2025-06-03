@@ -815,3 +815,158 @@ a[href="#conteudos"]:hover {
 #userDonationInfo {
   margin-bottom: 20px;
 }
+
+/* Filtros de Campanhas */
+.campanhas-filtros {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filtro-grupo label {
+    font-weight: 500;
+    color: var(--cor-texto);
+}
+
+.filtro-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: var(--borda-radius);
+    font-size: 1rem;
+    color: var(--cor-texto);
+    background-color: var(--cor-fundo);
+    cursor: pointer;
+    transition: var(--transicao-padrao);
+}
+
+.filtro-select:hover {
+    border-color: var(--cor-primaria);
+}
+
+.filtro-select:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Cards de Campanha Melhorados */
+.campanha-card {
+    background-color: var(--cor-fundo);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--sombra-padrao);
+    width: 350px;
+    text-align: left;
+    position: relative;
+    transition: var(--transicao-padrao);
+    border: 1px solid #eee;
+}
+
+.campanha-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.campanha-local {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: var(--cor-texto);
+    margin: 1rem 0;
+}
+
+.campanha-local i {
+    color: var(--cor-primaria);
+}
+
+.campanha-info {
+    background-color: var(--cor-fundo-secundaria);
+    padding: 1rem;
+    border-radius: var(--borda-radius);
+    margin: 1rem 0;
+}
+
+.campanha-info p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.campanha-info i {
+    color: var(--cor-primaria);
+    width: 16px;
+}
+
+.campanha-descricao {
+    font-size: 1rem;
+    color: var(--cor-texto);
+    line-height: 1.5;
+    margin: 1rem 0;
+}
+
+.campanha-status {
+    margin: 1rem 0;
+}
+
+.status-bar {
+    height: 8px;
+    background-color: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.status-progress {
+    height: 100%;
+    background-color: var(--cor-primaria);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.campanha-status p {
+    font-size: 0.9rem;
+    color: var(--cor-texto);
+    text-align: right;
+}
+
+.campanha-acao {
+    display: inline-block;
+    background-color: var(--cor-primaria);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--borda-radius);
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: var(--transicao-padrao);
+}
+
+.campanha-acao:hover {
+    background-color: #d44637;
+    transform: translateY(-2px);
+}
+
+/* Responsividade dos filtros e cards */
+@media (max-width: 768px) {
+    .campanhas-filtros {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 1rem;
+    }
+
+    .campanha-card {
+        width: 100%;
+        max-width: 400px;
+    }
+}

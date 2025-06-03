@@ -219,6 +219,51 @@ class MobileMenu {
     }
 }
 
+// Filtros de Campanhas
+class CampanhasFiltro {
+    constructor() {
+        this.filtroSangue = document.getElementById('filtro-sangue');
+        this.filtroUrgencia = document.getElementById('filtro-urgencia');
+        this.cards = document.querySelectorAll('.campanha-card');
+
+        if (this.filtroSangue && this.filtroUrgencia) {
+            this.setupEventListeners();
+        }
+    }
+
+    setupEventListeners() {
+        this.filtroSangue.addEventListener('change', () => this.aplicarFiltros());
+        this.filtroUrgencia.addEventListener('change', () => this.aplicarFiltros());
+    }
+
+    aplicarFiltros() {
+        const tipoSangue = this.filtroSangue.value;
+        const urgencia = this.filtroUrgencia.value;
+
+        this.cards.forEach(card => {
+            const cardTipoSangue = card.dataset.tipoSangue;
+            const cardUrgencia = card.dataset.urgencia;
+            
+            const matchTipoSangue = tipoSangue === 'todos' || cardTipoSangue === tipoSangue;
+            const matchUrgencia = urgencia === 'todos' || cardUrgencia === urgencia;
+
+            if (matchTipoSangue && matchUrgencia) {
+                card.style.display = '';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300);
+            }
+        });
+    }
+}
+
 // Initialize features when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Start animations when elements scroll into view
@@ -229,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize mobile menu
     const mobileMenu = new MobileMenu();
+
+    // Initialize campanhas filtro
+    const campanhasFiltro = new CampanhasFiltro();
 
     // Cleanup on page unload
     window.addEventListener('unload', () => {
