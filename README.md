@@ -34,6 +34,8 @@
 **Função:** Suporte no Frontend e Backend  
 **Responsabilidades:**  
 - Ajudar na interface do usuário (UI)  
-- Ajudar na integração com Banco de Dados  
+- Ajudar na integração com Banco de Dados
+- Modernização da interface
+- Implementação de filtros e melhorias na usabilidade
 
 ---
