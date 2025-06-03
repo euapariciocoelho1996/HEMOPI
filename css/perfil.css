@@ -348,3 +348,30 @@ h1 {
         padding: 10px 0;
     }
 }
+
+.total-doacoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #cb0d0d 0%, #cb0d0d 100%);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  box-shadow: 0 4px 15px rgba(255, 75, 75, 0.2);
+}
+
+.total-doacoes i {
+  font-size: 24px;
+  color: #fff;
+}
+
+.total-doacoes p {
+  margin: 0;
+  color: #fff;
+}
+
+.total-doacoes .numero-doacoes {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-left: 5px;
+}
