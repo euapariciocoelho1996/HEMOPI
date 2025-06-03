@@ -61,19 +61,42 @@ function renderUserProfile(userData) {
   const container = document.getElementById("profileInfo");
   if (!container) return;
 
-  container.innerHTML = `
-        <div class="profile-card">
-            <h3>Dados do Usuário</h3>
-            <p><strong>Nome:</strong> ${userData.nome || "Não informado"}</p>
-            <p><strong>Idade:</strong> ${userData.idade || "Não informada"}</p>
-            <p><strong>Sexo:</strong> ${userData.sexo || "Não informado"}</p>
-            <p><strong>Rua:</strong> ${userData.rua || "Não informada"}</p>
-            <p><strong>Bairro:</strong> ${
-              userData.bairro || "Não informado"
-            }</p>
-            
+  if (!userData || !userData.nome) {
+    container.innerHTML = `
+      <div class="info-card">
+        <div class="info-item">
+          <i class="fas fa-exclamation-circle"></i>
+          <p><strong>Quase lá...</strong> <span class="info-value">Você precisa atualizar seus dados no botão acima para continuar.</span></p>
         </div>
+      </div>
     `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="info-card">
+      <div class="info-item">
+        <i class="fas fa-user"></i>
+        <p><strong>Nome:</strong> <span class="info-value">${userData.nome || "Não informado"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-birthday-cake"></i>
+        <p><strong>Idade:</strong> <span class="info-value">${userData.idade || "Não informada"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-user-tag"></i>
+        <p><strong>Sexo:</strong> <span class="info-value">${userData.sexo || "Não informado"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <p><strong>Rua:</strong> <span class="info-value">${userData.rua || "Não informada"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-building"></i>
+        <p><strong>Bairro:</strong> <span class="info-value">${userData.bairro || "Não informado"}</span></p>
+      </div>
+    </div>
+  `;
 }
 
 async function loadLocalByEmail(email) {
@@ -103,148 +126,41 @@ function renderLocalData(localData) {
 
   if (!localData) {
     container.innerHTML = `
-            <div class="profile-card">
-                <h3>Local não encontrado</h3>
-                <p>Não há dados de local vinculados ao seu e-mail.</p>
-            </div>
-        `;
+      <div class="info-card">
+        <div class="info-item">
+          <i class="fas fa-search"></i>
+          <p><strong>Buscando informações do local...</strong></p>
+        </div>
+      </div>
+    `;
     return;
   }
 
   // Renderiza os dados do local
   container.innerHTML = `
-        <div class="profile-card">
-            <h3>Informações Salvas</h3>
-            <p><strong>Nome:</strong> ${localData.nome || "Não informado"}</p>
-            <p><strong>CNPJ:</strong> ${localData.cnpj || "Não informado"}</p>
-            <p><strong>Contato:</strong> ${
-              localData.contato || "Não informado"
-            }</p>
-            <p><strong>Email:</strong> ${localData.email || "Não informado"}</p>
-            <p><strong>Endereço:</strong> ${
-              localData.endereco || "Não informado"
-            }</p>
-        </div>
-    `;
-
-  // Cria os botões novamente
-  const buttonContainer = document.createElement("div");
-  buttonContainer.style.display = "flex";
-  buttonContainer.style.gap = "10px";
-  buttonContainer.style.justifyContent = "center";
-  buttonContainer.style.marginTop = "20px";
-
-  const campaignBtn = document.createElement("button");
-  campaignBtn.textContent = "Cadastrar Campanha";
-  campaignBtn.classList.add("form-button");
-  campaignBtn.addEventListener("click", () =>
-    showCampaignForm(localData.email)
-  );
-
-  const redirectBtn = document.createElement("button");
-  redirectBtn.textContent = "Editar Campanhas";
-  redirectBtn.classList.add("form-button");
-  redirectBtn.addEventListener("click", () => {
-    window.location.href = "campanhas_de_cada_local.html";
-  });
-
-  const registerUserBtn = document.createElement("button");
-  registerUserBtn.textContent = "Cadastrar Usuário";
-  registerUserBtn.classList.add("form-button");
-  registerUserBtn.addEventListener("click", () => {
-    if (typeof Swal === 'undefined') {
-      alert('Erro: SweetAlert2 não está carregado. Por favor, recarregue a página.');
-      return;
-    }
-
-    // Criar uma nova instância do Firebase para o novo usuário
-    const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-    const secondaryAuth = getAuth(secondaryApp);
-
-    Swal.fire({
-      title: "Cadastrar Novo Usuário",
-      html:
-        '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
-        '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
-        '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: "Cadastrar",
-      confirmButtonColor: "#ce483c",
-      preConfirm: async () => {
-        const email = document
-          .getElementById("swal-input-email")
-          .value.trim();
-        const senha = document.getElementById("swal-input-password").value;
-        const confirmar =
-          document.getElementById("swal-input-confirm").value;
-
-        if (!email || !senha || !confirmar) {
-          Swal.showValidationMessage(
-            "Por favor, preencha todos os campos."
-          );
-          return false;
-        }
-
-        if (senha !== confirmar) {
-          Swal.showValidationMessage("As senhas não coincidem.");
-          return false;
-        }
-
-        try {
-          // Usar a instância secundária para criar o novo usuário
-          const userCredential = await createUserWithEmailAndPassword(
-            secondaryAuth,
-            email,
-            senha
-          );
-          const newUser = userCredential.user;
-
-          // Usar a instância principal do Firestore para salvar os dados
-          await setDoc(doc(db, "usuarios", newUser.uid), {
-            email: email,
-            dataCadastro: new Date().toISOString(),
-          });
-
-          // Fazer logout apenas da instância secundária
-          await signOut(secondaryAuth);
-          return true;
-        } catch (error) {
-          if (error.code === "auth/email-already-in-use") {
-            Swal.showValidationMessage("Este e-mail já está cadastrado.");
-          } else if (error.code === "auth/weak-password") {
-            Swal.showValidationMessage(
-              "A senha deve ter pelo menos 6 caracteres."
-            );
-          } else {
-            Swal.showValidationMessage(
-              "Erro ao cadastrar usuário: " + error.message
-            );
-          }
-          return false;
-        }
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
-      }
-    });
-  });
-
-  const editLocalBtn = document.createElement("button");
-  editLocalBtn.textContent = "Editar Local";
-  editLocalBtn.classList.add("form-button");
-  editLocalBtn.addEventListener("click", () => {
-    showEditLocalForm(localData);
-  });
-
-  // Adiciona os botões ao container
-  buttonContainer.appendChild(campaignBtn);
-  buttonContainer.appendChild(redirectBtn);
-  buttonContainer.appendChild(registerUserBtn);
-  buttonContainer.appendChild(editLocalBtn);
-
-  container.appendChild(buttonContainer); // Anexa ao DOM
+    <div class="info-card">
+      <div class="info-item">
+        <i class="fas fa-hospital"></i>
+        <p><strong>Nome:</strong> <span class="info-value">${localData.nome || "Não informado"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-id-card"></i>
+        <p><strong>CNPJ:</strong> <span class="info-value">${localData.cnpj || "Não informado"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-phone"></i>
+        <p><strong>Contato:</strong> <span class="info-value">${localData.contato || "Não informado"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-envelope"></i>
+        <p><strong>Email:</strong> <span class="info-value">${localData.email || "Não informado"}</span></p>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-map-marked-alt"></i>
+        <p><strong>Endereço:</strong> <span class="info-value">${localData.endereco || "Não informado"}</span></p>
+      </div>
+    </div>
+  `;
 }
 
 async function saveUserProfile(uid, data) {
@@ -490,156 +406,228 @@ function showEditLocalForm(localData) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const profileBtn = document.getElementById("abrirFormulario");
-  const profileInfoContainer = document.getElementById("profileInfo");
-  const localInfoContainer = document.getElementById("localInfo");
-  const pageTitle = document.getElementById("pageTitle");
+// Função para filtrar campanhas
+function filtrarCampanhas(termo) {
+    const campanhas = document.querySelectorAll('.lista-campanhas li');
+    const termoBusca = termo.toLowerCase();
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      profileInfoContainer.innerHTML = `
+    campanhas.forEach(campanha => {
+        const texto = campanha.textContent.toLowerCase();
+        if (texto.includes(termoBusca)) {
+            campanha.style.display = '';
+        } else {
+            campanha.style.display = 'none';
+        }
+    });
+}
+
+// Função para atualizar a lista de campanhas
+async function atualizarCampanhas() {
+    const refreshButton = document.querySelector('.refresh-button');
+    const icon = refreshButton.querySelector('i');
+    
+    // Adiciona classe de loading
+    refreshButton.classList.add('loading');
+    
+    try {
+        // Aqui você pode adicionar a lógica para buscar novas campanhas
+        // Por enquanto, vamos apenas simular um delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Atualiza a lista de campanhas
+        // ... seu código de atualização aqui ...
+        
+        // Mostra mensagem de sucesso
+        mostrarNotificacao('Campanhas atualizadas com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao atualizar campanhas:', error);
+        mostrarNotificacao('Erro ao atualizar campanhas', 'error');
+    } finally {
+        // Remove classe de loading
+        refreshButton.classList.remove('loading');
+    }
+}
+
+// Função para mostrar notificações
+function mostrarNotificacao(mensagem, tipo) {
+    const notificacao = document.createElement('div');
+    notificacao.className = `notificacao ${tipo}`;
+    notificacao.textContent = mensagem;
+    
+    document.body.appendChild(notificacao);
+    
+    // Remove a notificação após 3 segundos
+    setTimeout(() => {
+        notificacao.remove();
+    }, 3000);
+}
+
+// Adiciona event listeners quando o documento estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.querySelector('.search-campanhas input');
+    const refreshButton = document.querySelector('.refresh-button');
+    const botoesContainer = document.querySelector('.botoes-container');
+    
+    // Esconde os botões inicialmente
+    if (botoesContainer) {
+        botoesContainer.style.display = 'none';
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filtrarCampanhas(e.target.value);
+        });
+    }
+    
+    if (refreshButton) {
+        refreshButton.addEventListener('click', atualizarCampanhas);
+    }
+
+    // Event listeners para os novos botões
+    const btnCadastrarCampanha = document.getElementById('btnCadastrarCampanha');
+    const btnEditarCampanhas = document.getElementById('btnEditarCampanhas');
+    const btnCadastrarUsuario = document.getElementById('btnCadastrarUsuario');
+    const btnEditarLocal = document.getElementById('btnEditarLocal');
+
+    if (btnCadastrarCampanha) {
+        btnCadastrarCampanha.addEventListener('click', () => {
+            const user = auth.currentUser;
+            if (user) {
+                showCampaignForm(user.email);
+            }
+        });
+    }
+
+    if (btnEditarCampanhas) {
+        btnEditarCampanhas.addEventListener('click', () => {
+            window.location.href = "campanhas_de_cada_local.html";
+        });
+    }
+
+    if (btnCadastrarUsuario) {
+        btnCadastrarUsuario.addEventListener('click', () => {
+            if (typeof Swal === 'undefined') {
+                alert('Erro: SweetAlert2 não está carregado. Por favor, recarregue a página.');
+                return;
+            }
+
+            const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+            const secondaryAuth = getAuth(secondaryApp);
+
+            Swal.fire({
+                title: "Cadastrar Novo Usuário",
+                html:
+                    '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
+                    '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
+                    '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: "Cadastrar",
+                confirmButtonColor: "#ce483c",
+                preConfirm: async () => {
+                    const email = document.getElementById("swal-input-email").value.trim();
+                    const senha = document.getElementById("swal-input-password").value;
+                    const confirmar = document.getElementById("swal-input-confirm").value;
+
+                    if (!email || !senha || !confirmar) {
+                        Swal.showValidationMessage("Por favor, preencha todos os campos.");
+                        return false;
+                    }
+
+                    if (senha !== confirmar) {
+                        Swal.showValidationMessage("As senhas não coincidem.");
+                        return false;
+                    }
+
+                    try {
+                        const userCredential = await createUserWithEmailAndPassword(
+                            secondaryAuth,
+                            email,
+                            senha
+                        );
+                        const newUser = userCredential.user;
+
+                        await setDoc(doc(db, "usuarios", newUser.uid), {
+                            email: email,
+                            dataCadastro: new Date().toISOString(),
+                        });
+
+                        await signOut(secondaryAuth);
+                        return true;
+                    } catch (error) {
+                        if (error.code === "auth/email-already-in-use") {
+                            Swal.showValidationMessage("Este e-mail já está cadastrado.");
+                        } else if (error.code === "auth/weak-password") {
+                            Swal.showValidationMessage("A senha deve ter pelo menos 6 caracteres.");
+                        } else {
+                            Swal.showValidationMessage("Erro ao cadastrar usuário: " + error.message);
+                        }
+                        return false;
+                    }
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
+                }
+            });
+        });
+    }
+
+    if (btnEditarLocal) {
+        btnEditarLocal.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const locaisRef = collection(db, "locais");
+                const q = query(locaisRef, where("email", "==", user.email));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const localData = querySnapshot.docs[0].data();
+                    showEditLocalForm(localData);
+                }
+            }
+        });
+    }
+
+    const profileBtn = document.getElementById("abrirFormulario");
+    const profileInfoContainer = document.getElementById("profileInfo");
+    const localInfoContainer = document.getElementById("localInfo");
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            profileInfoContainer.innerHTML = `
                 <div class="profile-card">
                     <h3>Não autenticado</h3>
                     <p>Faça login para visualizar seu perfil.</p>
                     <a href="login.html" class="login-link">Fazer Login</a>
                 </div>
             `;
-      localInfoContainer.innerHTML = "";
-      profileBtn.style.display = "none";
-      return;
-    }
-
-    const isLocal = await loadLocalByEmail(user.email);
-
-    if (isLocal) {
-      profileInfoContainer.innerHTML = "";
-      profileBtn.style.display = "none";
-      
-
-      const buttonContainer = document.createElement("div");
-      buttonContainer.style.display = "flex";
-      buttonContainer.style.gap = "10px";
-      buttonContainer.style.justifyContent = "center"; // Centraliza os botões horizontalmente
-      buttonContainer.style.width = "100%"; // Garante que ocupe toda a largura do container pai
-      buttonContainer.style.marginTop = "20px"; // Espaço entre o título e os botões
-
-      const campaignBtn = document.createElement("button");
-      campaignBtn.textContent = "Cadastrar Campanha";
-      campaignBtn.classList.add("form-button");
-      campaignBtn.addEventListener("click", () => showCampaignForm(user.email));
-
-      const redirectBtn = document.createElement("button");
-      redirectBtn.textContent = "Editar Campanhas";
-      redirectBtn.classList.add("form-button");
-      redirectBtn.addEventListener("click", () => {
-        window.location.href = "campanhas_de_cada_local.html";
-      });
-
-      const registerUserBtn = document.createElement("button");
-      registerUserBtn.textContent = "Cadastrar Usuário";
-      registerUserBtn.classList.add("form-button");
-      registerUserBtn.addEventListener("click", () => {
-        if (typeof Swal === 'undefined') {
-          alert('Erro: SweetAlert2 não está carregado. Por favor, recarregue a página.');
-          return;
+            localInfoContainer.innerHTML = "";
+            profileBtn.style.display = "none";
+            if (botoesContainer) {
+                botoesContainer.style.display = 'none';
+            }
+            return;
         }
 
-        // Criar uma nova instância do Firebase para o novo usuário
-        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-        const secondaryAuth = getAuth(secondaryApp);
+        const isLocal = await loadLocalByEmail(user.email);
 
-        Swal.fire({
-          title: "Cadastrar Novo Usuário",
-          html:
-            '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
-            '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
-            '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
-          focusConfirm: false,
-          showCancelButton: true,
-          confirmButtonText: "Cadastrar",
-          confirmButtonColor: "#ce483c",
-          preConfirm: async () => {
-            const email = document
-              .getElementById("swal-input-email")
-              .value.trim();
-            const senha = document.getElementById("swal-input-password").value;
-            const confirmar =
-              document.getElementById("swal-input-confirm").value;
-
-            if (!email || !senha || !confirmar) {
-              Swal.showValidationMessage(
-                "Por favor, preencha todos os campos."
-              );
-              return false;
+        if (isLocal) {
+            profileInfoContainer.innerHTML = "";
+            profileBtn.style.display = "none";
+            if (botoesContainer) {
+                botoesContainer.style.display = 'flex';
             }
-
-            if (senha !== confirmar) {
-              Swal.showValidationMessage("As senhas não coincidem.");
-              return false;
+        } else {
+            const userData = await loadUserProfile(user.uid);
+            if (userData) {
+                renderUserProfile(userData);
             }
-
-            try {
-              // Usar a instância secundária para criar o novo usuário
-              const userCredential = await createUserWithEmailAndPassword(
-                secondaryAuth,
-                email,
-                senha
-              );
-              const newUser = userCredential.user;
-
-              // Usar a instância principal do Firestore para salvar os dados
-              await setDoc(doc(db, "usuarios", newUser.uid), {
-                email: email,
-                dataCadastro: new Date().toISOString(),
-              });
-
-              // Fazer logout apenas da instância secundária
-              await signOut(secondaryAuth);
-              return true;
-            } catch (error) {
-              if (error.code === "auth/email-already-in-use") {
-                Swal.showValidationMessage("Este e-mail já está cadastrado.");
-              } else if (error.code === "auth/weak-password") {
-                Swal.showValidationMessage(
-                  "A senha deve ter pelo menos 6 caracteres."
-                );
-              } else {
-                Swal.showValidationMessage(
-                  "Erro ao cadastrar usuário: " + error.message
-                );
-              }
-              return false;
+            localInfoContainer.innerHTML = "";
+            profileBtn.style.display = "inline-block";
+            profileBtn.addEventListener("click", showProfileForm);
+            if (botoesContainer) {
+                botoesContainer.style.display = 'none';
             }
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
-          }
-        });
-      });
-
-      const editLocalBtn = document.createElement("button");
-      editLocalBtn.textContent = "Editar Local";
-      editLocalBtn.classList.add("form-button");
-      editLocalBtn.addEventListener("click", async () => {
-        const locaisRef = collection(db, "locais");
-        const q = query(locaisRef, where("email", "==", user.email));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const localData = querySnapshot.docs[0].data();
-          showEditLocalForm(localData);
         }
-      });
-    } else {
-      const userData = await loadUserProfile(user.uid);
-      if (userData) {
-        renderUserProfile(userData);
-      }
-      localInfoContainer.innerHTML = "";
-      profileBtn.style.display = "inline-block";
-      profileBtn.addEventListener("click", showProfileForm);
-      pageTitle.textContent = "Perfil do Usuário";
-    }
-  });
+    });
 });
