@@ -23,6 +23,10 @@
     --sombra-padrao: 0 2px 10px rgba(0, 0, 0, 0.1);
     --fonte-principal: 'Segoe UI', system-ui, -apple-system, sans-serif;
     --transicao-padrao: all 0.3s ease;
+    --animation-speed-fast: 0.2s;
+    --animation-speed-normal: 0.3s;
+    --animation-speed-slow: 0.5s;
+    --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 1. General Styles */
@@ -969,4 +973,96 @@ a[href="#conteudos"]:hover {
         width: 100%;
         max-width: 400px;
     }
+}
+
+/* Animações de Feedback */
+.button-feedback {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--animation-speed-normal) var(--transition-timing);
+}
+
+.button-feedback:active {
+  transform: scale(0.95);
+}
+
+.button-feedback::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.button-feedback:active::after {
+  animation: ripple 0.6s ease-out;
+}
+
+/* Animação de Loading */
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--cor-primaria-clara);
+  border-radius: 50%;
+  border-top-color: var(--cor-primaria);
+  animation: spin 1s ease-in-out infinite;
+  margin: auto;
+}
+
+/* Animação de Fade */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn var(--animation-speed-normal) forwards;
+}
+
+.slide-in {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideIn var(--animation-speed-normal) forwards;
+}
+
+/* Keyframes */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(40);
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Aplicando classes aos elementos existentes */
+.cta-button {
+  @extend .button-feedback;
+}
+
+.card-campanha {
+  @extend .fade-in;
+}
+
+.menu-item {
+  @extend .slide-in;
 }
