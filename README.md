@@ -1,49 +1,5 @@
-# HEMOPI - Sistema de Gestão de Doações de Sangue
-
-## Sistemas Implementados
-
-1. Sistema de Perfil de Usuário
-- Edição de informações
-- Histórico de doações
-- Badges e conquistas
-- Interface responsiva
-
-2. Sistema de Agendamento
-- Calendário interativo
-- Seleção de local e horário
-- Gerenciamento de agendamentos
-- Validações e feedback
-
-3. Sistema de Estatísticas
-- Gráficos interativos
-- Contadores animados
-- Visualização por tipo sanguíneo
-- Evolução mensal
-
-4. Sistema de FAQ
-- Categorização de perguntas
-- Busca em tempo real
-- Animações suaves
-- Interface responsiva
-
-5. Sistema de Feedback
-- Avaliações e comentários
-- Sistema de estrelas
-- Filtros e ordenação
-- Respostas da administração
-
-6. Sistema de Autenticação
-- Login e registro
-- Persistência de sessão
-- Proteção de conteúdo
-- Interface moderna
-
-## Tecnologias Utilizadas
-- JavaScript Moderno
-- Firebase (Auth e Firestore)
-- HTML5 e CSS3
-- Animações e Transições
-- Design Responsivo
+# HEMOPI
+ O HEMOPI (Sangue Solidário) é uma plataforma web inovadora, projetada para modernizar o acompanhamento de doações de sangue, o envio de notificações inteligentes e a gestão de campanhas de doação. Desenvolvido em apoio ao Centro de Hematologia e Hemoterapia do Piauí (HEMOPI), o sistema promove a doação recorrente, organiza de forma eficiente as informações dos doadores e otimiza os processos internos da instituição, fortalecendo seu alcance e impacto social.
 
 ## 👥 Equipe do Projeto
 

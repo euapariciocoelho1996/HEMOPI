@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
+  font-size: 16px;
 }
 
 h1 {
@@ -39,27 +40,51 @@ h1 {
 }
 
 .profile-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 30px;
+  background-color: #fefefe;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05), 0 15px 35px rgba(0, 0, 0, 0.03);
+  padding: 30px;
+  margin-top: 20px;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   text-align: left;
+  transition: all 0.4s ease-in-out;
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #cb0d0d, #cb0d0d);
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.profile-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08), 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
 .profile-card h3 {
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom: 15px;
-  color: #444;
+  color: #222;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-top: 5px;
 }
 
 .profile-card p {
-  font-size: 18px;
-  margin: 10px 0;
-  line-height: 1.6;
+  font-size: 17px;
+  margin: 15px 0;
+  line-height: 1.8;
+  color: #444;
 }
 
 .donation-info p {
@@ -116,7 +141,7 @@ h1 {
   display: inline-block;
   margin-top: 15px;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #cb0d0d;
   color: white;
   text-decoration: none;
   border-radius: 5px;
@@ -124,9 +149,7 @@ h1 {
   transition: background-color 0.3s;
 }
 
-.login-link:hover {
-  background-color: #0056b3;
-}
+
 
 /* estilo de botao de cadastrar campanha */
 .form-button {
@@ -145,37 +168,101 @@ h1 {
 /* estilo lista de camapnhas no perfil */
 .campanhas-lista {
   max-width: 600px;
-  margin: 30px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  height: 355px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #fefefe;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05), 0 15px 35px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s ease-in-out;
+  overflow: hidden;
+  position: relative;
+}
+
+.campanhas-lista::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #cb0d0d, #cb0d0d);
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.campanhas-lista:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08), 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.campanhas-lista h2 {
+  margin: 0 0 15px 0;
+  color: #222;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-top: 5px;
+  font-size: 20px;
 }
 
 .campanhas-lista input {
-  width: 95%;
-  padding: 10px;
-  margin-top: 18px;
+  width: calc(100% - 24px);
+  padding: 12px;
+  margin-top: 15px;
   margin-bottom: 15px;
   font-size: 16px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.campanhas-lista input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+  outline: none;
 }
 
 .campanhas-lista ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .campanhas-lista li {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 17px;
+  color: #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.campanhas-lista li:last-child {
+  border-bottom: none;
+}
+
+.campanhas-lista li:hover {
+  background-color: #f9f9f9;
+}
+
+#refreshCampanhas {
+  font-size: 1.3rem;
+  color: #007bff;
+  transition: transform 0.4s ease, color 0.3s ease;
+}
+
+#refreshCampanhas i {
+  font-size: 1rem;
+  color: #007bff;
+  transition: transform 0.4s ease, color 0.3s ease;
 }
 
 #refreshCampanhas:hover i {
-  transform: rotate(180deg);
-  transition: transform 0.4s ease;
-  color: #cb0d0d;
+  transform: rotate(180deg) scale(1.1);
+  color: #cb0d0d;;
 }
 
 /* Estilo para dados de doação do usuario comum */
@@ -199,7 +286,7 @@ h1 {
 }
 
 .donation-info i {
-  font-style: normal; /* Para garantir que emoji não fique itálico */
+  font-style: normal;
   font-size: 22px;
   margin-right: 10px;
   user-select: none;
@@ -217,4 +304,46 @@ h1 {
 .donation-info p:hover i {
   transform: scale(1.2);
   color: #e63946;
+}
+
+/* Container para Informações do Local e Campanhas */
+.info-campanhas-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+}
+
+/* Media query para telas menores */
+@media (max-width: 768px) {
+    .info-campanhas-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .info-campanhas-container #localInfo,
+    .info-campanhas-container #campanhasContainer {
+        width: 95%;
+        margin-bottom: 20px;
+        margin-top: 0;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .profile-card,
+    .campanhas-lista {
+        padding: 25px;
+        transform: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .profile-card::before,
+    .campanhas-lista::before {
+        content: none;
+    }
+    .campanhas-lista input {
+        width: calc(100% - 20px);
+        padding: 10px;
+    }
+    .campanhas-lista li {
+        padding: 10px 0;
+    }
 }

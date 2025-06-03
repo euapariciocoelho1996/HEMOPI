@@ -114,7 +114,7 @@ function renderLocalData(localData) {
   // Renderiza os dados do local
   container.innerHTML = `
         <div class="profile-card">
-            <h3>Informações do Local Vinculado</h3>
+            <h3>Informações Salvas</h3>
             <p><strong>Nome:</strong> ${localData.nome || "Não informado"}</p>
             <p><strong>CNPJ:</strong> ${localData.cnpj || "Não informado"}</p>
             <p><strong>Contato:</strong> ${
@@ -490,656 +490,156 @@ function showEditLocalForm(localData) {
   });
 }
 
-// Sistema de Perfil de Usuário
-class UserProfile {
-    constructor() {
-        this.userData = null;
-        this.init();
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  const profileBtn = document.getElementById("abrirFormulario");
+  const profileInfoContainer = document.getElementById("profileInfo");
+  const localInfoContainer = document.getElementById("localInfo");
+  const pageTitle = document.getElementById("pageTitle");
 
-    init() {
-        // Verificar se usuário está logado
-        if (window.auth && window.auth.currentUser) {
-            this.loadUserData();
-        }
-        
-        // Adicionar listener para mudanças no estado de autenticação
-        document.body.addEventListener('authStateChange', (e) => {
-            if (e.detail.isLoggedIn) {
-                this.loadUserData();
-            } else {
-                this.hideProfile();
-            }
-        });
-        
-        // Criar seção de perfil
-        this.createProfileSection();
-    }
-
-    async loadUserData() {
-        try {
-            // Simulação de chamada à API
-            this.userData = await this.simulateApiCall({
-                name: window.auth.currentUser.name,
-                email: window.auth.currentUser.email,
-                bloodType: 'A+',
-                lastDonation: '2024-02-15',
-                totalDonations: 5,
-                nextDonationDate: '2024-06-15',
-                donationHistory: [
-                    {
-                        date: '2024-02-15',
-                        location: 'HEMOPI Central',
-                        type: 'Sangue Total',
-                        status: 'Concluída'
-                    },
-                    {
-                        date: '2023-10-10',
-                        location: 'HEMOPI Móvel',
-                        type: 'Sangue Total',
-                        status: 'Concluída'
-                    },
-                    {
-                        date: '2023-06-05',
-                        location: 'HEMOPI Central',
-                        type: 'Plaquetas',
-                        status: 'Concluída'
-                    }
-                ],
-                badges: [
-                    {
-                        icon: 'fa-heart',
-                        name: 'Primeira Doação',
-                        description: 'Realizou sua primeira doação'
-                    },
-                    {
-                        icon: 'fa-award',
-                        name: 'Doador Regular',
-                        description: 'Realizou 5 doações'
-                    },
-                    {
-                        icon: 'fa-star',
-                        name: 'Doador Platina',
-                        description: 'Doou em 3 campanhas diferentes'
-                    }
-                ]
-            });
-            
-            this.updateProfileUI();
-        } catch (error) {
-            window.notifications.error('Erro ao carregar dados do perfil');
-        }
-    }
-
-    createProfileSection() {
-        let profileSection = document.querySelector('.profile-section');
-        if (!profileSection) {
-            profileSection = document.createElement('section');
-            profileSection.className = 'profile-section';
-            profileSection.style.display = 'none';
-            
-            profileSection.innerHTML = `
-                <div class="profile-container">
-                    <div class="profile-header">
-                        <div class="profile-cover"></div>
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <button class="edit-profile-btn">
-                            <i class="fas fa-edit"></i>
-                            Editar Perfil
-                        </button>
-                    </div>
-                    
-                    <div class="profile-content">
-                        <div class="profile-info">
-                            <h2 class="profile-name"></h2>
-                            <div class="profile-details">
-                                <div class="profile-detail">
-                                    <i class="fas fa-envelope"></i>
-                                    <span class="profile-email"></span>
-                                </div>
-                                <div class="profile-detail">
-                                    <i class="fas fa-tint"></i>
-                                    <span class="profile-blood-type"></span>
-                                </div>
-                                <div class="profile-detail">
-                                    <i class="fas fa-calendar"></i>
-                                    <span class="profile-last-donation"></span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="profile-stats">
-                            <div class="stat-card">
-                                <div class="stat-value"></div>
-                                <div class="stat-label">Doações Realizadas</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value next-donation"></div>
-                                <div class="stat-label">Próxima Doação</div>
-                            </div>
-                        </div>
-                        
-                        <div class="profile-badges">
-                            <h3>Conquistas</h3>
-                            <div class="badges-grid"></div>
-                        </div>
-                        
-                        <div class="donation-history">
-                            <h3>Histórico de Doações</h3>
-                            <div class="history-timeline"></div>
-                        </div>
-                    </div>
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      profileInfoContainer.innerHTML = `
+                <div class="profile-card">
+                    <h3>Não autenticado</h3>
+                    <p>Faça login para visualizar seu perfil.</p>
+                    <a href="login.html" class="login-link">Fazer Login</a>
                 </div>
             `;
-            
-            // Inserir após a seção de autenticação
-            const authSection = document.querySelector('.auth-section');
-            if (authSection) {
-                authSection.parentNode.insertBefore(profileSection, authSection.nextSibling);
-            } else {
-                document.body.appendChild(profileSection);
-            }
-            
-            // Adicionar listeners
-            this.setupProfileListeners(profileSection);
+      localInfoContainer.innerHTML = "";
+      profileBtn.style.display = "none";
+      return;
+    }
+
+    const isLocal = await loadLocalByEmail(user.email);
+
+    if (isLocal) {
+      profileInfoContainer.innerHTML = "";
+      profileBtn.style.display = "none";
+      
+
+      const buttonContainer = document.createElement("div");
+      buttonContainer.style.display = "flex";
+      buttonContainer.style.gap = "10px";
+      buttonContainer.style.justifyContent = "center"; // Centraliza os botões horizontalmente
+      buttonContainer.style.width = "100%"; // Garante que ocupe toda a largura do container pai
+      buttonContainer.style.marginTop = "20px"; // Espaço entre o título e os botões
+
+      const campaignBtn = document.createElement("button");
+      campaignBtn.textContent = "Cadastrar Campanha";
+      campaignBtn.classList.add("form-button");
+      campaignBtn.addEventListener("click", () => showCampaignForm(user.email));
+
+      const redirectBtn = document.createElement("button");
+      redirectBtn.textContent = "Editar Campanhas";
+      redirectBtn.classList.add("form-button");
+      redirectBtn.addEventListener("click", () => {
+        window.location.href = "campanhas_de_cada_local.html";
+      });
+
+      const registerUserBtn = document.createElement("button");
+      registerUserBtn.textContent = "Cadastrar Usuário";
+      registerUserBtn.classList.add("form-button");
+      registerUserBtn.addEventListener("click", () => {
+        if (typeof Swal === 'undefined') {
+          alert('Erro: SweetAlert2 não está carregado. Por favor, recarregue a página.');
+          return;
         }
-    }
 
-    setupProfileListeners(profileSection) {
-        const editBtn = profileSection.querySelector('.edit-profile-btn');
-        editBtn.addEventListener('click', () => this.showEditProfileModal());
-    }
+        // Criar uma nova instância do Firebase para o novo usuário
+        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+        const secondaryAuth = getAuth(secondaryApp);
 
-    updateProfileUI() {
-        const profileSection = document.querySelector('.profile-section');
-        if (!profileSection || !this.userData) return;
-        
-        // Atualizar informações básicas
-        profileSection.querySelector('.profile-name').textContent = this.userData.name;
-        profileSection.querySelector('.profile-email').textContent = this.userData.email;
-        profileSection.querySelector('.profile-blood-type').textContent = this.userData.bloodType;
-        profileSection.querySelector('.profile-last-donation').textContent = 
-            `Última doação: ${this.formatDate(this.userData.lastDonation)}`;
-        
-        // Atualizar estatísticas
-        profileSection.querySelector('.stat-value').textContent = this.userData.totalDonations;
-        profileSection.querySelector('.next-donation').textContent = 
-            this.formatDate(this.userData.nextDonationDate);
-        
-        // Atualizar badges
-        const badgesGrid = profileSection.querySelector('.badges-grid');
-        badgesGrid.innerHTML = this.userData.badges.map(badge => `
-            <div class="badge-card" data-tooltip="${badge.description}">
-                <i class="fas ${badge.icon}"></i>
-                <span>${badge.name}</span>
-            </div>
-        `).join('');
-        
-        // Atualizar histórico
-        const timeline = profileSection.querySelector('.history-timeline');
-        timeline.innerHTML = this.userData.donationHistory.map(donation => `
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <div class="timeline-date">${this.formatDate(donation.date)}</div>
-                    <div class="timeline-title">${donation.type}</div>
-                    <div class="timeline-location">${donation.location}</div>
-                    <div class="timeline-status ${donation.status.toLowerCase()}">${donation.status}</div>
-                </div>
-            </div>
-        `).join('');
-        
-        // Mostrar seção
-        profileSection.style.display = 'block';
-    }
+        Swal.fire({
+          title: "Cadastrar Novo Usuário",
+          html:
+            '<input id="swal-input-email" class="swal2-input" placeholder="Email">' +
+            '<input id="swal-input-password" type="password" class="swal2-input" placeholder="Senha">' +
+            '<input id="swal-input-confirm" type="password" class="swal2-input" placeholder="Confirmar Senha">',
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: "Cadastrar",
+          confirmButtonColor: "#ce483c",
+          preConfirm: async () => {
+            const email = document
+              .getElementById("swal-input-email")
+              .value.trim();
+            const senha = document.getElementById("swal-input-password").value;
+            const confirmar =
+              document.getElementById("swal-input-confirm").value;
 
-    showEditProfileModal() {
-        const modal = document.createElement('div');
-        modal.className = 'edit-profile-modal';
-        
-        modal.innerHTML = `
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <button class="modal-close">&times;</button>
-                <h2>Editar Perfil</h2>
-                
-                <form id="editProfileForm">
-                    <div class="form-group">
-                        <label for="editName">Nome</label>
-                        <input type="text" id="editName" value="${this.userData.name}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="editEmail">Email</label>
-                        <input type="email" id="editEmail" value="${this.userData.email}" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="editBloodType">Tipo Sanguíneo</label>
-                        <select id="editBloodType">
-                            <option value="A+" ${this.userData.bloodType === 'A+' ? 'selected' : ''}>A+</option>
-                            <option value="A-" ${this.userData.bloodType === 'A-' ? 'selected' : ''}>A-</option>
-                            <option value="B+" ${this.userData.bloodType === 'B+' ? 'selected' : ''}>B+</option>
-                            <option value="B-" ${this.userData.bloodType === 'B-' ? 'selected' : ''}>B-</option>
-                            <option value="AB+" ${this.userData.bloodType === 'AB+' ? 'selected' : ''}>AB+</option>
-                            <option value="AB-" ${this.userData.bloodType === 'AB-' ? 'selected' : ''}>AB-</option>
-                            <option value="O+" ${this.userData.bloodType === 'O+' ? 'selected' : ''}>O+</option>
-                            <option value="O-" ${this.userData.bloodType === 'O-' ? 'selected' : ''}>O-</option>
-                        </select>
-                    </div>
-                    
-                    <button type="submit" class="save-profile-btn">Salvar Alterações</button>
-                </form>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // Adicionar listeners
-        const form = modal.querySelector('#editProfileForm');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleProfileUpdate(form);
-        });
-        
-        const closeBtn = modal.querySelector('.modal-close');
-        closeBtn.addEventListener('click', () => {
-            document.body.removeChild(modal);
-        });
-        
-        const overlay = modal.querySelector('.modal-overlay');
-        overlay.addEventListener('click', () => {
-            document.body.removeChild(modal);
-        });
-    }
+            if (!email || !senha || !confirmar) {
+              Swal.showValidationMessage(
+                "Por favor, preencha todos os campos."
+              );
+              return false;
+            }
 
-    async handleProfileUpdate(form) {
-        const name = form.querySelector('#editName').value;
-        const email = form.querySelector('#editEmail').value;
-        const bloodType = form.querySelector('#editBloodType').value;
-        
-        try {
-            // Simulação de chamada à API
-            await this.simulateApiCall({ name, email, bloodType });
-            
-            // Atualizar dados
-            this.userData = {
-                ...this.userData,
-                name,
+            if (senha !== confirmar) {
+              Swal.showValidationMessage("As senhas não coincidem.");
+              return false;
+            }
+
+            try {
+              // Usar a instância secundária para criar o novo usuário
+              const userCredential = await createUserWithEmailAndPassword(
+                secondaryAuth,
                 email,
-                bloodType
-            };
-            
-            // Atualizar UI
-            this.updateProfileUI();
-            
-            // Fechar modal
-            const modal = document.querySelector('.edit-profile-modal');
-            if (modal) {
-                document.body.removeChild(modal);
+                senha
+              );
+              const newUser = userCredential.user;
+
+              // Usar a instância principal do Firestore para salvar os dados
+              await setDoc(doc(db, "usuarios", newUser.uid), {
+                email: email,
+                dataCadastro: new Date().toISOString(),
+              });
+
+              // Fazer logout apenas da instância secundária
+              await signOut(secondaryAuth);
+              return true;
+            } catch (error) {
+              if (error.code === "auth/email-already-in-use") {
+                Swal.showValidationMessage("Este e-mail já está cadastrado.");
+              } else if (error.code === "auth/weak-password") {
+                Swal.showValidationMessage(
+                  "A senha deve ter pelo menos 6 caracteres."
+                );
+              } else {
+                Swal.showValidationMessage(
+                  "Erro ao cadastrar usuário: " + error.message
+                );
+              }
+              return false;
             }
-            
-            window.notifications.success('Perfil atualizado com sucesso!');
-        } catch (error) {
-            window.notifications.error('Erro ao atualizar perfil');
-        }
-    }
-
-    hideProfile() {
-        const profileSection = document.querySelector('.profile-section');
-        if (profileSection) {
-            profileSection.style.display = 'none';
-        }
-    }
-
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR');
-    }
-
-    simulateApiCall(data) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(data);
-            }, 800);
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire("Sucesso!", "Usuário cadastrado com sucesso.", "success");
+          }
         });
-    }
-}
+      });
 
-// Adicionar estilos
-const style = document.createElement('style');
-style.textContent = `
-    .profile-section {
-        padding: 40px 20px;
-        background: var(--cor-fundo);
-    }
-
-    .profile-container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: var(--cor-fundo);
-        border-radius: 12px;
-        box-shadow: var(--sombra-padrao);
-        overflow: hidden;
-    }
-
-    .profile-header {
-        position: relative;
-        height: 200px;
-    }
-
-    .profile-cover {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 120px;
-        background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
-    }
-
-    .profile-avatar {
-        position: absolute;
-        left: 30px;
-        bottom: 20px;
-        width: 120px;
-        height: 120px;
-        background: var(--cor-fundo);
-        border: 4px solid var(--cor-fundo);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: var(--sombra-padrao);
-    }
-
-    .profile-avatar i {
-        font-size: 48px;
-        color: var(--cor-primaria);
-    }
-
-    .edit-profile-btn {
-        position: absolute;
-        right: 20px;
-        bottom: 20px;
-        padding: 8px 16px;
-        background: var(--cor-primaria);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s;
-    }
-
-    .edit-profile-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .profile-content {
-        padding: 30px;
-    }
-
-    .profile-info {
-        margin-bottom: 40px;
-    }
-
-    .profile-name {
-        margin: 0 0 20px 0;
-        color: var(--cor-texto);
-    }
-
-    .profile-details {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-    }
-
-    .profile-detail {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--cor-texto);
-    }
-
-    .profile-detail i {
-        color: var(--cor-primaria);
-    }
-
-    .profile-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-
-    .stat-card {
-        padding: 20px;
-        background: var(--cor-fundo);
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: var(--sombra-padrao);
-    }
-
-    .stat-value {
-        font-size: 36px;
-        font-weight: bold;
-        color: var(--cor-primaria);
-        margin-bottom: 10px;
-    }
-
-    .stat-label {
-        color: var(--cor-texto);
-        font-size: 14px;
-    }
-
-    .profile-badges {
-        margin-bottom: 40px;
-    }
-
-    .profile-badges h3 {
-        margin-bottom: 20px;
-        color: var(--cor-texto);
-    }
-
-    .badges-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 20px;
-    }
-
-    .badge-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 15px;
-        background: var(--cor-fundo);
-        border-radius: 8px;
-        box-shadow: var(--sombra-padrao);
-        cursor: help;
-    }
-
-    .badge-card i {
-        font-size: 24px;
-        color: var(--cor-primaria);
-        margin-bottom: 10px;
-    }
-
-    .badge-card span {
-        text-align: center;
-        font-size: 12px;
-        color: var(--cor-texto);
-    }
-
-    .donation-history h3 {
-        margin-bottom: 20px;
-        color: var(--cor-texto);
-    }
-
-    .history-timeline {
-        position: relative;
-        padding-left: 30px;
-    }
-
-    .history-timeline::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: var(--cor-primaria);
-        opacity: 0.3;
-    }
-
-    .timeline-item {
-        position: relative;
-        margin-bottom: 30px;
-    }
-
-    .timeline-dot {
-        position: absolute;
-        left: -34px;
-        top: 0;
-        width: 10px;
-        height: 10px;
-        background: var(--cor-primaria);
-        border-radius: 50%;
-    }
-
-    .timeline-content {
-        background: var(--cor-fundo);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: var(--sombra-padrao);
-    }
-
-    .timeline-date {
-        font-size: 14px;
-        color: var(--cor-texto);
-        opacity: 0.7;
-        margin-bottom: 5px;
-    }
-
-    .timeline-title {
-        font-weight: bold;
-        color: var(--cor-texto);
-        margin-bottom: 5px;
-    }
-
-    .timeline-location {
-        font-size: 14px;
-        color: var(--cor-texto);
-        margin-bottom: 10px;
-    }
-
-    .timeline-status {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .timeline-status.concluída {
-        background: #28a745;
-        color: white;
-    }
-
-    .edit-profile-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        animation: fadeIn 0.3s ease;
-    }
-
-    .modal-content {
-        position: relative;
-        width: 90%;
-        max-width: 500px;
-        background: var(--cor-fundo);
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        animation: slideIn 0.3s ease;
-        z-index: 1;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        color: var(--cor-texto);
-        cursor: pointer;
-        opacity: 0.5;
-        transition: opacity 0.2s;
-    }
-
-    .modal-close:hover {
-        opacity: 1;
-    }
-
-    .save-profile-btn {
-        width: 100%;
-        padding: 12px;
-        background: var(--cor-primaria);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .save-profile-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    @media (max-width: 768px) {
-        .profile-header {
-            height: 240px;
+      const editLocalBtn = document.createElement("button");
+      editLocalBtn.textContent = "Editar Local";
+      editLocalBtn.classList.add("form-button");
+      editLocalBtn.addEventListener("click", async () => {
+        const locaisRef = collection(db, "locais");
+        const q = query(locaisRef, where("email", "==", user.email));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const localData = querySnapshot.docs[0].data();
+          showEditLocalForm(localData);
         }
-
-        .profile-avatar {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .edit-profile-btn {
-            bottom: 60px;
-        }
-
-        .profile-details {
-            grid-template-columns: 1fr;
-        }
+      });
+    } else {
+      const userData = await loadUserProfile(user.uid);
+      if (userData) {
+        renderUserProfile(userData);
+      }
+      localInfoContainer.innerHTML = "";
+      profileBtn.style.display = "inline-block";
+      profileBtn.addEventListener("click", showProfileForm);
+      pageTitle.textContent = "Perfil do Usuário";
     }
-`;
-
-document.head.appendChild(style);
-
-// Inicializar sistema de perfil
-document.addEventListener('DOMContentLoaded', () => {
-    new UserProfile();
+  });
 });

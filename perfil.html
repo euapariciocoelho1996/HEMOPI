@@ -43,7 +43,7 @@
       </div>
     </header>
 
-    <h1 id="pageTitle">Perfil</h1>
+    
 
     <div class="botao-container">
       <button class="perfil-btn" id="abrirFormulario">
@@ -58,41 +58,43 @@
       </div>
     </div>
 
-    <div id="localInfo">
-      <div class="profile-card">
-        <h3>Buscando informações do local...</h3>
+    <div class="info-campanhas-container">
+      <div id="localInfo" style="margin: -10px; padding: 0;">
+        <div class="profile-card">
+          <h3>Buscando informações do local...</h3>
+        </div>
       </div>
-    </div>
 
-    <div id="campanhasContainer" class="campanhas-lista" style="display: none">
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        "
-      >
-        <h2 style="margin: 0">Campanhas do Local</h2>
-        <button
-          id="refreshCampanhas"
-          title="Atualizar lista"
+      <div id="campanhasContainer" class="campanhas-lista" style="display: none; margin: 10px; padding: 10px;">
+        <div
           style="
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.4rem;
-            color: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
           "
         >
-          <i class="fas fa-sync-alt"></i>
-        </button>
+          <h2 style="margin: 10px">Campanhas Ativas</h2>
+          <button
+            id="refreshCampanhas"
+            title="Atualizar lista"
+            style="
+              background: none;
+              border: none;
+              cursor: pointer;
+              font-size: 1.4rem;
+              color: #007bff;
+            "
+          >
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+        <input
+          type="text"
+          id="buscaCampanha"
+          placeholder="Buscar campanha pelo título..."
+        />
+        <ul id="listaCampanhas"></ul>
       </div>
-      <input
-        type="text"
-        id="buscaCampanha"
-        placeholder="Buscar campanha pelo título..."
-      />
-      <ul id="listaCampanhas"></ul>
     </div>
 
     <div id="userDonationInfo" style="display: none">
