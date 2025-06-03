@@ -184,6 +184,15 @@
             <h2>Campanhas de Doação Ativas</h2>
             <p class="campanha-subtitulo">Fique por dentro das campanhas atuais e faça parte da corrente de solidariedade</p>
             
+            <!-- Campo de Pesquisa -->
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="campanha-search" placeholder="Pesquisar campanhas..." 
+                           data-tooltip="Pesquise por local, tipo sanguíneo ou descrição">
+                </div>
+            </div>
+
             <!-- Filtros de Campanhas -->
             <div class="campanhas-filtros">
                 <div class="filtro-grupo">
@@ -328,10 +337,19 @@
         </div>
     </footer>
 
+    <!-- Botão de Tema -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema claro/escuro">
+        <i class="fas fa-moon"></i>
+    </button>
+
     <!-- Scripts -->
     <script src="js/script.js"></script>
     <script type="module" src="js/verifica_user_autenticado.js"></script>
     <script type="module" src="js/chatbot-init.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/pesquisa.js"></script>
+    <script src="js/compartilhamento.js"></script>
+    <script src="js/estatisticas.js"></script>
 </body>
 
 </html>

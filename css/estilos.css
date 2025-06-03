@@ -13,20 +13,39 @@
  */
 
 :root {
+    /* Tema Claro (Padrão) */
     --cor-primaria: #e74c3c;
     --cor-secundaria: #3498db;
     --cor-texto: #2c3e50;
     --cor-fundo: #ffffff;
     --cor-fundo-secundaria: #f8f9fa;
+    --cor-borda: #e1e1e1;
+    --cor-input: #ffffff;
+    --cor-placeholder: #6c757d;
     --espacamento-padrao: 1rem;
     --borda-radius: 8px;
     --sombra-padrao: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --sombra-hover: 0 4px 15px rgba(0, 0, 0, 0.15);
     --fonte-principal: 'Segoe UI', system-ui, -apple-system, sans-serif;
     --transicao-padrao: all 0.3s ease;
     --animation-speed-fast: 0.2s;
     --animation-speed-normal: 0.3s;
     --animation-speed-slow: 0.5s;
     --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tema Escuro */
+[data-theme="dark"] {
+    --cor-primaria: #ff6b6b;
+    --cor-secundaria: #4dabf7;
+    --cor-texto: #e9ecef;
+    --cor-fundo: #1a1a1a;
+    --cor-fundo-secundaria: #2d2d2d;
+    --cor-borda: #404040;
+    --cor-input: #333333;
+    --cor-placeholder: #888888;
+    --sombra-padrao: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --sombra-hover: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* 1. General Styles */
@@ -1065,4 +1084,119 @@ a[href="#conteudos"]:hover {
 
 .menu-item {
   @extend .slide-in;
+}
+
+/* Botão de Alternar Tema */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--cor-primaria);
+    color: var(--cor-fundo);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--sombra-padrao);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--sombra-hover);
+}
+
+.theme-toggle i {
+    font-size: 24px;
+}
+
+/* Ajustes para Tema Escuro */
+[data-theme="dark"] .header-moderno {
+    background-color: var(--cor-fundo);
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+[data-theme="dark"] .menu-centralizado a {
+    color: var(--cor-texto);
+}
+
+[data-theme="dark"] .hero {
+    background: linear-gradient(135deg, var(--cor-fundo) 0%, var(--cor-fundo-secundaria) 100%);
+}
+
+[data-theme="dark"] .info-card,
+[data-theme="dark"] .perfil-card,
+[data-theme="dark"] .campanha-card {
+    background-color: var(--cor-fundo-secundaria);
+    border: 1px solid var(--cor-borda);
+}
+
+[data-theme="dark"] .campanha-info {
+    background-color: var(--cor-fundo);
+}
+
+[data-theme="dark"] .status-bar {
+    background-color: var(--cor-borda);
+}
+
+/* Campo de Pesquisa */
+.search-container {
+    margin: 2rem auto;
+    max-width: 600px;
+    padding: 0 1rem;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--cor-placeholder);
+    font-size: 18px;
+}
+
+#campanha-search {
+    width: 100%;
+    padding: 12px 16px 12px 45px;
+    border: 2px solid var(--cor-borda);
+    border-radius: var(--borda-radius);
+    font-size: 16px;
+    color: var(--cor-texto);
+    background-color: var(--cor-input);
+    transition: var(--transicao-padrao);
+}
+
+#campanha-search::placeholder {
+    color: var(--cor-placeholder);
+}
+
+#campanha-search:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+/* Animação de fade para os cards */
+.campanha-card {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
