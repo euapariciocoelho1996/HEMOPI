@@ -858,3 +858,62 @@ a[href="#conteudos"]:hover {
 #userDonationInfo {
   margin-bottom: 20px;
 }
+
+/* Estilos para o botão de menu responsivo */
+.menu-toggle {
+    display: none; /* Esconde o botão em telas grandes */
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #454545;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .header-moderno {
+        justify-content: space-between; /* Ajusta o alinhamento para o menu responsivo */
+        padding: 15px 20px; /* Reduz o padding em telas menores */
+    }
+
+    .menu-centralizado {
+        display: none; /* Esconde o menu de navegação padrão em telas menores */
+        flex-direction: column;
+        position: absolute;
+        top: 70px; /* Ajusta com a altura do header */
+        left: 0;
+        width: 100%;
+        background-color: #ffffff; /* Fundo branco para o menu */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 999; /* Garante que o menu fique acima de outros elementos */
+        padding: 20px 0;
+        border-top: 1px solid #eee;
+    }
+
+    .menu-centralizado.active {
+        display: flex; /* Mostra o menu quando ativo */
+    }
+
+    .menu-centralizado a {
+        padding: 10px 20px;
+        text-align: center;
+        width: 100%;
+        border-bottom: 1px solid #f0f0f0; /* Separador para os itens do menu */
+    }
+
+    .menu-centralizado a:last-child {
+        border-bottom: none;
+    }
+
+    .menu-toggle {
+        display: block; /* Mostra o botão do hambúrguer em telas menores */
+    }
+
+    .logo {
+        margin-right: auto; /* Empurra o logo para a esquerda, e o menu-toggle e user-header-options para a direita */
+    }
+
+    #user-header-options {
+        margin-left: 15px; /* Adiciona um pouco de espaço à esquerda das opções de usuário */
+    }
+}
