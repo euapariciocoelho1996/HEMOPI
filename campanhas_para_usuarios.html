@@ -23,7 +23,11 @@
       <img src="img/icone.png" alt="Logo Sangue Solidário">
       <span>Sangue Solidário</span>
     </div>
-    <nav class="menu-centralizado">
+    <!-- Botão para abrir o menu responsivo -->
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu de navegação">
+        <i class="fas fa-bars"></i>
+    </button>
+    <nav class="menu-centralizado" id="main-nav">
       <a href="index.html">Início</a>
       <a href="#informacoes-doacao">Sobre a Doação</a>
       <a href="#secao-perfil-doador">Perfil do Doador</a>
@@ -58,6 +62,7 @@
   <script type="module" src="js/campanhas.js"></script>
   <script type="module" src="js/header.js"></script>
   <script src="js/script.js"></script>
+  <script src="js/menu.js"></script>
   <script type="module" src="js/chatbot-init.js"></script>
 
 </body>
