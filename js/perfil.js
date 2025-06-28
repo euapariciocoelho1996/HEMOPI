@@ -101,15 +101,21 @@ function renderUserProfile(userData) {
 
 async function loadLocalByEmail(email) {
   try {
+    console.log("Verificando se email é local:", email);
+    
     const locaisRef = collection(db, "locais");
-    const q = query(locaisRef, where("email", "==", email));
+    const q = query(locaisRef, where("email", "==", email), where("tipo", "==", "administrador"));
     const querySnapshot = await getDocs(q);
+
+    console.log("Resultado da consulta:", querySnapshot.empty ? "Nenhum local encontrado" : "Local encontrado");
 
     if (!querySnapshot.empty) {
       const localData = querySnapshot.docs[0].data();
+      console.log("Dados do local encontrado:", localData);
       renderLocalData(localData);
       return true;
     } else {
+      console.log("Nenhum local encontrado para o email:", email);
       renderLocalData(null);
       return false;
     }
@@ -593,7 +599,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const localInfoContainer = document.getElementById("localInfo");
 
     onAuthStateChanged(auth, async (user) => {
+        console.log("onAuthStateChanged - Usuário:", user ? user.email : "Não autenticado");
+        
         if (!user) {
+            console.log("Usuário não autenticado - mostrando tela de login");
             profileInfoContainer.innerHTML = `
                 <div class="profile-card">
                     <h3>Não autenticado</h3>
@@ -609,15 +618,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        console.log("Verificando se usuário é local...");
         const isLocal = await loadLocalByEmail(user.email);
+        console.log("Resultado da verificação de local:", isLocal);
 
         if (isLocal) {
+            console.log("Usuário é local - mostrando botões administrativos");
             profileInfoContainer.innerHTML = "";
             profileBtn.style.display = "none";
             if (botoesContainer) {
                 botoesContainer.style.display = 'flex';
             }
         } else {
+            console.log("Usuário é comum - mostrando perfil pessoal");
             const userData = await loadUserProfile(user.uid);
             if (userData) {
                 renderUserProfile(userData);

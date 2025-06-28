@@ -133,19 +133,29 @@ async function validateLocalForm(event) {
 
     try {
         // Cria o usuário no Firebase Auth
-        await createUserWithEmailAndPassword(auth, email, senha);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+        const user = userCredential.user;
+
+        console.log("Usuário criado no Firebase Auth:", user.uid);
 
         // Salva os dados no Firestore
         const localRef = doc(db, "locais", cnpj);
-        await setDoc(localRef, {
+        const localData = {
             nome,
             endereco,
             contato,
             email,
             cnpj,
+            uid: user.uid,
             tipo: "administrador",
             dataCadastro: new Date().toISOString()
-        });
+        };
+
+        console.log("Dados do local a serem salvos:", localData);
+
+        await setDoc(localRef, localData);
+
+        console.log("Local salvo com sucesso no Firestore");
 
         // Mostrar mensagem de sucesso com animação
         await Swal.fire({
