@@ -3,12 +3,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebas
 import { 
     getAuth, 
     createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import { 
     getFirestore, 
     doc, 
     setDoc,
+    getDoc,
     collection,
     query,
     where,
@@ -223,25 +226,11 @@ onAuthStateChanged(auth, (user) => {
     document.dispatchEvent(authEvent);
 });
 
-function voltarLogin() {
-    document.getElementById("local-form-container").style.display = "none";
-    document.getElementById("auth-container").style.display = "flex";
-}
-
-function toggleLocalForm() {
-    document.getElementById("auth-container").style.display = "none";
-    document.getElementById("local-form-container").style.display = "flex";
-}
-
 function init() {
     const localForm = document.getElementById('local-form');
     if (localForm) {
         localForm.addEventListener('submit', validateLocalForm);
     }
-
-    window.toggleLocalForm = toggleLocalForm;
-    window.voltarLogin = voltarLogin;
-    window.validateLocalForm = validateLocalForm;
 }
 
 document.addEventListener('DOMContentLoaded', init);
