@@ -1,15 +1,46 @@
-// Import Firebase modules
-import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { app } from "./firebase-config.js";
+// Script de recuperação de senha - Versão 2
+// Abordagem mais robusta para garantir que a função seja exportada
 
-// Get auth instance from existing app
-const auth = getAuth(app);
+console.log('Iniciando script de recuperação de senha v2...');
 
-console.log('Script de recuperação de senha iniciando...');
-console.log('App configurado:', app);
-console.log('Auth configurado:', auth);
+// Função para carregar Firebase dinamicamente
+async function carregarFirebase() {
+    try {
+        // Importar módulos do Firebase
+        const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js");
+        const { getAuth, sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js");
+        
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
+            authDomain: "teste-2067f.firebaseapp.com",
+            projectId: "teste-2067f",
+            storageBucket: "teste-2067f.appspot.com",
+            messagingSenderId: "160483034987",
+            appId: "1:160483034987:web:944eb621b02efea11b2e2e"
+        };
 
-// Função para recuperar senha
+        // Inicializar Firebase apenas se não existir
+        let app;
+        if (getApps().length === 0) {
+            app = initializeApp(firebaseConfig);
+            console.log('Firebase inicializado');
+        } else {
+            app = getApps()[0];
+            console.log('Firebase já estava inicializado');
+        }
+
+        const auth = getAuth(app);
+        console.log('Auth configurado:', auth);
+
+        return { auth, sendPasswordResetEmail };
+    } catch (error) {
+        console.error('Erro ao carregar Firebase:', error);
+        throw error;
+    }
+}
+
+// Função principal de recuperação de senha
 async function recuperarSenha() {
     console.log('Função recuperarSenha chamada');
     
@@ -21,6 +52,9 @@ async function recuperarSenha() {
     }
 
     try {
+        // Carregar Firebase
+        const { auth, sendPasswordResetEmail } = await carregarFirebase();
+
         // Mostrar modal de recuperação de senha
         const { value: email } = await Swal.fire({
             title: 'Recuperar Senha',
@@ -82,11 +116,14 @@ async function recuperarSenha() {
 window.recuperarSenha = recuperarSenha;
 
 // Log para confirmar que o script foi carregado
-console.log('Script de recuperação de senha carregado');
+console.log('Script de recuperação de senha v2 carregado');
 console.log('Função recuperarSenha disponível:', typeof window.recuperarSenha);
 
 // Aguardar o DOM estar pronto
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM carregado - verificando função recuperarSenha');
-    console.log('Função disponível:', typeof window.recuperarSenha);
-}); 
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM carregado - função recuperarSenha disponível:', typeof window.recuperarSenha);
+    });
+} else {
+    console.log('DOM já carregado - função recuperarSenha disponível:', typeof window.recuperarSenha);
+} 

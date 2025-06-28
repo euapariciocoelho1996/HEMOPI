@@ -1,36 +1,24 @@
-// Import Firebase modules 
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import {
-    getAuth,
-    onAuthStateChanged,
-    signOut,
-    createUserWithEmailAndPassword
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import {
-    getFirestore,
-    doc,
-    getDoc,
+import { 
+    getFirestore, 
+    doc, 
     setDoc,
     collection,
     query,
     where,
     getDocs
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { app } from "./firebase-config.js";
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDul81cb5or7oR8HCs5I_Vw-SHm-ORHshI",
-    authDomain: "teste-2067f.firebaseapp.com",
-    projectId: "teste-2067f",
-    storageBucket: "teste-2067f.firebasestorage.app",
-    messagingSenderId: "160483034987",
-    appId: "1:160483034987:web:944eb621b02efea11b2e2e"
-};
-
-// Initialize Firebase services
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Get auth and firestore instances from existing app
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 // Mostrar erro abaixo do input
 function showFieldError(id, message) {
