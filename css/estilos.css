@@ -430,11 +430,6 @@ body {
   gap: 12px;
 }
 
-.rodape-logo img {
-  height: 40px;
-  width: auto;
-}
-
 .rodape-links {
   display: flex;
   gap: 30px;
