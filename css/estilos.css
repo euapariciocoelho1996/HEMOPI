@@ -3,13 +3,12 @@
  * Table of Contents:
  * 1. General Styles
  * 2. Media Queries
- * 3. Header
- * 4. User Authentication
- * 5. Hero Section
- * 6. Carousel
- * 7. Informational Sections
- * 8. Profile Section
- * 9. Footer
+ * 3. Hero Section
+ * 4. Carousel
+ * 5. Informational Sections
+ * 6. Profile Section
+ * 7. Campaigns Section
+ * 8. Footer
  */
 
 /* 1. General Styles */
@@ -30,10 +29,6 @@ body {
   .rodape-container {
     flex-direction: column;
     align-items: center;
-  }
-
-  .menu-centralizado {
-    gap: 16px;
   }
 
   .hero-texto h1 {
@@ -61,17 +56,8 @@ body {
 }
 
 @media (max-width: 768px) {
-  .header-moderno {
-    flex-direction: column;
-    gap: 10px;
-  }
-
   .hero-content {
     padding: 20px;
-  }
-
-  .menu-centralizado {
-    flex-direction: column;
   }
 
   .cta-button,
@@ -123,10 +109,6 @@ body {
 }
 
 @media (max-width: 480px) {
-  .logo span {
-    font-size: 16px;
-  }
-
   .hero-texto h1 {
     font-size: 24px;
   }
@@ -193,146 +175,13 @@ body {
   }
 }
 
-/* 3. Header */
-.header-moderno {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 15px 40px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo img {
-  height: 42px;
-}
-
-.logo span {
-  font-size: 20px;
-  font-weight: 600;
-  color: rgb(206, 72, 60);
-}
-
-.menu-centralizado {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
-}
-
-.menu-centralizado a {
-  text-decoration: none;
-  font-size: 15px;
-  color: #454545;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-a[href="#solicite-demo"].cta-button {
-  color: #ffffff;
-}
-
-a[href="#conteudos"]:hover {
-  color: rgb(206, 72, 60);
-  text-decoration: underline;
-}
-
-.cta-button {
-  background-color: rgb(206, 72, 60);
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.cta-button:hover {
-  background-color: rgb(206, 72, 60);
-}
-
-/* 4. User Authentication */
-.login {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  font-size: 15px;
-  color: #454545;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.login:hover {
-  color: rgb(206, 72, 60);
-}
-
-.icon-login {
-  height: 24px;
-  margin-right: 8px;
-}
-
-/* User menu when logged in */
-.user-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f5f5f5;
-  padding: 10px 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.user-greeting {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
-  margin-right: 10px;
-}
-
-.user-greeting strong {
-  color: rgb(206, 72, 60);
-}
-
-.profile-link {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: 500;
-  margin-right: 20px;
-  transition: color 0.2s;
-}
-
-.profile-link:hover {
-  color: #0056b3;
-  text-decoration: underline;
-}
-
-.logout-button {
-  background-color: #dc3545;
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.logout-button:hover {
-  background-color: #c82333;
-}
-
-/* 5. Hero Section */
+/* 3. Hero Section */
 .hero {
-  background-color: #f8fbfd;
-  padding: 60px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-content {
@@ -340,178 +189,170 @@ a[href="#conteudos"]:hover {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  gap: 60px;
+  padding: 0 40px;
 }
 
 .hero-texto {
   flex: 1;
-  min-width: 300px;
   max-width: 600px;
 }
 
 .hero-texto .destaque {
-  color: rgb(206, 72, 60);
-  font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .hero-texto h1 {
-  font-size: 36px;
-  color: #1e1e1e;
-  margin: 0 0 20px 0;
+  font-size: 48px;
   font-weight: 700;
+  margin-bottom: 20px;
   line-height: 1.2;
 }
 
 .hero-texto .descricao {
-  font-size: 16px;
-  color: #444;
+  font-size: 18px;
+  line-height: 1.6;
   margin-bottom: 30px;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .cta-hero {
   display: inline-block;
-  padding: 12px 24px;
-  background-color: #ffffff;
-  color: #1a1a1a;
-  border: 2px solid #1a1a1a;
+  background-color: #e63946;
+  color: white;
+  padding: 15px 30px;
   border-radius: 30px;
   text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
 }
 
 .cta-hero:hover {
-  background-color: #eeeeee;
+  background-color: #d32f3d;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.4);
 }
 
 .hero-imagem {
   flex: 1;
-  min-width: 300px;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+  max-width: 500px;
+  position: relative;
 }
 
 .hero-imagem img {
-  max-width: 100%;
+  width: 100%;
   height: auto;
-  border-radius: 20px;
-  /* cantos arredondados */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  /* sombra suave */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
 .hero-imagem img:hover {
-  transform: scale(1.03);
-  /* efeito leve de zoom */
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
 }
 
+/* 4. Informational Sections */
 .informacoes-doacao {
-  background-color: #f8fbfd;
-  padding: 60px 20px;
+  padding: 80px 0;
+  background-color: #f8f9fa;
 }
 
 .informacoes-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
   gap: 30px;
+  padding: 0 40px;
+  flex-wrap: wrap;
 }
 
 .info-card {
   flex: 1;
-  min-width: 280px;
-  max-width: 370px;
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  padding: 20px;
-  transition: transform 0.3s ease;
+  min-width: 300px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .info-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .info-card img {
-  width: 100%;
-  height: 180px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 15px;
-  transition: transform 0.3s ease;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .info-card h3 {
-  font-size: 20px;
-  color: rgb(206, 72, 60);
-  margin-bottom: 10px;
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 15px;
   font-weight: 600;
 }
 
 .info-card p {
-  font-size: 15px;
-  color: #444;
-  line-height: 1.5;
-  text-align: justify;
-  font-weight: 400;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
 }
 
+/* 5. Informative Section */
 .secao-doacao-informativa {
-  background-color: #f2f4f8;
-  /* cor levemente diferente de #f8fbfd */
-  padding: 80px 20px;
-  display: flex;
-  justify-content: center;
+  padding: 80px 0;
+  background: white;
 }
 
 .conteudo-doacao {
   max-width: 1200px;
+  margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 40px;
+  gap: 60px;
+  padding: 0 40px;
 }
 
 .texto-esquerda {
   flex: 1;
-  min-width: 300px;
 }
 
 .texto-esquerda h2 {
-  font-size: 32px;
-  color: #1a202c;
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 20px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .texto-direita {
-  flex: 2;
-  min-width: 300px;
+  flex: 1;
 }
 
 .texto-direita p {
-  font-size: 16px;
-  color: #444;
+  font-size: 18px;
+  color: #666;
   line-height: 1.6;
-  text-align: justify;
-  font-weight: 400;
 }
 
+/* 6. Reveal Animation */
 .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  will-change: opacity, transform;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
 }
 
 .reveal.active {
@@ -519,205 +360,201 @@ a[href="#conteudos"]:hover {
   transform: translateY(0);
 }
 
+/* 7. Carousel */
 .carrossel-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .carousel {
   position: relative;
-  width: 100%;
-  max-width: 500px;
   overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .carousel-images {
   display: flex;
   transition: transform 0.5s ease-in-out;
-  width: 300%;
-  gap: 20px;
-  padding: 0 10px;
-  box-sizing: border-box;
 }
 
 .carousel-images img {
-  width: calc(100% - 20px);
-  height: auto;
-  border-radius: 10px;
-  flex: 0 0 100%;
+  width: 100%;
+  height: 300px;
   object-fit: cover;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
-/* Indicadores posicionados abaixo do carrossel */
 .carousel-indicators {
-  margin-top: 12px;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .carousel-indicators .dot {
-  height: 10px;
-  width: 10px;
-  background-color: #ccc;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.3s;
+  background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .carousel-indicators .dot.active {
-  background-color: rgb(206, 72, 60);
+  background-color: white;
 }
 
+/* 8. Footer */
 .rodape {
-  background-color: rgb(206, 72, 60);
-  color: #fff;
-  padding: 70px 30px 40px;
-  /* ↑ Aumenta altura (topo e base) */
-  font-family: "Arial", sans-serif;
+  background-color: #333;
+  color: white;
+  padding: 40px 0 20px;
 }
 
 .rodape-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  flex-wrap: wrap;
   gap: 20px;
 }
 
 .rodape-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 20px;
-  font-weight: bold;
+  gap: 12px;
 }
 
 .rodape-logo img {
-  width: 40px;
   height: 40px;
+  width: auto;
 }
 
 .rodape-links {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  gap: 30px;
 }
 
 .rodape-links a {
-  color: #fff;
+  color: white;
   text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s;
+  transition: color 0.3s ease;
 }
 
 .rodape-links a:hover {
-  color: #ffdada;
+  color: #e63946;
 }
 
 .rodape-social a {
-  margin-left: 10px;
+  margin-left: 15px;
 }
 
 .rodape-social img {
   width: 30px;
   height: 30px;
-  filter: brightness(0) invert(1);
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
 }
 
 .rodape-social img:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .rodape-copy {
   text-align: center;
   margin-top: 30px;
-  font-size: 13px;
-  color: #fff;
-  opacity: 0.8;
+  padding-top: 20px;
+  border-top: 1px solid #555;
+  color: #ccc;
 }
 
+/* 9. Profile Section */
 .secao-perfil-doador {
-  background: linear-gradient(135deg, #fff5f5, #ffeaea);
-  padding: 60px 20px;
+  padding: 80px 0;
+  background-color: #f8f9fa;
 }
 
 .perfil-container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 40px;
   text-align: center;
 }
 
 .perfil-texto h2 {
-  font-size: 32px;
-  color: rgb(206, 72, 60);
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 20px;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.perfil-texto h2 i {
+  color: #e63946;
+  font-size: 32px;
 }
 
 .perfil-texto p {
   font-size: 18px;
-  color: #444;
-  max-width: 700px;
+  color: #666;
+  line-height: 1.6;
+  max-width: 800px;
   margin: 0 auto 40px;
-  font-weight: 400;
 }
 
 .perfil-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  display: flex;
   gap: 30px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .perfil-card {
-  background-color: #fff;
+  flex: 1;
+  min-width: 250px;
+  background: white;
+  padding: 30px;
   border-radius: 12px;
-  padding: 30px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .perfil-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .perfil-card i {
-  font-size: 36px;
-  color: rgb(206, 72, 60);
-  margin-bottom: 15px;
+  font-size: 40px;
+  color: #e63946;
+  margin-bottom: 20px;
 }
 
 .perfil-card h3 {
   font-size: 20px;
-  margin-bottom: 10px;
   color: #333;
+  margin-bottom: 15px;
   font-weight: 600;
 }
 
 .perfil-card p {
-  font-size: 15px;
-  color: #555;
-  font-weight: 400;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
 }
 
-/* Estilo Para Campanhas */
-
+/* 10. Campaigns Section */
 .secao-campanhas {
-  background-color: #f8fbfd;
-  padding: 60px 20px;
+  padding: 80px 0;
+  background: white;
 }
 
 .campanhas-container {
@@ -825,7 +662,7 @@ a[href="#conteudos"]:hover {
 
 .cta-perfil {
   display: inline-block;
-  background-color: rgb(206, 72, 60);
+  background-color: #e63946;
   color: #fff;
   padding: 15px 35px;
   border-radius: 30px;
@@ -833,13 +670,13 @@ a[href="#conteudos"]:hover {
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(206, 72, 60, 0.3);
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
 }
 
 .cta-perfil:hover {
-  background-color: rgb(185, 57, 46);
+  background-color: #d32f3d;
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(206, 72, 60, 0.4);
+  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.4);
 }
 
 /* Media queries for campaign section */
@@ -857,63 +694,4 @@ a[href="#conteudos"]:hover {
 
 #userDonationInfo {
   margin-bottom: 20px;
-}
-
-/* Estilos para o botão de menu responsivo */
-.menu-toggle {
-    display: none; /* Esconde o botão em telas grandes */
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #454545;
-    padding: 0;
-}
-
-@media (max-width: 768px) {
-    .header-moderno {
-        justify-content: space-between; /* Ajusta o alinhamento para o menu responsivo */
-        padding: 15px 20px; /* Reduz o padding em telas menores */
-    }
-
-    .menu-centralizado {
-        display: none; /* Esconde o menu de navegação padrão em telas menores */
-        flex-direction: column;
-        position: absolute;
-        top: 70px; /* Ajusta com a altura do header */
-        left: 0;
-        width: 100%;
-        background-color: #ffffff; /* Fundo branco para o menu */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 999; /* Garante que o menu fique acima de outros elementos */
-        padding: 20px 0;
-        border-top: 1px solid #eee;
-    }
-
-    .menu-centralizado.active {
-        display: flex; /* Mostra o menu quando ativo */
-    }
-
-    .menu-centralizado a {
-        padding: 10px 20px;
-        text-align: center;
-        width: 100%;
-        border-bottom: 1px solid #f0f0f0; /* Separador para os itens do menu */
-    }
-
-    .menu-centralizado a:last-child {
-        border-bottom: none;
-    }
-
-    .menu-toggle {
-        display: block; /* Mostra o botão do hambúrguer em telas menores */
-    }
-
-    .logo {
-        margin-right: auto; /* Empurra o logo para a esquerda, e o menu-toggle e user-header-options para a direita */
-    }
-
-    #user-header-options {
-        margin-left: 15px; /* Adiciona um pouco de espaço à esquerda das opções de usuário */
-    }
 }

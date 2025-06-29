@@ -1,148 +1,402 @@
+/* Estilos do Header - Sangue Solidário */
+
+/* Reset básico */
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
 }
-/* 3. Header */
+
+/* Header Principal */
 .header-moderno {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 15px 40px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .logo img {
-    height: 42px;
-  }
-  
-  .logo span {
-    font-size: 20px;
-    font-weight: 600;
-    color: #e63946;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 70px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.logo img {
+  height: 42px;
+  width: auto;
+}
+
+.logo span {
+  font-size: 20px;
+  font-weight: 600;
+  color: #e63946;
+}
+
+/* Menu de Navegação */
+.menu-centralizado {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-centralizado a {
+  text-decoration: none;
+  font-size: 15px;
+  color: #454545;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.menu-centralizado a:hover {
+  color: #e63946;
+  background-color: rgba(230, 57, 70, 0.1);
+}
+
+/* Botão CTA */
+.cta-button {
+  background-color: #e63946;
+  color: #ffffff !important;
+  padding: 10px 20px !important;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #d32f3d !important;
+  color: #ffffff !important;
+}
+
+/* Área de Autenticação */
+#user-header-options {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.login {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 15px;
+  color: #454545;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.login:hover {
+  color: #e63946;
+  background-color: rgba(230, 57, 70, 0.1);
+}
+
+.icon-login {
+  height: 24px;
+  margin-right: 8px;
+  width: auto;
+}
+
+/* Botão do Menu Responsivo */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #454545;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  margin-left: 15px;
+  z-index: 1001;
+}
+
+.menu-toggle:hover {
+  color: #e63946;
+  background-color: rgba(230, 57, 70, 0.1);
+}
+
+.menu-toggle:focus {
+  outline: 2px solid #e63946;
+  outline-offset: 2px;
+}
+
+/* Informações do Usuário Logado */
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f5f5f5;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+.user-greeting {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  margin-right: 10px;
+}
+
+.user-greeting strong {
+  color: #e63946;
+}
+
+.profile-link {
+  text-decoration: none;
+  color: #007BFF;
+  font-weight: 500;
+  margin-right: 20px;
+  transition: color 0.2s;
+}
+
+.profile-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+/* Media Queries para Responsividade */
+
+/* Tablets e telas médias */
+@media (max-width: 1024px) {
+  .header-moderno {
+    padding: 15px 20px;
   }
   
   .menu-centralizado {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-    align-items: center;
+    gap: 20px;
   }
   
   .menu-centralizado a {
-    text-decoration: none;
-    font-size: 15px;
-    color: #454545;
-    font-weight: 500;
-    transition: color 0.3s ease;
+    font-size: 14px;
+  }
+}
+
+/* Dispositivos móveis */
+@media (max-width: 768px) {
+  .header-moderno {
+    padding: 15px 20px;
+    position: relative;
   }
   
-  a[href="#solicite-demo"].cta-button {
-    color: #ffffff;
+  /* Mostrar botão do menu */
+  .menu-toggle {
+    display: block;
+    order: 3;
   }
   
-  a[href="#conteudos"]:hover {
-    color: rgb(206, 72, 60);
-    text-decoration: underline;
+  /* Esconder menu de navegação por padrão */
+  .menu-centralizado {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    flex-direction: column;
+    gap: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #eee;
+    z-index: 999;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
   }
   
+  /* Menu ativo */
+  .menu-centralizado.active {
+    display: flex;
+  }
+  
+  .menu-centralizado a {
+    width: 100%;
+    padding: 15px 20px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    display: block;
+  }
+  
+  .menu-centralizado a:last-child {
+    border-bottom: none;
+  }
+  
+  .menu-centralizado a:hover {
+    background-color: rgba(230, 57, 70, 0.1);
+  }
+  
+  /* Ajustar logo e área de usuário */
+  .logo {
+    order: 1;
+    flex: 1;
+  }
+  
+  #user-header-options {
+    order: 2;
+    margin-left: auto;
+  }
+  
+  /* Ajustar botão CTA no mobile */
   .cta-button {
-    background-color: rgb(206, 72, 60);
-    color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+    margin: 10px 20px;
+    width: calc(100% - 40px);
+    text-align: center;
   }
   
-  .cta-button:hover {
-    background-color: rgb(206, 72, 60);
+  /* Prevenir scroll do body quando menu está aberto */
+  body.menu-open {
+    overflow: hidden;
+  }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 480px) {
+  .header-moderno {
+    padding: 12px 15px;
   }
   
-  /* User menu when logged in */
-  .user-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f5f5f5;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  .logo span {
+    font-size: 16px;
   }
   
-  .user-greeting {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #333;
-    margin-right: 10px;
+  .logo img {
+    height: 36px;
   }
   
-  .user-greeting strong {
-    color: rgb(206, 72, 60);
+  .menu-toggle {
+    font-size: 20px;
+    padding: 6px;
   }
   
-  .profile-link {
-    text-decoration: none;
-    color: #007BFF;
-    font-weight: 500;
-    margin-right: 20px;
-    transition: color 0.2s;
-  }
-  
-  .profile-link:hover {
-    color: #0056b3;
-    text-decoration: underline;
-  }
-  
-  .logout-button {
-    background-color: #dc3545;
-    border: none;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .logout-button:hover {
-    background-color: #c82333;
-  }
-  
-  /* 4. User Authentication */
-  .login {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
+  .menu-centralizado a {
+    padding: 12px 15px;
     font-size: 15px;
-    color: #454545;
-    font-weight: 500;
-    transition: color 0.3s ease;
   }
   
-  .login:hover {
-    color: rgb(206, 72, 60);
+  .login {
+    font-size: 14px;
   }
   
   .icon-login {
-    height: 24px;
-    margin-right: 8px;
+    height: 20px;
   }
   
-  .nav-links a {
-    font-weight: 500;
-    text-decoration: none;
-    color: #333;
-    transition: color 0.3s;
+  .menu-centralizado {
+    max-height: calc(100vh - 60px);
   }
+}
+
+/* Animações para o menu */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-centralizado.active {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Melhorias de acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .menu-centralizado.active {
+    animation: none;
+  }
+  
+  .menu-centralizado a,
+  .login,
+  .menu-toggle {
+    transition: none;
+  }
+}
+
+/* Suporte para modo escuro (se implementado no futuro) */
+@media (prefers-color-scheme: dark) {
+  .header-moderno {
+    background-color: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .menu-centralizado a {
+    color: #e0e0e0;
+  }
+  
+  .menu-centralizado a:hover {
+    background-color: rgba(230, 57, 70, 0.2);
+  }
+  
+  .logo span {
+    color: #e63946;
+  }
+  
+  .menu-toggle {
+    color: #e0e0e0;
+  }
+  
+  .login {
+    color: #e0e0e0;
+  }
+}
+
+/* Estados de foco para navegação por teclado */
+.menu-centralizado a:focus,
+.login:focus,
+.menu-toggle:focus {
+  outline: 2px solid #e63946;
+  outline-offset: 2px;
+}
+
+/* Indicador visual para JavaScript carregado */
+.js-loaded .menu-toggle {
+  opacity: 1;
+}
+
+/* Fallback para quando JavaScript não está disponível */
+.no-js .menu-toggle {
+  display: none;
+}
+
+.no-js .menu-centralizado {
+  display: flex;
+}
   
