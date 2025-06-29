@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleMenu();
     });
 
-    // Fechar menu quando um link é clicado
+    // Fechar menu quando um link é clicado (incluindo o item de perfil)
     mainNav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             // Pequeno delay para permitir que o link seja processado

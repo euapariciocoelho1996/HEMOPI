@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Menu Perfil - Sangue Solidário</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <style>
+        .test-content {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 40px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .test-section p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .device-info {
+            background: rgb(206, 72, 60);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .auth-status {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .auth-status.not-logged {
+            background: #dc3545;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .test-btn.primary {
+            background: rgb(206, 72, 60);
+            color: white;
+        }
+        .test-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="no-js">
+
+    <!-- Header Responsivo -->
+    <header class="header-moderno">
+        <div class="logo">
+            <img src="img/icone.png" alt="Logo Sangue Solidário">
+            <span>Sangue Solidário</span>
+        </div>
+
+        <!-- Botão para abrir o menu responsivo -->
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu de navegação">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Menu de Navegação -->
+        <nav class="menu-centralizado" id="main-nav">
+            <a href="index.html">Início</a>
+            <a href="#informacoes-doacao">Sobre a Doação</a>
+            <a href="#secao-perfil-doador">Perfil do Doador</a>
+            <a href="campanhas_para_usuarios.html" class="cta-button">Campanhas Ativas</a>
+        </nav>
+
+        <!-- Área de Autenticação do Usuário -->
+        <div id="user-header-options">
+            <a href="login.html" class="login">
+                <img src="img/login.png" alt="Ícone de login" class="icon-login">
+                Entrar
+            </a>
+        </div>
+    </header>
+
+    <!-- Conteúdo de Teste -->
+    <div class="test-content">
+        <div class="device-info">
+            <strong>Teste do Menu Perfil</strong><br>
+            Verifique se o item "Meu Perfil" aparece no menu quando logado
+        </div>
+
+        <div id="auth-status" class="auth-status not-logged">
+            <strong>Status:</strong> Não logado
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Teste de Funcionalidade</h2>
+            <p>Este arquivo testa se o item "Meu Perfil" aparece corretamente no menu hamburguer quando o usuário está logado.</p>
+            
+            <div class="test-buttons">
+                <button class="test-btn primary" onclick="simularLogin()">🔐 Simular Login</button>
+                <button class="test-btn secondary" onclick="simularLogout()">🚪 Simular Logout</button>
+                <button class="test-btn secondary" onclick="verificarStatus()">🔍 Verificar Status</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Como Testar</h2>
+            <ol>
+                <li>Redimensione a janela para < 768px para ativar o menu hamburguer</li>
+                <li>Clique em "Simular Login" para simular um usuário logado</li>
+                <li>Clique no menu hamburguer (ícone de 3 linhas)</li>
+                <li>Verifique se aparece "Meu Perfil" com ícone de usuário</li>
+                <li>Clique em "Simular Logout" e verifique se o item desaparece</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Funcionalidades Testadas</h2>
+            <ul>
+                <li>Item "Meu Perfil" aparece quando usuário está logado</li>
+                <li>Item "Meu Perfil" desaparece quando usuário não está logado</li>
+                <li>Estilo diferenciado para o item de perfil (fundo vermelho claro)</li>
+                <li>Ícone de usuário no item de perfil</li>
+                <li>Posicionamento correto no menu (antes das Campanhas Ativas)</li>
+                <li>Funciona tanto em desktop quanto mobile</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Estilos do Item Perfil</h2>
+            <ul>
+                <li><strong>Desktop:</strong> Borda esquerda vermelha, fundo vermelho claro</li>
+                <li><strong>Mobile:</strong> Borda inferior vermelha, fundo vermelho claro</li>
+                <li><strong>Hover:</strong> Fundo vermelho mais escuro</li>
+                <li><strong>Ícone:</strong> FontAwesome fa-user</li>
+                <li><strong>Texto:</strong> "Meu Perfil" em negrito</li>
+            </ul>
+        </div>
+
+        <!-- Conteúdo extra para testar scroll -->
+        <div class="test-section">
+            <h2>📜 Conteúdo para Testar Scroll</h2>
+            <p>Este conteúdo é adicionado para testar se o scroll do body é bloqueado corretamente quando o menu está aberto em dispositivos móveis.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/header.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/menu.js"></script>
+    
+    <script>
+        // Funções de teste
+        let isLoggedIn = false;
+        
+        function simularLogin() {
+            isLoggedIn = true;
+            atualizarStatus();
+            // Simular o comportamento do Firebase Auth
+            const event = new CustomEvent('authStateChanged', { detail: { user: { uid: 'test-user', email: 'test@example.com' } } });
+            document.dispatchEvent(event);
+        }
+        
+        function simularLogout() {
+            isLoggedIn = false;
+            atualizarStatus();
+            // Simular o comportamento do Firebase Auth
+            const event = new CustomEvent('authStateChanged', { detail: { user: null } });
+            document.dispatchEvent(event);
+        }
+        
+        function verificarStatus() {
+            alert(`Status atual: ${isLoggedIn ? 'Logado' : 'Não logado'}`);
+        }
+        
+        function atualizarStatus() {
+            const statusDiv = document.getElementById('auth-status');
+            if (isLoggedIn) {
+                statusDiv.className = 'auth-status';
+                statusDiv.innerHTML = '<strong>Status:</strong> Logado (usuário de teste)';
+            } else {
+                statusDiv.className = 'auth-status not-logged';
+                statusDiv.innerHTML = '<strong>Status:</strong> Não logado';
+            }
+        }
+        
+        // Inicializar status
+        atualizarStatus();
+    </script>
+</body>
+</html> 

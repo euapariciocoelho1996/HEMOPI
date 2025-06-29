@@ -223,7 +223,7 @@ body {
 
 .cta-hero {
   display: inline-block;
-  background-color: #e63946;
+  background-color: rgb(206, 72, 60);
   color: white;
   padding: 15px 30px;
   border-radius: 30px;
@@ -231,13 +231,13 @@ body {
   font-weight: 600;
   font-size: 16px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+  box-shadow: 0 4px 12px rgba(206, 72, 60, 0.3);
 }
 
 .cta-hero:hover {
-  background-color: #d32f3d;
+  background-color: rgb(185, 57, 46);
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.4);
+  box-shadow: 0 6px 16px rgba(206, 72, 60, 0.4);
 }
 
 .hero-imagem {
@@ -447,7 +447,7 @@ body {
 }
 
 .rodape-links a:hover {
-  color: #e63946;
+  color: rgb(206, 72, 60);
 }
 
 .rodape-social a {
@@ -497,7 +497,7 @@ body {
 }
 
 .perfil-texto h2 i {
-  color: #e63946;
+  color: rgb(206, 72, 60);
   font-size: 32px;
 }
 
@@ -534,7 +534,7 @@ body {
 
 .perfil-card i {
   font-size: 40px;
-  color: #e63946;
+  color: rgb(206, 72, 60);
   margin-bottom: 20px;
 }
 
@@ -662,7 +662,7 @@ body {
 
 .cta-perfil {
   display: inline-block;
-  background-color: #e63946;
+  background-color: rgb(206, 72, 60);
   color: #fff;
   padding: 15px 35px;
   border-radius: 30px;
@@ -670,13 +670,13 @@ body {
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+  box-shadow: 0 4px 12px rgba(206, 72, 60, 0.3);
 }
 
 .cta-perfil:hover {
-  background-color: #d32f3d;
+  background-color: rgb(185, 57, 46);
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.4);
+  box-shadow: 0 6px 16px rgba(206, 72, 60, 0.4);
 }
 
 /* Media queries for campaign section */

@@ -51,17 +51,41 @@ function setupNavigation() {
 // Atualiza o header com base no login
 function updateHeaderUI(user) {
   const userHeader = document.getElementById("user-header-options");
+  const mainNav = document.getElementById("main-nav");
+  
   if (!userHeader) return;
 
   if (user) {
+    // Atualiza a área de usuário no header (sem o link Ver Perfil)
     userHeader.innerHTML = `
       <div class="user-info">
         <span class="user-greeting">Olá, <strong>Herói</strong> ❤️</span>
-        <a href="perfil.html" class="profile-link">Ver Perfil</a>
         <button id="logout-btn" class="logout-button">Sair</button>
       </div>
     `;
 
+    // Adiciona a opção de perfil no menu hamburguer
+    if (mainNav) {
+      // Remove links de perfil existentes para evitar duplicação
+      const existingProfileLinks = mainNav.querySelectorAll('.profile-menu-item');
+      existingProfileLinks.forEach(link => link.remove());
+      
+      // Adiciona o link de perfil no menu
+      const profileLink = document.createElement('a');
+      profileLink.href = 'perfil.html';
+      profileLink.className = 'profile-menu-item';
+      profileLink.innerHTML = '<i class="fas fa-user"></i> Meu Perfil';
+      
+      // Insere o link de perfil antes do último item (Campanhas Ativas)
+      const lastItem = mainNav.querySelector('a:last-child');
+      if (lastItem) {
+        mainNav.insertBefore(profileLink, lastItem);
+      } else {
+        mainNav.appendChild(profileLink);
+      }
+    }
+
+    // Adiciona evento de logout
     document.getElementById("logout-btn").addEventListener("click", () => {
       signOut(auth)
         .then(() => {
@@ -72,6 +96,13 @@ function updateHeaderUI(user) {
         });
     });
   } else {
+    // Remove a opção de perfil do menu quando não logado
+    if (mainNav) {
+      const profileLinks = mainNav.querySelectorAll('.profile-menu-item');
+      profileLinks.forEach(link => link.remove());
+    }
+
+    // Atualiza a área de usuário para mostrar login
     userHeader.innerHTML = `
       <a href="login.html" class="login">
         <img src="img/login.png" alt="Ícone de login" class="icon-login">

@@ -41,7 +41,7 @@ body {
 .logo span {
   font-size: 20px;
   font-weight: 600;
-  color: #e63946;
+  color: rgb(206, 72, 60);
 }
 
 /* Menu de Navegação */
@@ -66,13 +66,33 @@ body {
 }
 
 .menu-centralizado a:hover {
-  color: #e63946;
-  background-color: rgba(230, 57, 70, 0.1);
+  color: rgb(206, 72, 60);
+  background-color: rgba(206, 72, 60, 0.1);
+}
+
+/* Item de perfil no menu */
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(206, 72, 60, 0.1);
+  color: rgb(206, 72, 60) !important;
+  font-weight: 600 !important;
+  border-left: 3px solid rgb(206, 72, 60);
+}
+
+.profile-menu-item i {
+  font-size: 16px;
+}
+
+.profile-menu-item:hover {
+  background-color: rgba(206, 72, 60, 0.2) !important;
+  color: rgb(206, 72, 60) !important;
 }
 
 /* Botão CTA */
 .cta-button {
-  background-color: #e63946;
+  background-color: rgb(206, 72, 60);
   color: #ffffff !important;
   padding: 10px 20px !important;
   border-radius: 30px;
@@ -81,7 +101,7 @@ body {
 }
 
 .cta-button:hover {
-  background-color: #d32f3d !important;
+  background-color: rgb(185, 57, 46) !important;
   color: #ffffff !important;
 }
 
@@ -105,8 +125,8 @@ body {
 }
 
 .login:hover {
-  color: #e63946;
-  background-color: rgba(230, 57, 70, 0.1);
+  color: rgb(206, 72, 60);
+  background-color: rgba(206, 72, 60, 0.1);
 }
 
 .icon-login {
@@ -131,12 +151,12 @@ body {
 }
 
 .menu-toggle:hover {
-  color: #e63946;
-  background-color: rgba(230, 57, 70, 0.1);
+  color: rgb(206, 72, 60);
+  background-color: rgba(206, 72, 60, 0.1);
 }
 
 .menu-toggle:focus {
-  outline: 2px solid #e63946;
+  outline: 2px solid rgb(206, 72, 60);
   outline-offset: 2px;
 }
 
@@ -160,7 +180,7 @@ body {
 }
 
 .user-greeting strong {
-  color: #e63946;
+  color: rgb(206, 72, 60);
 }
 
 .profile-link {
@@ -257,7 +277,28 @@ body {
   }
   
   .menu-centralizado a:hover {
-    background-color: rgba(230, 57, 70, 0.1);
+    background-color: rgba(206, 72, 60, 0.1);
+  }
+  
+  /* Estilos específicos para o item de perfil no mobile */
+  .profile-menu-item {
+    text-align: center;
+    justify-content: center;
+    background-color: rgba(206, 72, 60, 0.1);
+    color: rgb(206, 72, 60) !important;
+    font-weight: 600 !important;
+    border-left: none;
+    border-bottom: 2px solid rgb(206, 72, 60);
+    margin: 5px 0;
+  }
+  
+  .profile-menu-item i {
+    margin-right: 8px;
+  }
+  
+  .profile-menu-item:hover {
+    background-color: rgba(206, 72, 60, 0.2) !important;
+    color: rgb(206, 72, 60) !important;
   }
   
   /* Ajustar logo e área de usuário */
@@ -362,11 +403,11 @@ body {
   }
   
   .menu-centralizado a:hover {
-    background-color: rgba(230, 57, 70, 0.2);
+    background-color: rgba(206, 72, 60, 0.2);
   }
   
   .logo span {
-    color: #e63946;
+    color: rgb(206, 72, 60);
   }
   
   .menu-toggle {
@@ -382,7 +423,7 @@ body {
 .menu-centralizado a:focus,
 .login:focus,
 .menu-toggle:focus {
-  outline: 2px solid #e63946;
+  outline: 2px solid rgb(206, 72, 60);
   outline-offset: 2px;
 }
 
