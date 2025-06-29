@@ -76,13 +76,8 @@ function updateHeaderUI(user) {
       profileLink.className = 'profile-menu-item';
       profileLink.innerHTML = '<i class="fas fa-user"></i> Meu Perfil';
       
-      // Insere o link de perfil antes do último item (Campanhas Ativas)
-      const lastItem = mainNav.querySelector('a:last-child');
-      if (lastItem) {
-        mainNav.insertBefore(profileLink, lastItem);
-      } else {
-        mainNav.appendChild(profileLink);
-      }
+      // Insere o link de perfil após o último item (Campanhas Ativas)
+      mainNav.appendChild(profileLink);
     }
 
     // Adiciona evento de logout
