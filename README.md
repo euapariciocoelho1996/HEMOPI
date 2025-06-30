@@ -45,3 +45,18 @@ Adicionar favicon.
 Recuperação de senha.
 
 Indicar ao usuário se a senha é forte ou fraca.
+
+Usuário Comum
+Login com Google ou com e-mail e senha.
+
+Atualizar dados do usuário.
+
+Cadastro de novo usuário (com e-mail e senha ou Google).
+
+Ajuste no layout dos dados do usuário (ex: cards desalinhados).
+
+Só é possível se cadastrar em campanhas se estiver logado.
+
+Pode se cadastrar nas campanhas disponíveis após login.
+
+Ao cadastrar um local, entra automaticamente como usuário comum.
