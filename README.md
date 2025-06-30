@@ -37,3 +37,11 @@
 - Ajudar na integração com Banco de Dados  
 
 ---
+Geral
+Navegação (header) presente em todas as páginas, exceto na página de login (corrigir bug).
+
+Adicionar favicon.
+
+Recuperação de senha.
+
+Indicar ao usuário se a senha é forte ou fraca.
