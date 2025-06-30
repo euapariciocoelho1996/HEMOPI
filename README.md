@@ -60,3 +60,18 @@ Só é possível se cadastrar em campanhas se estiver logado.
 Pode se cadastrar nas campanhas disponíveis após login.
 
 Ao cadastrar um local, entra automaticamente como usuário comum.
+
+Administrador
+Login com Google ou com e-mail e senha.
+
+Administrador já está cadastrado.
+
+Cadastrar campanhas.
+
+Editar, concluir e excluir campanhas.
+
+Cadastrar usuários.
+
+Atualizar dados do administrador.
+
+Administrador pode se cadastrar em campanhas (se aplicável).
